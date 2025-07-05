@@ -14,8 +14,8 @@ export const revalidate = 600
 export default async function Page() {
   const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
-    collection: 'posts',
+  const articles = await payload.find({
+    collection: 'articles',
     depth: 1,
     limit: 12,
     overrideAccess: false,
@@ -32,24 +32,24 @@ export default async function Page() {
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>Articles</h1>
         </div>
       </div>
 
       <div className="container mb-8">
         <PageRange
-          collection="posts"
-          currentPage={posts.page}
+          collection="articles"
+          currentPage={articles.page}
           limit={12}
-          totalDocs={posts.totalDocs}
+          totalDocs={articles.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={articles.docs} />
 
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+        {articles.totalPages > 1 && articles.page && (
+          <Pagination page={articles.page} totalPages={articles.totalPages} />
         )}
       </div>
     </div>
@@ -58,6 +58,6 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Posts`,
+    title: `Payload Website Template Articles`,
   }
 }
