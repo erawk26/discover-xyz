@@ -9,12 +9,16 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticated } from '../../access/authenticated'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
-import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import {
+  contentCreateAccess,
+  contentReadAccess,
+  contentUpdateAccess,
+  contentDeleteAccess,
+} from '@/access/contentAccess'
+import { Banner } from '@/blocks/Banner/config'
+import { Code } from '@/blocks/Code/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidateArticle } from './hooks/revalidateArticle'
 
@@ -30,10 +34,10 @@ import { slugField } from '@/fields/slug'
 export const Articles: CollectionConfig<'articles'> = {
   slug: 'articles',
   access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticatedOrPublished,
-    update: authenticated,
+    create: contentCreateAccess,
+    delete: contentDeleteAccess,
+    read: contentReadAccess,
+    update: contentUpdateAccess,
   },
   // This config controls what's populated by default when an article is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -63,7 +67,7 @@ export const Articles: CollectionConfig<'articles'> = {
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: typeof data?.slug === 'string' ? data.slug : '',
-        collection: 'posts',
+        collection: 'articles',
         req,
       }),
     useAsTitle: 'title',
