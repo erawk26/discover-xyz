@@ -10,6 +10,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
   heroImage,
   metaImage,
 }) => {
+  const siteName = process.env.SITE_NAME || 'DiscoverXYZ'
   return {
     slug: 'home',
     _status: 'published',
@@ -47,7 +48,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Payload Website Template',
+                  text: siteName,
                   version: 1,
                 },
               ],
@@ -668,7 +669,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
     meta: {
       description: 'An open-source website built with Payload and Next.js.',
       image: heroImage.id,
-      title: 'Payload Website Template',
+      title: siteName,
     },
     title: 'Home',
   }
