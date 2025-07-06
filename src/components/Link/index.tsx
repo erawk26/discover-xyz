@@ -12,7 +12,7 @@ type CMSLinkType = {
   label?: string | null
   newTab?: boolean | null
   reference?: {
-    relationTo: 'pages' | 'posts' | 'articles'
+    relationTo: 'pages' | 'articles'
     value: Page | Article | string | number
   } | null
   size?: ButtonProps['size'] | null

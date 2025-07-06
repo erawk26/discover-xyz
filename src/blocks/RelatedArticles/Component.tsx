@@ -7,13 +7,13 @@ import type { Article } from '@/payload-types'
 import { Card } from '../../components/Card'
 import { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 
-export type RelatedPostsProps = {
+export type RelatedArticlesProps = {
   className?: string
   docs?: Article[]
   introContent?: SerializedEditorState
 }
 
-export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
+export const RelatedArticles: React.FC<RelatedArticlesProps> = (props) => {
   const { className, docs, introContent } = props
 
   return (

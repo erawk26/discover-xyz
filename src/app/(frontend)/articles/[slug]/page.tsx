@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
+import { RelatedArticles } from '@/blocks/RelatedArticles/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -64,7 +64,7 @@ export default async function Article({ params: paramsPromise }: Args) {
         <div className="container">
           <RichText className="max-w-[48rem] mx-auto" data={article.content} enableGutter={false} />
           {article.relatedArticles && article.relatedArticles.length > 0 && (
-            <RelatedPosts
+            <RelatedArticles
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
               docs={article.relatedArticles.filter((article) => typeof article === 'object')}
             />

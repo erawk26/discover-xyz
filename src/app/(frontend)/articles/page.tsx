@@ -45,7 +45,7 @@ export default async function Page() {
         />
       </div>
 
-      <CollectionArchive posts={articles.docs} />
+      <CollectionArchive articles={articles.docs} />
 
       <div className="container">
         {articles.totalPages > 1 && articles.page && (
