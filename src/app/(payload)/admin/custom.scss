@@ -1,0 +1,231 @@
+// Branding CSS customization for DiscoverXYZ
+// This file customizes the Payload admin interface
+// Brand colors are defined in tailwind.config.ts and can be used as:
+// - bg-brand-primary, text-brand-primary, border-brand-primary
+// - bg-brand-secondary, text-brand-secondary, border-brand-secondary
+// - bg-brand-accent, text-brand-accent, border-brand-accent
+
+@layer payload {
+  // Use Tailwind's brand colors defined in config
+  // You can now use: bg-brand-primary, text-brand-secondary, etc.
+  :root {
+    // Brand colors - matching tailwind.config.ts
+    --theme-brand-primary: #2563eb;
+    --theme-brand-primary-hover: #1d4ed8;
+    --theme-brand-primary-active: #1e40af;
+    --theme-brand-secondary: #7c3aed;
+    --theme-brand-accent: #06b6d4;
+    
+    // Custom background colors
+    --theme-bg-brand: #f8fafc;
+    --theme-bg-brand-dark: #0f172a;
+    
+    // Typography
+    --font-brand: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+
+  // Custom login page styling
+  .login {
+    background: linear-gradient(135deg, var(--theme-brand-primary) 0%, var(--theme-brand-secondary) 100%);
+    
+    &__wrap {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Custom dashboard styling
+  .dashboard {
+    &__wrapper {
+      font-family: var(--font-brand);
+    }
+    
+    &__label {
+      color: var(--theme-brand-primary);
+      font-weight: 600;
+    }
+  }
+
+  // Navigation customization
+  .nav {
+    &__wrap {
+      background: var(--theme-bg-brand);
+      border-right: 1px solid rgba(37, 99, 235, 0.1);
+    }
+    
+    &__link {
+      &:hover {
+        background: rgba(37, 99, 235, 0.05);
+      }
+      
+      &--active {
+        background: rgba(37, 99, 235, 0.1);
+        border-left: 3px solid var(--theme-brand-primary);
+      }
+    }
+  }
+
+  // Button customizations
+  .btn {
+    &--style-primary {
+      background: var(--theme-brand-primary);
+      border-color: var(--theme-brand-primary);
+      
+      &:hover {
+        background: var(--theme-brand-primary-hover);
+        border-color: var(--theme-brand-primary-hover);
+      }
+      
+      &:active {
+        background: var(--theme-brand-primary-active);
+        border-color: var(--theme-brand-primary-active);
+      }
+    }
+    
+    &--style-secondary {
+      border-color: var(--theme-brand-primary);
+      color: var(--theme-brand-primary);
+      
+      &:hover {
+        background: var(--theme-brand-primary);
+        color: white;
+      }
+    }
+  }
+
+  // Form field customizations
+  .field-type {
+    &--text,
+    &--email,
+    &--password,
+    &--textarea,
+    &--select {
+      input,
+      textarea,
+      select {
+        &:focus {
+          border-color: var(--theme-brand-primary);
+          box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+      }
+    }
+  }
+
+  // Header customizations
+  .template-default {
+    .doc-header {
+      &__wrapper {
+        border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+      }
+    }
+  }
+
+  // Custom logo styling
+  .logo {
+    svg {
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  // Icon styling
+  .icon {
+    svg {
+      transition: all 0.2s ease;
+    }
+  }
+
+  // Custom table styling
+  .table {
+    &__wrapper {
+      border: 1px solid rgba(37, 99, 235, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    thead {
+      background: var(--theme-bg-brand);
+    }
+    
+    tbody tr {
+      &:hover {
+        background: rgba(37, 99, 235, 0.02);
+      }
+    }
+  }
+
+  // Sidebar customizations
+  .nav-toggler {
+    &__button {
+      color: var(--theme-brand-primary);
+      
+      &:hover {
+        background: rgba(37, 99, 235, 0.1);
+      }
+    }
+  }
+
+  // Status indicators using Tailwind colors
+  .pill {
+    &--style-success {
+      background: #10b981;
+    }
+    
+    &--style-warning {
+      background: #f59e0b;
+    }
+    
+    &--style-error {
+      background: #ef4444;
+    }
+  }
+
+  // Dark mode adjustments
+  [data-theme="dark"] {
+    --theme-bg-brand: var(--theme-bg-brand-dark);
+    
+    .nav__wrap {
+      background: var(--theme-bg-brand-dark);
+      border-right-color: rgba(37, 99, 235, 0.2);
+    }
+    
+    .login {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      
+      &__wrap {
+        background: rgba(15, 23, 42, 0.95);
+      }
+    }
+  }
+
+  // Custom animations
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dashboard__wrapper {
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  // Remove Payload branding (optional)
+  .branding {
+    display: none !important;
+  }
+  
+  // Hide "Powered by Payload" footer
+  .powered-by {
+    display: none !important;
+  }
+}
