@@ -34,6 +34,12 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    // White-label meta configuration
+    meta: {
+      titleSuffix: `- ${process.env.SITE_NAME || 'Payload CMS'} Admin`,
+    },
+    // Admin panel theme
+    theme: 'all', // 'all', 'light', or 'dark'
     livePreview: {
       breakpoints: [
         {

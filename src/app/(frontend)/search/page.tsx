@@ -82,7 +82,8 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 }
 
 export function generateMetadata(): Metadata {
+  const siteName = process.env.SITE_NAME || 'DiscoverXYZ'
   return {
-    title: `Payload Website Template Search`,
+    title: `${siteName} Search`,
   }
 }

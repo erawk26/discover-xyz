@@ -57,7 +57,8 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
+  const siteName = process.env.SITE_NAME || 'DiscoverXYZ'
   return {
-    title: `Payload Website Template Articles`,
+    title: `${siteName} Articles`,
   }
 }

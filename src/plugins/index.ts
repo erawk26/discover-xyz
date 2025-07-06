@@ -15,7 +15,8 @@ import { Page, Article } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
 const generateTitle: GenerateTitle<Article | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+  const siteName = process.env.SITE_NAME || 'DiscoverXYZ'
+  return doc?.title ? `${doc.title} | ${siteName}` : siteName
 }
 
 const generateURL: GenerateURL<Article | Page> = ({ doc }) => {

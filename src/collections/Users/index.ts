@@ -27,6 +27,25 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: true,
+  hooks: {
+    beforeValidate: [
+      async ({ data, req }) => {
+        if (data) {
+          // Check if this is the first user being created
+          const userCount = await req.payload.count({
+            collection: 'users',
+          })
+          
+          // If no users exist, make this user an admin
+          if (userCount.totalDocs === 0) {
+            data.role = UserRole.ADMIN
+          }
+        }
+        
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'name',
