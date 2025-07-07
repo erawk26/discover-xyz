@@ -1,12 +1,12 @@
 import type { CollectionConfig } from 'payload'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { contentAccess } from '../access/contentAccess'
@@ -26,7 +26,7 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      //required: true,
+      required: true,
     },
     {
       name: 'caption',
@@ -39,7 +39,6 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
@@ -47,11 +46,6 @@ export const Media: CollectionConfig = {
       {
         name: 'thumbnail',
         width: 300,
-      },
-      {
-        name: 'square',
-        width: 500,
-        height: 500,
       },
       {
         name: 'small',
@@ -74,6 +68,17 @@ export const Media: CollectionConfig = {
         width: 1200,
         height: 630,
         crop: 'center',
+      },
+      {
+        name: 'square',
+        width: 900,
+        height: 900,
+      },
+
+      {
+        name: 'portrait',
+        width: 900,
+        height: 1300,
       },
     ],
   },
