@@ -27,7 +27,7 @@ export const TransformedCategorySchema = z.object({
   externalId: z.string(),
   isGroup: z.boolean().optional(),
   groupName: z.string().optional(),
-})
+}).passthrough()
 
 // Type exports
 export type Category = z.infer<typeof CategorySchema>
