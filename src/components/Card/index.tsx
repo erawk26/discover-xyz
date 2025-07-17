@@ -13,7 +13,7 @@ export type CardArticleData = Pick<Article, 'slug' | 'categories' | 'meta' | 'ti
 export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
-  doc?: CardPostData
+  doc?: CardArticleData
   relationTo?: 'articles'
   showCategories?: boolean
   title?: string

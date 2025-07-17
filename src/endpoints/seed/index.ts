@@ -208,7 +208,7 @@ export const seed = async ({
 
   // Do not create articles with `Promise.all` because we want the articles to be created in order
   // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const article1Doc = await payload.create({
+  await payload.create({
     collection: 'articles',
     depth: 0,
     context: {
@@ -217,7 +217,7 @@ export const seed = async ({
     data: article1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
   })
 
-  const article2Doc = await payload.create({
+  await payload.create({
     collection: 'articles',
     depth: 0,
     context: {
@@ -226,7 +226,7 @@ export const seed = async ({
     data: article2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
   })
 
-  const article3Doc = await payload.create({
+  await payload.create({
     collection: 'articles',
     depth: 0,
     context: {
