@@ -1,0 +1,41 @@
+{
+  "name": "fedsync-import",
+  "version": "1.0.0",
+  "description": "FedSync Import System for Payload CMS",
+  "main": "index.ts",
+  "type": "module",
+  "bin": {
+    "fedsync-import": "./cli.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "cli": "tsx cli.ts",
+    "import": "tsx cli.ts import",
+    "status": "tsx cli.ts status",
+    "validate": "tsx cli.ts validate",
+    "examples": "tsx cli.ts examples"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "chalk": "^5.4.1",
+    "ora": "^8.2.0",
+    "p-limit": "^6.2.0",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "typescript": "*",
+    "vitest": "*",
+    "tsx": "^4.0.0"
+  },
+  "keywords": [
+    "fedsync",
+    "payload-cms",
+    "import",
+    "data-transformation"
+  ],
+  "author": "FedSync Import Team",
+  "license": "MIT"
+}

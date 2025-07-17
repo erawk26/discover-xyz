@@ -76,6 +76,13 @@ export class ProgressTracker {
       this.spinner.succeed(finalMessage)
     }
   }
+
+  /**
+   * Finish progress tracking successfully
+   */
+  finish(message?: string) {
+    this.succeed(message)
+  }
   
   /**
    * Mark as failed
