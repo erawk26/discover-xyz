@@ -72,6 +72,8 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    events: Event;
+    profiles: Profile;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -88,6 +90,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -745,6 +749,286 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: string;
+  title: string;
+  /**
+   * ID from the federator API
+   */
+  externalId?: number | null;
+  trackingId?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  eventDates?:
+    | {
+        name?: string | null;
+        startDate: string;
+        endDate?: string | null;
+        startTime?: string | null;
+        endTime?: string | null;
+        allDay?: boolean | null;
+        timesText?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  photos?:
+    | {
+        photo: string | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  venueName?: string | null;
+  address: {
+    line1?: string | null;
+    line2?: string | null;
+    city: string;
+    state?: string | null;
+    postcode?: string | null;
+  };
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
+  /**
+   * Cities associated with this event
+   */
+  cities?: (string | Category)[] | null;
+  /**
+   * Regions associated with this event
+   */
+  regions?: (string | Category)[] | null;
+  emailAddresses?: {
+    business?: string | null;
+    booking?: string | null;
+  };
+  phoneNumbers?: {
+    local?: string | null;
+    alt?: string | null;
+    fax?: string | null;
+    freeUS?: string | null;
+    freeWorld?: string | null;
+  };
+  websites?: {
+    business?: string | null;
+    booking?: string | null;
+  };
+  socials?: {
+    facebook?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+    youtube?: string | null;
+    pinterest?: string | null;
+  };
+  /**
+   * Event categories
+   */
+  categories?: (string | Category)[] | null;
+  /**
+   * Raw data from the federator API
+   */
+  listingData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Last time this was synced from the API
+   */
+  syncedAt?: string | null;
+  syncSource?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  publishedAt?: string | null;
+  status?: ('draft' | 'published' | 'archived') | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles".
+ */
+export interface Profile {
+  id: string;
+  title: string;
+  /**
+   * Name used for alphabetical sorting
+   */
+  sortName?: string | null;
+  /**
+   * ID from the federator API
+   */
+  externalId?: number | null;
+  trackingId?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  photos?:
+    | {
+        photo: string | Media;
+        caption?: string | null;
+        altText?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  videos?:
+    | {
+        url: string;
+        title?: string | null;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  address: {
+    line1?: string | null;
+    line2?: string | null;
+    city: string;
+    state?: string | null;
+    postcode?: string | null;
+  };
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
+  /**
+   * Cities associated with this profile
+   */
+  cities?: (string | Category)[] | null;
+  /**
+   * Regions associated with this profile
+   */
+  regions?: (string | Category)[] | null;
+  citiesServed?:
+    | {
+        city?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  emailAddresses?: {
+    business?: string | null;
+    booking?: string | null;
+  };
+  phoneNumbers?: {
+    local?: string | null;
+    alt?: string | null;
+    fax?: string | null;
+    freeUS?: string | null;
+    freeWorld?: string | null;
+  };
+  websites?: {
+    business?: string | null;
+    booking?: string | null;
+    meetings?: string | null;
+    mobile?: string | null;
+  };
+  socials?: {
+    facebook?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+    youtube?: string | null;
+    pinterest?: string | null;
+    tripadvisor?: string | null;
+  };
+  hours?:
+    | {
+        day?: ('Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday') | null;
+        open?: string | null;
+        close?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Additional information about hours
+   */
+  hoursText?: string | null;
+  /**
+   * Available amenities and features
+   */
+  amenities?: (string | Category)[] | null;
+  rates?:
+    | {
+        type?: string | null;
+        amount?: string | null;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  roomsInfo?: {
+    numOfRooms?: number | null;
+    numOfSuites?: number | null;
+  };
+  meetingFacilities?: {
+    totalSqFt?: number | null;
+    numMtgRooms?: number | null;
+    largestRoom?: number | null;
+    ceilingHt?: number | null;
+  };
+  type?: ('listing' | 'accommodation' | 'restaurant' | 'attraction' | 'activity' | 'shopping' | 'service') | null;
+  /**
+   * Business categories
+   */
+  categories?: (string | Category)[] | null;
+  /**
+   * Raw data from the federator API
+   */
+  listingData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Last time this was synced from the API
+   */
+  syncedAt?: string | null;
+  syncSource?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  publishedAt?: string | null;
+  status?: ('draft' | 'published' | 'archived') | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -935,6 +1219,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: string | Event;
+      } | null)
+    | ({
+        relationTo: 'profiles';
+        value: string | Profile;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1310,6 +1602,211 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  externalId?: T;
+  trackingId?: T;
+  description?: T;
+  eventDates?:
+    | T
+    | {
+        name?: T;
+        startDate?: T;
+        endDate?: T;
+        startTime?: T;
+        endTime?: T;
+        allDay?: T;
+        timesText?: T;
+        id?: T;
+      };
+  photos?:
+    | T
+    | {
+        photo?: T;
+        caption?: T;
+        id?: T;
+      };
+  venueName?: T;
+  address?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        state?: T;
+        postcode?: T;
+      };
+  location?: T;
+  cities?: T;
+  regions?: T;
+  emailAddresses?:
+    | T
+    | {
+        business?: T;
+        booking?: T;
+      };
+  phoneNumbers?:
+    | T
+    | {
+        local?: T;
+        alt?: T;
+        fax?: T;
+        freeUS?: T;
+        freeWorld?: T;
+      };
+  websites?:
+    | T
+    | {
+        business?: T;
+        booking?: T;
+      };
+  socials?:
+    | T
+    | {
+        facebook?: T;
+        twitter?: T;
+        instagram?: T;
+        youtube?: T;
+        pinterest?: T;
+      };
+  categories?: T;
+  listingData?: T;
+  syncedAt?: T;
+  syncSource?: T;
+  slug?: T;
+  slugLock?: T;
+  publishedAt?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles_select".
+ */
+export interface ProfilesSelect<T extends boolean = true> {
+  title?: T;
+  sortName?: T;
+  externalId?: T;
+  trackingId?: T;
+  description?: T;
+  photos?:
+    | T
+    | {
+        photo?: T;
+        caption?: T;
+        altText?: T;
+        id?: T;
+      };
+  videos?:
+    | T
+    | {
+        url?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  address?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        state?: T;
+        postcode?: T;
+      };
+  location?: T;
+  cities?: T;
+  regions?: T;
+  citiesServed?:
+    | T
+    | {
+        city?: T;
+        id?: T;
+      };
+  emailAddresses?:
+    | T
+    | {
+        business?: T;
+        booking?: T;
+      };
+  phoneNumbers?:
+    | T
+    | {
+        local?: T;
+        alt?: T;
+        fax?: T;
+        freeUS?: T;
+        freeWorld?: T;
+      };
+  websites?:
+    | T
+    | {
+        business?: T;
+        booking?: T;
+        meetings?: T;
+        mobile?: T;
+      };
+  socials?:
+    | T
+    | {
+        facebook?: T;
+        twitter?: T;
+        instagram?: T;
+        youtube?: T;
+        pinterest?: T;
+        tripadvisor?: T;
+      };
+  hours?:
+    | T
+    | {
+        day?: T;
+        open?: T;
+        close?: T;
+        id?: T;
+      };
+  hoursText?: T;
+  amenities?: T;
+  rates?:
+    | T
+    | {
+        type?: T;
+        amount?: T;
+        description?: T;
+        id?: T;
+      };
+  roomsInfo?:
+    | T
+    | {
+        numOfRooms?: T;
+        numOfSuites?: T;
+      };
+  meetingFacilities?:
+    | T
+    | {
+        totalSqFt?: T;
+        numMtgRooms?: T;
+        largestRoom?: T;
+        ceilingHt?: T;
+      };
+  type?: T;
+  categories?: T;
+  listingData?: T;
+  syncedAt?: T;
+  syncSource?: T;
+  slug?: T;
+  slugLock?: T;
+  publishedAt?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
