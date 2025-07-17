@@ -1,5 +1,7 @@
 # Access Control System
 
+[← Back to Main Documentation](../../README.md)
+
 This site implements a role-based access control system with four distinct user roles:
 
 ## User Roles (in hierarchical order)
@@ -41,6 +43,8 @@ This site implements a role-based access control system with four distinct user 
 - **Pages**: Managed by Site Builders and above  
 - **Media**: Managed by Content Editors and above
 - **Categories**: Managed by Content Editors and above (read access for everyone)
+- **Events**: Managed by Content Editors and above
+- **Profiles**: Managed by Content Editors and above
 
 ### Globals
 

@@ -1,5 +1,7 @@
 # Branding Configuration Guide
 
+[← Back to Main Documentation](./README.md)
+
 This guide explains how to customize and brand your Payload CMS admin interface.
 
 ## 🚨 Important: Set Your Site Name

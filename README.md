@@ -93,6 +93,8 @@ The main collections in this application are:
 - **Articles**: Create blog posts or news articles
 - **Media**: Upload and manage images and other assets
 - **Categories**: Organize articles into categories
+- **Events**: Manage events with dates, locations, and contact information
+- **Profiles**: Business listings with amenities, hours, and location data
 
 ### Development Scripts
 
@@ -104,6 +106,31 @@ The main collections in this application are:
 - `pnpm test`: Run all tests
 - `pnpm test:e2e`: Run end-to-end tests
 - `pnpm test:int`: Run integration tests
+
+## Collections Documentation
+
+### Events Collection
+
+The Events collection is designed to manage event listings with comprehensive date, location, and contact information:
+
+- **Event Information**: Title, description, multiple date ranges with times
+- **Location Details**: Venue name, full address, GPS coordinates, city/region relationships
+- **Contact Information**: Multiple email types, phone numbers, websites, and social media
+- **Media**: Photo galleries with captions
+- **Metadata**: Categories, sync tracking, external IDs for API integration
+
+### Profiles Collection
+
+The Profiles collection handles business listings with extensive features:
+
+- **Business Details**: Name, description, type classification
+- **Location & Service Area**: Address, coordinates, cities served, regions
+- **Contact Methods**: Multiple emails, phones, websites, social media profiles
+- **Operating Hours**: Detailed business hours by day
+- **Amenities & Features**: Relationship-based amenity tracking
+- **Accommodation Info**: Room counts, suites, meeting facilities
+- **Media**: Photo and video galleries
+- **Sync Integration**: API data preservation, sync status tracking
 
 ## Features
 
@@ -119,3 +146,10 @@ The main collections in this application are:
 - [Redirects](#redirects)
 - [Jobs and Scheduled Publishing](#jobs-and-scheduled-publish)
 - [Website](#website)
+
+## Additional Documentation
+
+- **[Access Control Guide](./src/access/README.md)**: Detailed information about user roles and permissions
+- **[Branding Guide](./BRANDING_GUIDE.md)**: Instructions for customizing the application's appearance
+- **[Development Guidelines](./CLAUDE.md)**: Project standards and development workflow
+- **[FedSync Documentation](./src/lib/fedsync/README.md)**: API synchronization tool for importing data
