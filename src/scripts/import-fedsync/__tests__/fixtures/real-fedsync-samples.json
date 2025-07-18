@@ -1,0 +1,229 @@
+{
+  "categories": {
+    "categories": [
+      {
+        "id": 1,
+        "name": "Food & Drink",
+        "categories": [
+          {
+            "id": 101,
+            "name": "Restaurants",
+            "type": "dining"
+          },
+          {
+            "id": 102,
+            "name": "Cafes",
+            "type": "dining"
+          },
+          {
+            "id": 103,
+            "name": "Bars",
+            "type": "nightlife"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Entertainment",
+        "categories": [
+          {
+            "id": 201,
+            "name": "Music Venues",
+            "type": "entertainment"
+          },
+          {
+            "id": 202,
+            "name": "Theaters",
+            "type": "entertainment"
+          }
+        ]
+      }
+    ]
+  },
+  "realEvent": {
+    "type": "event",
+    "name": "Summer Music Festival",
+    "external_id": 12345,
+    "tracking_id": "smf-2024-001",
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "venue_name": "Central Park",
+    "address": {
+      "line_1": "Central Park",
+      "line_2": "Great Lawn",
+      "city": "New York",
+      "state": "NY",
+      "postcode": "10024"
+    },
+    "event_dates": [
+      {
+        "name": "Opening Night",
+        "start_date": "2024-07-15",
+        "end_date": "2024-07-15",
+        "start_time": "19:00",
+        "end_time": "23:00",
+        "all_day": false,
+        "times_text": "7:00 PM - 11:00 PM"
+      },
+      {
+        "name": "Main Festival",
+        "start_date": "2024-07-16",
+        "end_date": "2024-07-18",
+        "start_time": "12:00",
+        "end_time": "23:00",
+        "all_day": false,
+        "times_text": "Noon - 11:00 PM daily"
+      }
+    ],
+    "email_addresses": {
+      "business": "info@summermusicfest.com",
+      "booking": "tickets@summermusicfest.com"
+    },
+    "phone_numbers": {
+      "local": "212-555-0123",
+      "alt": "212-555-0124",
+      "fax": "",
+      "free_us": "1-800-MUSIC-NY",
+      "free_world": ""
+    },
+    "websites": {
+      "business": "https://summermusicfest.com",
+      "booking": "https://tickets.summermusicfest.com"
+    },
+    "socials": {
+      "facebook": "facebook.com/summermusicfest",
+      "twitter": "twitter.com/summermusicny",
+      "instagram": "instagram.com/summermusicfest",
+      "youtube": "youtube.com/summermusicfest",
+      "pinterest": ""
+    },
+    "products": [
+      {
+        "description": {
+          "text": "Join us for the ultimate summer music experience in the heart of New York City. Three days of amazing performances by world-class artists across multiple genres."
+        }
+      }
+    ],
+    "categories": [201, 202],
+    "amenities": []
+  },
+  "realProfile": {
+    "type": "listing",
+    "name": "The Artisan Bakery",
+    "external_id": 67890,
+    "tracking_id": "tab-brooklyn-001",
+    "latitude": 40.6892,
+    "longitude": -73.9442,
+    "address": {
+      "line_1": "456 Brooklyn Avenue",
+      "line_2": "Suite 12",
+      "city": "Brooklyn",
+      "state": "NY",
+      "postcode": "11215"
+    },
+    "email_addresses": {
+      "business": "hello@artisanbakery.com",
+      "booking": "orders@artisanbakery.com"
+    },
+    "phone_numbers": {
+      "local": "718-555-0456",
+      "alt": "",
+      "fax": "718-555-0457",
+      "free_us": "",
+      "free_world": ""
+    },
+    "websites": {
+      "business": "https://artisanbakery.com",
+      "booking": "https://orders.artisanbakery.com"
+    },
+    "socials": {
+      "facebook": "facebook.com/artisanbakery",
+      "twitter": "",
+      "instagram": "instagram.com/artisanbakery",
+      "youtube": "",
+      "pinterest": "pinterest.com/artisanbakery"
+    },
+    "products": [
+      {
+        "description": {
+          "text": "Handcrafted artisan breads, pastries, and coffee made fresh daily using locally sourced ingredients. Family-owned since 1985."
+        }
+      }
+    ],
+    "categories": [101, 102],
+    "amenities": [1, 5, 12],
+    "photos": [
+      {
+        "url": "https://example.com/bakery-exterior.jpg",
+        "caption": "Bakery storefront"
+      },
+      {
+        "url": "https://example.com/fresh-bread.jpg", 
+        "caption": "Fresh daily bread"
+      }
+    ]
+  },
+  "problematicCases": {
+    "eventWithMissingFields": {
+      "type": "event",
+      "name": "Minimal Event",
+      "external_id": 999,
+      "tracking_id": "min-001",
+      "address": {
+        "line_1": "Basic Address",
+        "city": "City",
+        "state": "ST"
+      },
+      "event_dates": [
+        {
+          "name": "Date",
+          "start_date": "2024-01-01",
+          "end_date": "2024-01-01",
+          "all_day": true
+        }
+      ],
+      "email_addresses": {},
+      "phone_numbers": {},
+      "websites": {},
+      "socials": {}
+    },
+    "profileWithStringCategories": {
+      "type": "listing",
+      "name": "Business with String Categories",
+      "external_id": 888,
+      "tracking_id": "bwsc-001",
+      "address": {
+        "line_1": "123 String St",
+        "city": "Category City",
+        "state": "CC"
+      },
+      "categories": ["Restaurant", "Cafe"],
+      "email_addresses": {},
+      "phone_numbers": {},
+      "websites": {},
+      "socials": {}
+    },
+    "profileWithInvalidPhotos": {
+      "type": "listing", 
+      "name": "Business with Invalid Photos",
+      "external_id": 777,
+      "tracking_id": "bwip-001",
+      "address": {
+        "line_1": "789 Photo Ave",
+        "city": "Image City", 
+        "state": "IC"
+      },
+      "photos": [
+        "not-an-object-just-url",
+        {
+          "url": "invalid-url-format",
+          "caption": ""
+        }
+      ],
+      "email_addresses": {},
+      "phone_numbers": {},
+      "websites": {},
+      "socials": {}
+    }
+  }
+}

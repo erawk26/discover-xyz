@@ -34,7 +34,7 @@ describe('ProfileTransformer', () => {
 
   describe('transform', () => {
     const createMockProfile = (): Partial<ExtendedProfile> => ({
-      type: 'profile',
+      type: 'listing', // Fixed: Real FedSync uses 'listing' not 'profile'
       id: 683,
       external_id: 683,
       tracking_id: 'PROF-683',
@@ -510,7 +510,7 @@ describe('ProfileTransformer', () => {
         name: 'Not a profile',
       }
 
-      expect(() => transformer.transform(event as any)).toThrow('Expected profile type')
+      expect(() => transformer.transform(event as any)).toThrow('Expected profile or listing type')
     })
   })
 })

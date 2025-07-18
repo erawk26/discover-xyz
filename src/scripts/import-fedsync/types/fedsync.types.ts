@@ -20,7 +20,7 @@ import type {
   EventDate,
   EnrichedListing,
   FederatorResponse
-} from '../../../lib/fedsync'
+} from '@/lib/fedsync/src/api-types'
 
 // Re-export commonly used FedSync types for convenience
 export type {
@@ -40,8 +40,14 @@ export type {
 }
 
 // Type guards from FedSync
-import { isEvent, isProfile } from '../../../lib/fedsync/dist/api-types'
-export { isEvent, isProfile }
+import { isEvent } from '@/lib/fedsync/src/api-types'
+export { isEvent }
+
+// Custom type guard for profiles that accepts both 'profile' and 'listing' types
+export function isProfile(listing: Listing): boolean {
+  const profileTypes = ['profile', 'accommodation', 'restaurant', 'attraction', 'activity', 'shopping', 'service', 'listing']
+  return profileTypes.includes(listing.type)
+}
 
 // FedSync uses a unified Listing type with a discriminator field
 // Events have type: 'event'

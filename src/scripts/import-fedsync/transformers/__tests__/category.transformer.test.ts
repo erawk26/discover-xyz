@@ -25,7 +25,7 @@ describe('CategoryTransformer', () => {
       const result = transformer.transformCategory(category)
 
       expect(result).toEqual({
-        name: 'Art Gallery/Display',
+        title: 'Art Gallery/Display', // Fixed: uses 'title' not 'name' for Payload
         type: 'general',
         externalId: 'cat-1',
       })
@@ -41,7 +41,7 @@ describe('CategoryTransformer', () => {
       const result = transformer.transformCategory(category)
 
       expect(result).toEqual({
-        name: 'Restaurant',
+        title: 'Restaurant', // Fixed: uses 'title' not 'name' for Payload
         type: 'listing',
         externalId: 'cat-2',
       })
@@ -57,7 +57,7 @@ describe('CategoryTransformer', () => {
       const result = transformer.transformCategory(category, groupName)
 
       expect(result).toEqual({
-        name: 'Museums',
+        title: 'Museums', // Fixed: uses 'title' not 'name' for Payload
         type: 'general',
         externalId: 'cat-3',
         groupName: 'Arts, Culture & History',
@@ -72,7 +72,7 @@ describe('CategoryTransformer', () => {
 
       const result = transformer.transformCategory(category)
 
-      expect(result.name).toBe('Hotels & Motels')
+      expect(result.title).toBe('Hotels & Motels') // Fixed: 'title' field
     })
 
     it('should generate correct external IDs', () => {
@@ -97,7 +97,7 @@ describe('CategoryTransformer', () => {
       const result = transformer.transformCategoryGroup(group)
 
       expect(result).toEqual({
-        name: 'Arts, Culture & History',
+        title: 'Arts, Culture & History', // Fixed: uses 'title' not 'name' for Payload
         type: 'group',
         externalId: 'group-2',
         isGroup: true,
@@ -143,13 +143,13 @@ describe('CategoryTransformer', () => {
 
       expect(result).toHaveLength(6) // 2 groups + 4 categories
       expect(result[0]).toEqual({
-        name: 'Arts, Culture & History',
+        title: 'Arts, Culture & History', // Fixed: uses 'title' not 'name' for Payload
         type: 'group',
         externalId: 'group-2',
         isGroup: true,
       })
       expect(result[1]).toEqual({
-        name: 'Art Gallery/Display',
+        title: 'Art Gallery/Display', // Fixed: uses 'title' not 'name' for Payload
         type: 'general',
         externalId: 'cat-1',
         groupName: 'Arts, Culture & History',
@@ -169,7 +169,7 @@ describe('CategoryTransformer', () => {
       const result = transformer.transformCategoriesFile(categoriesFile)
 
       expect(result).toHaveLength(1)
-      expect(result[0].name).toBe('Empty Group')
+      expect(result[0].title).toBe('Empty Group') // Fixed: 'title' field
       expect(result[0].isGroup).toBe(true)
     })
 

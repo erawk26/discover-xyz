@@ -36,16 +36,9 @@ export class EventTransformer {
       timesText: date.times_text || '',
     }))
 
-    // Resolve category IDs to names
-    const categories: string[] = []
-    if (source.products?.[0]?.categories) {
-      for (const cat of source.products[0].categories) {
-        const categoryName = this.categoryMap.get(cat.category_id)
-        if (categoryName) {
-          categories.push(categoryName)
-        }
-      }
-    }
+    // TODO: Handle categories as relationship IDs to categories collection
+    // For now, skip to avoid validation errors
+    const categories: any[] = []
 
     const transformed: TransformedEvent = {
       title: source.name,
@@ -76,10 +69,10 @@ export class EventTransformer {
       // Event dates
       eventDates,
       
-      // Contact info
+      // Contact info - clean email addresses to remove invisible characters
       emailAddresses: {
-        business: source.email_addresses.business,
-        booking: source.email_addresses.booking,
+        business: this.cleanEmail(source.email_addresses.business),
+        booking: this.cleanEmail(source.email_addresses.booking),
       },
       
       phoneNumbers: {
@@ -115,6 +108,19 @@ export class EventTransformer {
     }
 
     return transformed
+  }
+
+  /**
+   * Clean email address by removing invisible unicode characters
+   */
+  private cleanEmail(email: string): string {
+    if (!email) return ''
+    
+    // Remove zero-width spaces and other invisible characters
+    return email
+      .replace(/[\u200B-\u200D\uFEFF]/g, '') // Zero-width spaces
+      .replace(/[\u00AD]/g, '') // Soft hyphens
+      .trim()
   }
 
   /**

@@ -289,11 +289,11 @@ export class ImportOrchestrator {
   private async importCategoryBatch(categories: any[], stats: ImportStats): Promise<void> {
     const promises = categories.map(async (category) => {
       try {
-        // Check if category already exists
+        // Check if category already exists by title
         const existing = await this.payload.find({
           collection: 'categories',
           where: {
-            externalId: { equals: category.externalId }
+            title: { equals: category.title }
           }
         })
 

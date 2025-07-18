@@ -15,7 +15,7 @@ export class CategoryTransformer {
    */
   transformCategory(category: Category, groupName?: string): TransformedCategory {
     const transformed = {
-      name: category.name.trim(),
+      title: category.name.trim(),
       type: category.type || 'general',
       externalId: `cat-${category.id}`,
       ...(groupName && { groupName })
@@ -29,7 +29,7 @@ export class CategoryTransformer {
    */
   transformCategoryGroup(group: CategoryGroup): TransformedCategory {
     return {
-      name: group.name,
+      title: group.name,
       type: 'group',
       externalId: `group-${group.id}`,
       isGroup: true,

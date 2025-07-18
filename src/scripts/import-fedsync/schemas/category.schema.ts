@@ -22,12 +22,12 @@ export const CategoryGroupSchema = z.object({
 
 // Transformed Category Schema for Payload CMS
 export const TransformedCategorySchema = z.object({
-  name: z.string().min(1),
+  title: z.string().min(1),
   type: z.string(),
   externalId: z.string(),
   isGroup: z.boolean().optional(),
   groupName: z.string().optional(),
-}).passthrough()
+})
 
 // Type exports
 export type Category = z.infer<typeof CategorySchema>
