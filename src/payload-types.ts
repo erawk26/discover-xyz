@@ -365,9 +365,17 @@ export interface Media {
 export interface Category {
   id: string;
   title: string;
+  type: 'group' | 'category';
+  /**
+   * Select the parent group for this category
+   */
+  parent?: (string | null) | Category;
+  /**
+   * FedSync category ID for sync purposes
+   */
+  externalId?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
-  parent?: (string | null) | Category;
   breadcrumbs?:
     | {
         doc?: (string | null) | Category;
@@ -1565,9 +1573,11 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  type?: T;
+  parent?: T;
+  externalId?: T;
   slug?: T;
   slugLock?: T;
-  parent?: T;
   breadcrumbs?:
     | T
     | {

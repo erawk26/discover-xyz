@@ -13,12 +13,13 @@ export class CategoryTransformer {
   /**
    * Transform a single category
    */
-  transformCategory(category: Category, groupName?: string): TransformedCategory {
+  transformCategory(category: Category, groupName?: string, parentId?: string): TransformedCategory {
     const transformed = {
       title: category.name.trim(),
-      type: category.type || 'general',
+      type: 'category', // Individual categories have type 'category'
       externalId: `cat-${category.id}`,
-      ...(groupName && { groupName })
+      ...(parentId && { parent: parentId }), // Reference to parent group by ID
+      ...(groupName && { groupName }) // Keep for backward compatibility
     }
 
     return transformed

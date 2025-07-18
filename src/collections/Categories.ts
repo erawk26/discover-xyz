@@ -20,6 +20,41 @@ export const Categories: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'type',
+      type: 'select',
+      required: true,
+      defaultValue: 'category',
+      options: [
+        {
+          label: 'Group (Parent Category)',
+          value: 'group',
+        },
+        {
+          label: 'Category',
+          value: 'category',
+        },
+      ],
+    },
+    {
+      name: 'parent',
+      type: 'relationship',
+      relationTo: 'categories',
+      filterOptions: {
+        type: { equals: 'group' }, // Only allow groups as parents
+      },
+      admin: {
+        description: 'Select the parent group for this category',
+      },
+    },
+    {
+      name: 'externalId',
+      type: 'text',
+      admin: {
+        description: 'FedSync category ID for sync purposes',
+      },
+      index: true,
+    },
     ...slugField(),
   ],
 }

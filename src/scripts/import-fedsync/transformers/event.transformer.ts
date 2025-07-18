@@ -10,7 +10,7 @@ import type { Listing, TransformedEvent } from '../types/fedsync.types'
 
 export class EventTransformer {
   constructor(
-    private categoryMap: Map<number, string>
+    private categoryMap: Map<number, string> // TODO: Will be used for category relationships
   ) {}
 
   /**
@@ -45,9 +45,31 @@ export class EventTransformer {
       externalId: source.external_id || 0,
       trackingId: source.tracking_id || '',
       ...(description && {
-        description: [{
-          children: [{ text: description }]
-        }]
+        description: {
+          root: {
+            type: 'root',
+            format: '',
+            indent: 0,
+            version: 1,
+            children: [{
+              type: 'paragraph',
+              format: '',
+              indent: 0,
+              version: 1,
+              children: [{
+                type: 'text',
+                format: 0,
+                text: description,
+                mode: 'normal',
+                style: '',
+                detail: 0,
+                version: 1
+              }],
+              direction: 'ltr'
+            }],
+            direction: 'ltr'
+          }
+        }
       }),
       
       // Location as [longitude, latitude]

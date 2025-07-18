@@ -73,11 +73,31 @@ export class ProfileTransformer {
       trackingId: profile.tracking_id || '',
       type: profile.type || 'profile',
       ...(description && {
-        description: [
-          {
-            children: [{ text: description }],
-          },
-        ],
+        description: {
+          root: {
+            type: 'root',
+            format: '',
+            indent: 0,
+            version: 1,
+            children: [{
+              type: 'paragraph',
+              format: '',
+              indent: 0,
+              version: 1,
+              children: [{
+                type: 'text',
+                format: 0,
+                text: description,
+                mode: 'normal',
+                style: '',
+                detail: 0,
+                version: 1
+              }],
+              direction: 'ltr'
+            }],
+            direction: 'ltr'
+          }
+        }
       }),
 
       // Location as [longitude, latitude]

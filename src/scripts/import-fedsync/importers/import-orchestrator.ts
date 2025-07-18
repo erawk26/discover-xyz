@@ -284,42 +284,79 @@ export class ImportOrchestrator {
   }
 
   /**
-   * Import a batch of categories
+   * Import a batch of categories with parent/child relationship handling
    */
   private async importCategoryBatch(categories: any[], stats: ImportStats): Promise<void> {
-    const promises = categories.map(async (category) => {
+    // Separate groups and individual categories
+    const groups = categories.filter(cat => cat.type === 'group')
+    const individualCategories = categories.filter(cat => cat.type === 'category')
+    
+    // Phase 1: Import groups first
+    const groupIdMap = new Map<string, string>() // externalId -> Payload ID
+    
+    for (const group of groups) {
       try {
-        // Check if category already exists by title
-        const existing = await this.payload.find({
-          collection: 'categories',
-          where: {
-            title: { equals: category.title }
-          }
-        })
-
-        if (existing.docs.length > 0) {
-          // Update existing category
-          await this.payload.update({
-            collection: 'categories',
-            id: existing.docs[0].id,
-            data: category
-          })
-        } else {
-          // Create new category
-          await this.payload.create({
-            collection: 'categories',
-            data: category
-          })
+        const result = await this.importSingleCategory(group)
+        if (result) {
+          groupIdMap.set(group.externalId, result.id)
         }
-
         stats.categories.imported++
       } catch (error) {
-        this.logger.error(`Failed to import category ${category.name}:`, error)
+        this.logger.error(`Failed to import group ${group.title}:`, error)
         stats.categories.errors++
+      }
+    }
+    
+    // Phase 2: Import individual categories with parent references
+    for (const category of individualCategories) {
+      try {
+        // Find parent group ID if this category has a groupName
+        if (category.groupName) {
+          const parentExternalId = `group-${groups.find(g => g.title === category.groupName)?.title?.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`
+          const parentGroup = groups.find(g => g.title === category.groupName)
+          if (parentGroup) {
+            const parentPayloadId = groupIdMap.get(parentGroup.externalId)
+            if (parentPayloadId) {
+              category.parent = parentPayloadId
+            }
+          }
+        }
+        
+        await this.importSingleCategory(category)
+        stats.categories.imported++
+      } catch (error) {
+        this.logger.error(`Failed to import category ${category.title}:`, error)
+        stats.categories.errors++
+      }
+    }
+  }
+  
+  /**
+   * Import a single category or group
+   */
+  private async importSingleCategory(category: any): Promise<any> {
+    // Check if category already exists by externalId
+    const existing = await this.payload.find({
+      collection: 'categories',
+      where: {
+        externalId: { equals: category.externalId }
       }
     })
 
-    await Promise.all(promises)
+    if (existing.docs.length > 0) {
+      // Update existing category
+      return await this.payload.update({
+        collection: 'categories',
+        id: existing.docs[0].id,
+        data: category
+      })
+    } else {
+      // Create new category
+      return await this.payload.create({
+        collection: 'categories',
+        data: category
+      })
+    }
   }
 
   /**

@@ -23,10 +23,11 @@ export const CategoryGroupSchema = z.object({
 // Transformed Category Schema for Payload CMS
 export const TransformedCategorySchema = z.object({
   title: z.string().min(1),
-  type: z.string(),
+  type: z.enum(['group', 'category']),
   externalId: z.string(),
-  isGroup: z.boolean().optional(),
-  groupName: z.string().optional(),
+  parent: z.string().optional(), // Payload ID of parent category
+  isGroup: z.boolean().optional(), // Backward compatibility
+  groupName: z.string().optional(), // Backward compatibility
 })
 
 // Type exports
