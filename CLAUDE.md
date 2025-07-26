@@ -52,6 +52,7 @@
 ## What NOT to Do
 
 ### Never
+- leave unworking changes
 - Jump ahead in the project plan
 - Write implementation before tests
 - Make assumptions about requirements
@@ -61,6 +62,7 @@
 
 ### Avoid
 - Large commits with multiple changes
+- crediting claude code in commits
 - Vague commit messages
 - Untested code
 - Breaking existing functionality
