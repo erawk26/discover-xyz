@@ -118,6 +118,15 @@
 - Start with basic auth, add features incrementally
 - Maintain backward compatibility
 
+### Key Documentation
+- **integrating-better-auth-with-payload.md** - Contains valuable technical details about:
+  - Better Auth architecture and patterns
+  - Payload CMS authentication system
+  - Integration challenges and solutions
+  - Security best practices
+  - Database migration strategies
+- Always consult this document for implementation details
+
 ### Testing Auth
 - Mock external services
 - Use test database
