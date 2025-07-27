@@ -1,5 +1,6 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { betterAuthPlugin } from 'payload-auth/better-auth'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
@@ -10,17 +11,17 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Articles } from './collections/Articles'
-import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { createBetterAuthOptions } from './lib/better-auth/auth-options'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-export default buildConfig({
+const config = buildConfig({
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -33,7 +34,7 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    user: Users.slug,
+    user: 'users',
     // White-label meta configuration
     meta: {
       titleSuffix: `- ${process.env.SITE_NAME || 'Payload CMS'} Admin`,
@@ -68,11 +69,53 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Articles, Media, Categories, Users],
+  collections: [Pages, Articles, Media, Categories],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
     ...plugins,
+    betterAuthPlugin({
+      betterAuthOptions: createBetterAuthOptions(),
+      hidePluginCollections: true, // Hide system collections like example
+      disableDefaultPayloadAuth: true, // Use Better Auth exclusively like example
+      users: {
+        slug: 'users',
+        hidden: false, // Keep users visible in admin like example
+        adminRoles: ['admin', 'content-editor'], // Allow content-editor to access admin
+        allowedFields: ['name', 'role'], // Allow role field but with admin-only access
+        blockFirstBetterAuthVerificationEmail: true, // Prevent duplicate emails like example
+        collectionOverrides: ({ collection }) => ({
+          ...collection,
+          // Match example pattern - preserve auth config
+          auth: {
+            ...(typeof collection?.auth === 'object' ? collection.auth : {}),
+          },
+          fields: collection.fields?.map((field) => {
+            // Add admin-only access control to the role field
+            if (field.type === 'select' && field.name === 'role') {
+              return {
+                ...field,
+                access: {
+                  create: ({ req: { user } }) => user?.role === 'admin',
+                  update: ({ req: { user } }) => user?.role === 'admin',
+                },
+              }
+            }
+            return field
+          }),
+        }),
+      },
+      // Define collection slugs to match example
+      accounts: {
+        slug: 'accounts'
+      },
+      sessions: {
+        slug: 'sessions'
+      },
+      verifications: {
+        slug: 'verifications'
+      },
+    }),
     // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET,
@@ -96,3 +139,5 @@ export default buildConfig({
     tasks: [],
   },
 })
+
+export default config
