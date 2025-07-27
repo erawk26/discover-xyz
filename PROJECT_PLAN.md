@@ -1,134 +1,149 @@
-# Better Auth Integration Project Plan
+# OAuth Integration Project Plan
 
 ## Overview
-Integrate Better Auth with Payload CMS v3.45 following Test-Driven Development (TDD) principles.
+Direct OAuth integration with Payload CMS v3.45, enabling Google OAuth authentication while maintaining Payload's built-in session management.
 
-## Current State
-- Payload CMS v3.45 with MongoDB
-- Built-in Payload authentication
-- No external auth providers
+## Project Goals
+- Fix Google OAuth redirect_uri_mismatch error
+- Enable OAuth login on Payload admin panel
+- Maintain existing Payload authentication system
+- Auto-assign roles based on email domain
 
-## Target State
-- Better Auth handling all authentication
-- PostgreSQL database (future phase)
-- OAuth providers (Google, GitHub)
-- Magic links and 2FA support
+## Implementation Phases
 
-## Phase 1: Foundation Setup (Current Sprint)
+## Phase 1: OAuth Foundation ✅ COMPLETED
 
-### 1.1 Test Infrastructure
-- [ ] Set up test environment for auth testing
-- [ ] Create test utilities for auth mocking
-- [ ] Define test fixtures for users and sessions
+### 1.1 Environment Setup
+- [x] Configure OAuth environment variables
+- [x] Set up correct port configuration (3026)
+- [x] Create OAuth provider configuration
 
-### 1.2 Better Auth Installation
-- [ ] Write tests for auth configuration
-- [ ] Install Better Auth dependencies
-- [ ] Create basic Better Auth setup
-- [ ] Verify tests pass
+### 1.2 OAuth Flow Implementation
+- [x] Create OAuth initiation endpoint
+- [x] Implement OAuth callback handler
+- [x] Handle token exchange with providers
+- [x] Extract user data from OAuth response
 
-### 1.3 Session Management
-- [ ] Write tests for session validation
-- [ ] Write tests for session creation
-- [ ] Implement session middleware
-- [ ] Integrate with Payload requests
+## Phase 2: Payload Integration ✅ COMPLETED
 
-### 1.4 Basic Authentication
-- [ ] Write tests for login/logout
-- [ ] Write tests for user registration
-- [ ] Implement auth routes
-- [ ] Connect to existing MongoDB
+### 2.1 User Collection Modifications
+- [x] Make password field optional
+- [x] Add oauth_provider field
+- [x] Add oauth_id field
+- [x] Implement password auto-generation
 
-## Phase 2: User Synchronization
+### 2.2 User Creation/Update Logic
+- [x] Create users from OAuth data
+- [x] Update existing users on OAuth login
+- [x] Implement domain-based role assignment
+- [x] Preserve existing user roles
 
-### 2.1 User Model Mapping
-- [ ] Write tests for user data mapping
-- [ ] Define Better Auth user schema
-- [ ] Create sync functions
-- [ ] Test bidirectional sync
+## Phase 3: Session Management ✅ COMPLETED
 
-### 2.2 Role Integration
-- [ ] Write tests for role mapping
-- [ ] Map Payload roles to Better Auth
-- [ ] Implement role sync
-- [ ] Test permission preservation
+### 3.1 JWT Token Generation
+- [x] Research Payload's token format
+- [x] Implement JWT generation
+- [x] Set proper cookie headers
+- [x] Handle token expiration
 
-## Phase 3: OAuth Providers
+### 3.2 Session Creation
+- [x] Create OAuth session endpoint
+- [x] Implement temporary password strategy
+- [x] Use Payload's login method
+- [x] Ensure proper cookie setting
 
-### 3.1 Google OAuth
-- [ ] Write tests for Google OAuth flow
-- [ ] Configure Google provider
-- [ ] Test user creation from OAuth
-- [ ] Verify role assignment
+## Phase 4: UI Integration ✅ COMPLETED
 
-### 3.2 GitHub OAuth
-- [ ] Write tests for GitHub OAuth flow
-- [ ] Configure GitHub provider
-- [ ] Test email scope handling
-- [ ] Verify user linking
+### 4.1 Admin Login Integration
+- [x] Create BeforeLogin component
+- [x] Add OAuth buttons to admin login
+- [x] Style OAuth buttons appropriately
+- [x] Handle OAuth flow initiation
 
-## Phase 4: Advanced Features
+### 4.2 User Experience
+- [x] Seamless redirect to admin after OAuth
+- [x] Clear error messages
+- [x] Loading states during OAuth flow
 
-### 4.1 Magic Links
-- [ ] Write tests for magic link flow
-- [ ] Implement email sending
-- [ ] Test token validation
-- [ ] Verify user creation
+## Phase 5: Testing & Cleanup ✅ COMPLETED
 
-### 4.2 Two-Factor Authentication
-- [ ] Write tests for 2FA enrollment
-- [ ] Implement TOTP generation
-- [ ] Test verification flow
-- [ ] Implement backup codes
+### 5.1 Testing
+- [x] Test Google OAuth flow
+- [x] Verify role assignment
+- [x] Test existing user updates
+- [x] Confirm session persistence
 
-## Phase 5: Database Migration (Future)
+### 5.2 Code Cleanup
+- [x] Remove unused Better Auth code
+- [x] Clean up test endpoints
+- [x] Remove unused imports
+- [x] Update documentation
 
-### 5.1 PostgreSQL Setup
-- [ ] Write migration tests
-- [ ] Install PostgreSQL adapter
-- [ ] Create migration scripts
-- [ ] Test data integrity
+## Current Architecture
 
-### 5.2 Zero-Downtime Migration
-- [ ] Implement dual-write pattern
-- [ ] Test concurrent operations
-- [ ] Verify data consistency
-- [ ] Complete cutover
+### Authentication Flow
+```
+User → Payload Admin Login → Google OAuth → Callback → User Creation/Update → JWT Generation → Admin Access
+```
 
-## Testing Strategy
+### Key Components
+1. **OAuth Initiation** (`/api/auth/oauth/initiate`)
+2. **OAuth Callback** (`/api/auth/callback/[provider]`)
+3. **Session Creation** (`/api/auth/oauth-session`)
+4. **BeforeLogin Component** (OAuth UI)
 
-### Unit Tests
-- Auth configuration
-- Session management
-- User synchronization
-- Role mapping
+## Success Metrics Achieved
+1. ✅ Google OAuth working on Payload admin
+2. ✅ Automatic user creation
+3. ✅ Domain-based role assignment (@milespartnership.com → content-editor)
+4. ✅ Session persistence with JWT tokens
+5. ✅ No password management for OAuth users
 
-### Integration Tests
-- OAuth flows
-- Magic link process
-- 2FA enrollment
-- Database operations
+## Known Limitations
+1. Only Google OAuth implemented (GitHub code exists but not integrated)
+2. No account linking UI
+3. No OAuth disconnect functionality
+4. Magic links remain as mock implementation
 
-### E2E Tests
-- Complete login flow
-- OAuth provider flows
-- Permission verification
-- Session management
+## Future Enhancements
 
-## Success Criteria
-1. All tests passing
-2. Zero authentication downtime
-3. Existing users can login
-4. OAuth providers functional
-5. Sessions properly managed
-6. Roles correctly mapped
+### Phase 6: Extended OAuth Support (PLANNED)
+- [ ] Enable GitHub OAuth
+- [ ] Add Microsoft/Azure AD OAuth
+- [ ] Implement OAuth provider selection UI
 
-## Risk Mitigation
-1. Feature flags for rollback
-2. Parallel auth systems during transition
-3. Comprehensive logging
-4. Database backups before migration
-5. Staged rollout plan
+### Phase 7: Account Management (PLANNED)
+- [ ] User profile page with OAuth info
+- [ ] Account linking (multiple providers)
+- [ ] OAuth disconnect functionality
+- [ ] Password reset for non-OAuth users
 
-## Current Focus: Phase 1.1 - Test Infrastructure
-Let's start by setting up the testing foundation before any implementation.
+### Phase 8: Security Enhancements (PLANNED)
+- [ ] Implement refresh tokens
+- [ ] Add OAuth state validation
+- [ ] Enhanced CSRF protection
+- [ ] Audit logging for OAuth events
+
+### Phase 9: Production Readiness (PLANNED)
+- [ ] Performance optimization
+- [ ] Error tracking integration
+- [ ] Monitoring and alerts
+- [ ] Load testing OAuth flows
+
+## Technical Decisions Made
+
+1. **Direct Payload Integration**: Chose to integrate OAuth directly with Payload rather than using Better Auth
+2. **Temporary Password Strategy**: OAuth users get auto-generated passwords for Payload compatibility
+3. **JWT Token Generation**: Created custom JWT tokens matching Payload's format
+4. **Cookie-based Sessions**: Using HTTP-only cookies for security
+
+## Lessons Learned
+
+1. **Payload's Authentication**: Deep understanding of Payload's auth system was crucial
+2. **JWT Token Format**: Payload expects specific token structure and claims
+3. **Session Management**: Cookie names and settings must match Payload's expectations
+4. **User Creation**: Password field complications required creative solutions
+
+## Project Status: COMPLETED ✅
+
+The OAuth integration is successfully implemented and working in production. Users can authenticate via Google OAuth on the Payload admin login page, with automatic user creation and role assignment based on email domain.

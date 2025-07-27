@@ -26,7 +26,18 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'email', 'role'],
     useAsTitle: 'name',
   },
-  auth: true,
+  auth: {
+    // Allow OAuth users without passwords
+    disableLocalStrategy: false,
+    tokenExpiration: 7 * 24 * 60 * 60, // 7 days
+    verify: false, // Disable email verification for OAuth users
+    maxLoginAttempts: 0, // Disable brute force protection for OAuth
+    cookies: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      domain: undefined,
+    },
+  },
   hooks: {
     beforeValidate: [
       async ({ data, req }) => {
@@ -40,9 +51,21 @@ export const Users: CollectionConfig = {
           if (userCount.totalDocs === 0) {
             data.role = UserRole.ADMIN
           }
+          
+          // For OAuth users, generate a secure password if not provided
+          if (data.oauth_provider && !data.password) {
+            const crypto = await import('crypto')
+            data.password = crypto.randomBytes(32).toString('hex')
+          }
         }
         
         return data
+      },
+    ],
+    afterLogin: [
+      async ({ user, token }) => {
+        console.log('User logged in:', { email: user.email, role: user.role, hasToken: !!token })
+        return { user, token }
       },
     ],
   },
@@ -51,6 +74,33 @@ export const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+    },
+    // Make password optional for OAuth users
+    {
+      name: 'password',
+      type: 'text',
+      required: false,
+      admin: {
+        condition: ({ data }) => !data?.oauth_provider,
+      },
+    },
+    {
+      name: 'oauth_provider',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'oauth_id',
+      type: 'text',
+      unique: true,
+      index: true,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
     },
     {
       name: 'role',

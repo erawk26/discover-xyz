@@ -382,6 +382,9 @@ export interface Category {
 export interface User {
   id: string;
   name: string;
+  password?: string | null;
+  oauth_provider?: string | null;
+  oauth_id?: string | null;
   role: 'admin' | 'site-builder' | 'content-editor' | 'authenticated';
   updatedAt: string;
   createdAt: string;
@@ -390,8 +393,6 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
   sessions?:
     | {
         id: string;
@@ -399,7 +400,6 @@ export interface User {
         expiresAt: string;
       }[]
     | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1293,6 +1293,9 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  password?: T;
+  oauth_provider?: T;
+  oauth_id?: T;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1301,8 +1304,6 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
   sessions?:
     | T
     | {
