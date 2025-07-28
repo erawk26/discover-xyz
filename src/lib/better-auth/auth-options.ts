@@ -73,61 +73,8 @@ export function createBetterAuthPlugins(appUrl: string) {
   ]
 }
 
-// Admin users - add first.last names here (case-insensitive)
-const ADMIN_NAMES = [
-  'erik.olsen',
-  // Add more admin names here:
-  // 'john.doe',
-  // 'jane.smith',
-]
-
-// Helper function to check if Miles Partnership email is admin
-function isMilesPartnershipAdmin(email: string): boolean {
-  const emailLower = email.toLowerCase()
-  if (!emailLower.endsWith('@milespartnership.com')) return false
-
-  const emailName = emailLower.split('@')[0]
-  return ADMIN_NAMES.includes(emailName)
-}
-
-// Email configuration for team access and roles
-const EMAIL_DOMAIN_CONFIG = [
-  // Miles Partnership emails - check against admin list
-  {
-    pattern: /^.*@milespartnership\.com$/i,
-    role: 'content-editor', // Default role, will be overridden for admins
-    description: 'Miles Partnership team members',
-  },
-
-  // Other allowed domains
-  // {
-  //   pattern: /^.*@clientcompany\.com$/i,
-  //   role: 'authenticated',
-  //   description: 'Client users'
-  // },
-
-  // Allow all emails (uncomment to enable open registration)
-  // {
-  //   pattern: /^.*$/i,
-  //   role: 'authenticated',
-  //   description: 'All users - open registration'
-  // },
-]
-
-function isEmailAllowed(email: string): boolean {
-  return EMAIL_DOMAIN_CONFIG.some((config) => config.pattern.test(email))
-}
-
-function getRoleForEmail(email: string): string {
-  // Check if it's a Miles Partnership admin first
-  if (isMilesPartnershipAdmin(email)) {
-    return 'admin'
-  }
-
-  // Otherwise use the pattern matching
-  const config = EMAIL_DOMAIN_CONFIG.find((c) => c.pattern.test(email))
-  return config?.role || 'authenticated'
-}
+// Email validation is now handled through the AllowedUsers collection
+// This provides a better admin interface for managing access
 
 export function createBetterAuthOptions(): BetterAuthOptions {
   const appUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026'
@@ -159,39 +106,11 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID!,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        // Map email domain to role using centralized config
-        mapProfileToUser: (profile) => {
-          // Check if email is allowed
-          if (!isEmailAllowed(profile.email || '')) {
-            throw new Error('Registration is restricted to team members only')
-          }
-          return {
-            email: profile.email,
-            name: profile.name,
-            image: profile.picture,
-            emailVerified: profile.email_verified,
-            role: getRoleForEmail(profile.email || ''),
-          }
-        },
       },
       github: {
         clientId: process.env.GITHUB_CLIENT_ID || '',
         clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
         enabled: !!process.env.GITHUB_CLIENT_ID,
-        // Map email domain to role using centralized config
-        mapProfileToUser: (profile) => {
-          // Check if email is allowed
-          if (!isEmailAllowed(profile.email || '')) {
-            throw new Error('Registration is restricted to team members only')
-          }
-          return {
-            email: profile.email,
-            name: profile.name,
-            image: profile.avatar_url,
-            emailVerified: true, // GitHub doesn't provide email verification status
-            role: getRoleForEmail(profile.email || ''),
-          }
-        },
       },
     },
     emailVerification: {
@@ -206,7 +125,6 @@ export function createBetterAuthOptions(): BetterAuthOptions {
         role: {
           type: 'string',
           defaultValue: 'authenticated',
-          required: true,
           input: false, // Prevent users from changing their own role
         },
       },

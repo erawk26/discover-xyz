@@ -82,6 +82,7 @@ export interface Config {
     articles: Article;
     media: Media;
     categories: Category;
+    'allowed-users': AllowedUser;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -108,6 +109,7 @@ export interface Config {
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'allowed-users': AllowedUsersSelect<false> | AllowedUsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -224,7 +226,7 @@ export interface User {
   /**
    * The role of the user
    */
-  role: 'admin' | 'content-editor' | 'user';
+  role?: ('admin' | 'content-editor' | 'user') | null;
   /**
    * Whether the user is banned from the platform
    */
@@ -237,6 +239,49 @@ export interface User {
    * The date and time when the ban will expire
    */
   banExpires?: string | null;
+  /**
+   * The pattern that authorized this user
+   */
+  allowedPattern?: (string | null) | AllowedUser;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "allowed-users".
+ */
+export interface AllowedUser {
+  id: string;
+  /**
+   * Email or pattern (e.g., user@example.com, *@company.com, team-*@company.com)
+   */
+  pattern: string;
+  /**
+   * Whether this is an exact email or a wildcard pattern
+   */
+  type: 'exact' | 'wildcard';
+  /**
+   * Role to assign to users matching this pattern
+   */
+  defaultRole: 'admin' | 'content-editor' | 'authenticated';
+  /**
+   * Description of who this allows (e.g., "All employees", "Engineering team")
+   */
+  description?: string | null;
+  /**
+   * Internal notes
+   */
+  notes?: string | null;
+  /**
+   * Number of users who have signed up matching this pattern
+   */
+  matchCount?: number | null;
+  /**
+   * Last time this pattern was matched
+   */
+  lastMatched?: string | null;
+  addedBy?: (string | null) | User;
+  addedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * Sessions are active sessions for users. They are used to authenticate users with a session token
@@ -1416,6 +1461,10 @@ export interface PayloadLockedDocument {
         value: string | Category;
       } | null)
     | ({
+        relationTo: 'allowed-users';
+        value: string | AllowedUser;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1498,6 +1547,7 @@ export interface UsersSelect<T extends boolean = true> {
   banned?: T;
   banReason?: T;
   banExpires?: T;
+  allowedPattern?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1931,6 +1981,23 @@ export interface CategoriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "allowed-users_select".
+ */
+export interface AllowedUsersSelect<T extends boolean = true> {
+  pattern?: T;
+  type?: T;
+  defaultRole?: T;
+  description?: T;
+  notes?: T;
+  matchCount?: T;
+  lastMatched?: T;
+  addedBy?: T;
+  addedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

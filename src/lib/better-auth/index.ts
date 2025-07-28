@@ -1,15 +1,13 @@
-import { betterAuth } from 'better-auth'
-import { mongodbAdapter } from 'better-auth/adapters/mongodb'
-import { createBetterAuthOptions } from './auth-options'
-import { MongoClient } from 'mongodb'
+// Better Auth is configured through the payload-auth plugin
+// We should get the auth instance from Payload instead of creating our own
 
-// Create MongoDB client for Better Auth
-const client = new MongoClient(process.env.DATABASE_URI!)
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 
-export const auth = betterAuth({
-  ...createBetterAuthOptions(),
-  database: mongodbAdapter(client.db('discover-xyz'))
-})
+export async function getAuth() {
+  const payload = await getPayload({ config })
+  return payload.betterAuth
+}
 
-// Export the type for use in other files
-export type Auth = typeof auth
+// For backwards compatibility, export auth as a promise
+export const auth = await getAuth()

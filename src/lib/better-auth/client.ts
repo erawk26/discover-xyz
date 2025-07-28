@@ -64,6 +64,5 @@ export const {
   magicLink,
   twoFactor,
   passkey,
-  phoneNumber,
-  emailOTP
+  phoneNumber
 } = authClient

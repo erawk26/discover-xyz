@@ -8,6 +8,7 @@ import { buildConfig, PayloadRequest, APIError } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
+import { AllowedUsers } from './collections/AllowedUsers'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Articles } from './collections/Articles'
@@ -70,7 +71,7 @@ const config = buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Articles, Media, Categories],
+  collections: [Pages, Articles, Media, Categories, AllowedUsers],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
@@ -90,6 +91,91 @@ const config = buildConfig({
           // Match example pattern - preserve auth config
           auth: {
             ...(typeof collection?.auth === 'object' ? collection.auth : {}),
+          },
+          hooks: {
+            beforeChange: [
+              async ({ data, operation, req }) => {
+                // Only check on create (new users)
+                if (operation === 'create' && data.email && req.payload) {
+                  try {
+                    // Check if this is the first user (no users exist yet)
+                    const userCount = await req.payload.count({
+                      collection: 'users',
+                    })
+                    
+                    // If no users exist, allow the first user to be created as admin
+                    if (userCount.totalDocs === 0) {
+                      console.log('Creating first admin user:', data.email)
+                      data.role = 'admin'
+                      return data
+                    }
+                    
+                    const { findMatchingPattern } = await import('@/utils/email-matcher')
+                    
+                    // Check if email matches any allowed pattern
+                    const matchingPattern = await findMatchingPattern(data.email, req.payload)
+                    
+                    if (!matchingPattern) {
+                      throw new APIError(
+                        'Access denied. Your email is not authorized for SSO access. ' +
+                        'Please contact an administrator to request access.',
+                        403
+                      )
+                    }
+                    
+                    // Set role based on the matching pattern
+                    data.role = matchingPattern.defaultRole || 'authenticated'
+                    data.allowedPattern = matchingPattern.id
+                    
+                    // Update the pattern's usage stats
+                    await req.payload.update({
+                      collection: 'allowed-users',
+                      id: matchingPattern.id,
+                      data: {
+                        matchCount: (matchingPattern.matchCount || 0) + 1,
+                        lastMatched: new Date(),
+                      },
+                    })
+                  } catch (error) {
+                    console.error('Error in beforeChange hook:', error)
+                    throw error
+                  }
+                }
+                
+                return data
+              },
+            ],
+            beforeLogin: [
+              async ({ user, req }) => {
+                if (req.payload && user.email) {
+                  try {
+                    const { findMatchingPattern } = await import('@/utils/email-matcher')
+                    
+                    // Double-check on every login that the user is still allowed
+                    const stillAllowed = await findMatchingPattern(user.email, req.payload)
+                    
+                    if (!stillAllowed) {
+                      throw new APIError(
+                        'Your access has been revoked. Please contact an administrator.',
+                        403
+                      )
+                    }
+                    
+                    // Update last matched timestamp
+                    await req.payload.update({
+                      collection: 'allowed-users',
+                      id: stillAllowed.id,
+                      data: { lastMatched: new Date() },
+                    })
+                  } catch (error) {
+                    console.error('Error in beforeLogin hook:', error)
+                    throw error
+                  }
+                }
+                
+                return user
+              },
+            ],
           },
           // Restrict access to users collection - admins can manage all, users can manage themselves
           access: {
@@ -122,19 +208,31 @@ const config = buildConfig({
               }
             },
           },
-          fields: collection.fields?.map((field) => {
-            // Add admin-only access control to the role field
-            if (field.type === 'select' && field.name === 'role') {
-              return {
-                ...field,
-                access: {
-                  create: ({ req: { user } }) => user?.role === 'admin',
-                  update: ({ req: { user } }) => user?.role === 'admin',
-                },
+          fields: [
+            ...(collection.fields || []).map((field) => {
+              // Add admin-only access control to the role field
+              if (field.type === 'select' && field.name === 'role') {
+                return {
+                  ...field,
+                  access: {
+                    create: ({ req: { user } }) => user?.role === 'admin',
+                    update: ({ req: { user } }) => user?.role === 'admin',
+                  },
+                }
               }
-            }
-            return field
-          }),
+              return field
+            }),
+            // Add allowedPattern field
+            {
+              name: 'allowedPattern',
+              type: 'relationship',
+              relationTo: 'allowed-users',
+              admin: {
+                readOnly: true,
+                description: 'The pattern that authorized this user',
+              },
+            },
+          ],
         }),
       },
       // Define collection slugs and restrict all to admin-only access

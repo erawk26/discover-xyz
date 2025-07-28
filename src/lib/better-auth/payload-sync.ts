@@ -1,4 +1,3 @@
-import { auth } from './index'
 import { headers } from 'next/headers'
 import type { User as PayloadUser } from '@/payload-types'
 import { getPayload } from 'payload'
@@ -8,7 +7,8 @@ import config from '@/payload.config'
  * Get the current Better Auth session
  */
 export async function getBetterAuthSession() {
-  const session = await auth.api.getSession({
+  const payload = await getPayload({ config })
+  const session = await payload.betterAuth.api.getSession({
     headers: await headers() 
   })
   

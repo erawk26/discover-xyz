@@ -32,14 +32,10 @@ export function SignInForm() {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      const { url, redirect } = await authClient.signIn.social({
+      await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/admin/oauth-redirect'
+        callbackURL: '/admin'
       })
-      
-      if (redirect && url) {
-        window.location.href = url
-      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in with Google')
       setLoading(false)
@@ -49,14 +45,10 @@ export function SignInForm() {
   const handleGithubSignIn = async () => {
     setLoading(true)
     try {
-      const { url, redirect } = await authClient.signIn.social({
+      await authClient.signIn.social({
         provider: 'github',
-        callbackURL: '/admin/oauth-redirect'
+        callbackURL: '/admin'
       })
-      
-      if (redirect && url) {
-        window.location.href = url
-      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to sign in with GitHub')
       setLoading(false)
@@ -71,7 +63,7 @@ export function SignInForm() {
     
     setLoading(true)
     try {
-      await authClient.magicLink.sendMagicLink({
+      await authClient.signIn.magicLink({
         email,
         callbackURL: '/admin'
       })
