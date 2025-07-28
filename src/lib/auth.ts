@@ -33,7 +33,7 @@ export const auth = betterAuth({
   },
   
   // Base URL for auth endpoints
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026',
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026',
   
   // Secret for signing tokens and cookies
   secret: process.env.BETTER_AUTH_SECRET || process.env.PAYLOAD_SECRET,
@@ -43,12 +43,12 @@ export const auth = betterAuth({
     google: process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      redirectURI: `${process.env.BETTER_AUTH_URL || 'http://localhost:3026'}/api/auth/callback/google`,
+      redirectURI: `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026'}/api/auth/callback/google`,
     } : undefined,
     github: process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET ? {
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      redirectURI: `${process.env.BETTER_AUTH_URL || 'http://localhost:3026'}/api/auth/callback/github`,
+      redirectURI: `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026'}/api/auth/callback/github`,
     } : undefined,
   },
 })

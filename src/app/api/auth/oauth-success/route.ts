@@ -6,6 +6,8 @@ import config from '@/payload.config'
 import jwt from 'jsonwebtoken'
 
 export async function GET() {
+  const appUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026'
+  
   try {
     // Get Better Auth session
     const session = await getBetterAuthSession()
@@ -14,7 +16,7 @@ export async function GET() {
     
     if (!session?.user) {
       console.log('OAuth Success - No session found')
-      return NextResponse.redirect(new URL('/sign-in', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3026'))
+      return NextResponse.redirect(new URL('/sign-in', appUrl))
     }
 
     const payload = await getPayload({ config })
@@ -81,9 +83,9 @@ export async function GET() {
       domain: undefined,
     })
     
-    return NextResponse.redirect(new URL('/admin', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3026'))
+    return NextResponse.redirect(new URL('/admin', appUrl))
   } catch (error) {
     console.error('OAuth success error:', error)
-    return NextResponse.redirect(new URL('/sign-in?error=oauth_failed', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3026'))
+    return NextResponse.redirect(new URL('/sign-in?error=oauth_failed', appUrl))
   }
 }
