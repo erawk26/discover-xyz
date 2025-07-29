@@ -13,7 +13,7 @@ export const Events: CollectionConfig = {
     update: authenticatedOrPublished,
   },
   admin: {
-    defaultColumns: ['title', 'startDate', 'endDate', 'status', 'updatedAt'],
+    defaultColumns: ['title', 'startDate', 'endDate', '_status', 'updatedAt'],
     livePreview: {
       url: ({ data }) => {
         const path = `/events/${data?.slug}${data?.slug !== data?.id ? `?draft=true` : ''}`
@@ -340,28 +340,6 @@ export const Events: CollectionConfig = {
     {
       name: 'publishedAt',
       type: 'date',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'status',
-      type: 'select',
-      defaultValue: 'draft',
-      options: [
-        {
-          label: 'Draft',
-          value: 'draft',
-        },
-        {
-          label: 'Published',
-          value: 'published',
-        },
-        {
-          label: 'Archived',
-          value: 'archived',
-        },
-      ],
       admin: {
         position: 'sidebar',
       },

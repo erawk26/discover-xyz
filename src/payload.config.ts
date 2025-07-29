@@ -18,6 +18,10 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import {
+  importFedSyncEndpoint,
+  importFedSyncStatusEndpoint,
+} from './payload/endpoints/import-fedsync'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,6 +35,18 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      // Custom navigation links
+      afterNavLinks: ['@/components/CustomNavLinks'],
+      views: {
+        fedSyncImport: {
+          Component: '@/admin/views/FedSyncImportView#default',
+          path: '/fedsync-import',
+        },
+        importJobStatus: {
+          Component: '@/admin/views/ImportJobStatusView#default',
+          path: '/import-job-status',
+        },
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -82,6 +98,7 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  endpoints: [importFedSyncEndpoint, importFedSyncStatusEndpoint],
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {

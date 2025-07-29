@@ -1,6 +1,6 @@
 /**
  * FedSync Import Type Definitions
- * 
+ *
  * This file only contains types specific to the import process.
  * All FedSync data types are imported from the FedSync library.
  */
@@ -19,8 +19,8 @@ import type {
   Product,
   EventDate,
   EnrichedListing,
-  FederatorResponse
-} from '@/lib/fedsync/src/api-types'
+  FederatorResponse,
+} from 'fedsync-standalone/api-types'
 
 // Re-export commonly used FedSync types for convenience
 export type {
@@ -36,16 +36,16 @@ export type {
   Amenity,
   Product,
   EventDate,
-  EnrichedListing
+  EnrichedListing,
 }
 
 // Type guards from FedSync
-import { isEvent } from '@/lib/fedsync/src/api-types'
+import { isEvent } from 'fedsync-standalone/api-types'
 export { isEvent }
 
 // Custom type guard for profiles that accepts both 'profile' and 'listing' types
 export function isProfile(listing: Listing): boolean {
-  const profileTypes = ['profile', 'accommodation', 'restaurant', 'attraction', 'activity', 'shopping', 'service', 'listing']
+  const profileTypes = ['profile', 'listing']
   return profileTypes.includes(listing.type)
 }
 
@@ -133,8 +133,7 @@ export interface TransformedEvent {
   listingData: any
   syncedAt: string
   syncSource: string
-  status: string
-  publishedAt: string
+  _status: 'published' | 'draft'
 }
 
 export interface TransformedProfile {
@@ -210,6 +209,5 @@ export interface TransformedProfile {
   listingData: any
   syncedAt: string
   syncSource: string
-  status: string
-  publishedAt: string
+  _status: 'published' | 'draft'
 }

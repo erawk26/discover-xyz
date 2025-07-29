@@ -8,23 +8,26 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import { CategoryTransformer } from '../category.transformer'
 import { EventTransformer } from '../event.transformer'
 import { ProfileTransformer } from '../profile.transformer'
-import fs from 'fs/promises'
-import path from 'path'
+import * as fs from 'fs/promises'
+import * as path from 'path'
 
 describe('Transformer Integration Tests', () => {
   let categoryTransformer: CategoryTransformer
   let eventTransformer: EventTransformer
   let profileTransformer: ProfileTransformer
   let categoryMap: Map<number, string>
+  let fixtureData: any
 
   beforeAll(async () => {
+    // Load fixture data
+    const fixturePath = path.join(__dirname, '../../__tests__/fixtures/real-fedsync-samples.json')
+    fixtureData = JSON.parse(await fs.readFile(fixturePath, 'utf-8'))
+    
     // Initialize category transformer and load categories
     categoryTransformer = new CategoryTransformer()
     
-    // Load and transform categories first
-    const categoriesPath = path.join(process.cwd(), 'src/lib/fedsync/listingData/categories/categories.json')
-    const categoriesData = JSON.parse(await fs.readFile(categoriesPath, 'utf-8'))
-    const transformedCategories = categoryTransformer.transformCategoriesFile(categoriesData)
+    // Transform categories from fixture
+    const transformedCategories = categoryTransformer.transformCategoriesFile(fixtureData.categories)
     
     // Get category map for other transformers
     categoryMap = categoryTransformer.getCategoryMap()
@@ -42,101 +45,68 @@ describe('Transformer Integration Tests', () => {
   })
 
   describe('Category Transformation', () => {
-    it('should transform real categories.json file', async () => {
-      const categoriesPath = path.join(process.cwd(), 'src/lib/fedsync/listingData/categories/categories.json')
-      const categoriesData = JSON.parse(await fs.readFile(categoriesPath, 'utf-8'))
-      
-      const result = categoryTransformer.transformCategoriesFile(categoriesData)
+    it('should transform real categories from fixture data', async () => {
+      const result = categoryTransformer.transformCategoriesFile(fixtureData.categories)
       
       // Check structure
       expect(result.length).toBeGreaterThan(0)
       
       // Find a specific group
-      const artsGroup = result.find(c => c.name === 'Arts, Culture & History')
-      expect(artsGroup).toBeDefined()
-      expect(artsGroup?.isGroup).toBe(true)
-      expect(artsGroup?.externalId).toBe('group-2')
+      const foodGroup = result.find(c => c.title === 'Food & Drink')
+      expect(foodGroup).toBeDefined()
+      expect(foodGroup?.isGroup).toBe(true)
+      expect(foodGroup?.externalId).toBe('group-1')
       
       // Find a specific category
-      const artGallery = result.find(c => c.name === 'Art Gallery/Display')
-      expect(artGallery).toBeDefined()
-      expect(artGallery?.groupName).toBe('Arts, Culture & History')
-      expect(artGallery?.externalId).toBe('cat-1')
+      const restaurants = result.find(c => c.title === 'Restaurants')
+      expect(restaurants).toBeDefined()
+      expect(restaurants?.groupName).toBe('Food & Drink')
+      expect(restaurants?.externalId).toBe('cat-101')
     })
   })
 
   describe('Event Transformation', () => {
-    it('should transform a real event JSON file', async () => {
-      const eventPath = path.join(process.cwd(), 'src/lib/fedsync/listingData/events/1024.json')
+    it('should transform a real event from fixture data', async () => {
+      const result = eventTransformer.transform(fixtureData.realEvent)
       
-      try {
-        const eventData = JSON.parse(await fs.readFile(eventPath, 'utf-8'))
-        const result = eventTransformer.transform(eventData)
-        
-        // Validate transformed event
-        expect(result.title).toBeDefined()
-        expect(result.eventDates).toBeInstanceOf(Array)
-        expect(result.eventDates.length).toBeGreaterThan(0)
-        expect(result.address).toBeDefined()
-        expect(result.syncSource).toBe('federator-api')
-        expect(result.status).toBe('published')
-        
-        // Check categories were resolved
-        if (result.categories.length > 0) {
-          expect(result.categories[0]).toBeTypeOf('string')
-        }
-        
-        // Validate against schema
-        const isValid = eventTransformer.validateTransformed(result)
-        expect(isValid).toBe(true)
-      } catch (error: any) {
-        // File might not exist in test environment
-        if (error.code === 'ENOENT') {
-          console.log('Sample event file not found, skipping test')
-          return
-        }
-        throw error
-      }
+      // Validate transformed event
+      expect(result.title).toBe('Summer Music Festival')
+      expect(result.eventDates).toBeInstanceOf(Array)
+      expect(result.eventDates.length).toBe(2)
+      expect(result.address).toBeDefined()
+      expect(result.syncSource).toBe('federator-api')
+      expect(result.status).toBe('published')
+      
+      // Check event dates
+      expect(result.eventDates[0].name).toBe('Opening Night')
+      expect(result.eventDates[0].startDate).toBe('2024-07-15')
+      
+      // Validate against schema
+      const isValid = eventTransformer.validateTransformed(result)
+      expect(isValid).toBe(true)
     })
   })
 
   describe('Profile Transformation', () => {
-    it('should transform a real profile JSON file', async () => {
-      const profilePath = path.join(process.cwd(), 'src/lib/fedsync/listingData/profiles/683.json')
+    it('should transform a real profile from fixture data', async () => {
+      const result = profileTransformer.transform(fixtureData.realProfile)
       
-      try {
-        const profileData = JSON.parse(await fs.readFile(profilePath, 'utf-8'))
-        const result = profileTransformer.transform(profileData)
-        
-        // Validate transformed profile
-        expect(result.title).toBeDefined()
-        expect(result.address).toBeDefined()
-        expect(result.emailAddresses).toBeDefined()
-        expect(result.phoneNumbers).toBeDefined()
-        expect(result.syncSource).toBe('federator-api')
-        expect(result.status).toBe('published')
-        
-        // Check if it has business-specific fields
-        if (result.hours) {
-          expect(result.hours).toBeInstanceOf(Array)
-        }
-        
-        // Check categories were resolved
-        if (result.categories.length > 0) {
-          expect(result.categories[0]).toBeTypeOf('string')
-        }
-        
-        // Validate against schema
-        const isValid = profileTransformer.validateTransformed(result)
-        expect(isValid).toBe(true)
-      } catch (error: any) {
-        // File might not exist in test environment
-        if (error.code === 'ENOENT') {
-          console.log('Sample profile file not found, skipping test')
-          return
-        }
-        throw error
-      }
+      // Validate transformed profile
+      expect(result.title).toBe('The Artisan Bakery')
+      expect(result.address).toBeDefined()
+      expect(result.emailAddresses).toBeDefined()
+      expect(result.phoneNumbers).toBeDefined()
+      expect(result.syncSource).toBe('federator-api')
+      expect(result.status).toBe('published')
+      
+      // Check address fields
+      expect(result.address.line1).toBeDefined()
+      expect(result.address.city).toBeDefined()
+      expect(result.address.state).toBeDefined()
+      
+      // Validate against schema
+      const isValid = profileTransformer.validateTransformed(result)
+      expect(isValid).toBe(true)
     })
   })
 
@@ -152,40 +122,36 @@ describe('Transformer Integration Tests', () => {
       
       // 1. Transform categories
       try {
-        const categoriesPath = path.join(process.cwd(), 'src/lib/fedsync/listingData/categories/categories.json')
-        const categoriesData = JSON.parse(await fs.readFile(categoriesPath, 'utf-8'))
-        const categories = categoryTransformer.transformCategoriesFile(categoriesData)
+        const categories = categoryTransformer.transformCategoriesFile(fixtureData.categories)
         stats.categories = categories.length
       } catch (error) {
         stats.errors++
       }
       
-      // 2. Transform a sample event
+      // 2. Transform the sample event
       try {
-        const eventPath = path.join(process.cwd(), 'src/lib/fedsync/listingData/events/1024.json')
-        const eventData = JSON.parse(await fs.readFile(eventPath, 'utf-8'))
-        const event = eventTransformer.transform(eventData)
+        const event = eventTransformer.transform(fixtureData.realEvent)
         if (eventTransformer.validateTransformed(event)) {
           stats.events++
         }
       } catch (error) {
-        // Expected if file doesn't exist
+        stats.errors++
       }
       
-      // 3. Transform a sample profile
+      // 3. Transform the sample profile
       try {
-        const profilePath = path.join(process.cwd(), 'src/lib/fedsync/listingData/profiles/683.json')
-        const profileData = JSON.parse(await fs.readFile(profilePath, 'utf-8'))
-        const profile = profileTransformer.transform(profileData)
+        const profile = profileTransformer.transform(fixtureData.realProfile)
         if (profileTransformer.validateTransformed(profile)) {
           stats.profiles++
         }
       } catch (error) {
-        // Expected if file doesn't exist
+        stats.errors++
       }
       
-      // At least categories should be transformed
+      // All should be transformed successfully
       expect(stats.categories).toBeGreaterThan(0)
+      expect(stats.events).toBe(1)
+      expect(stats.profiles).toBe(1)
       expect(stats.errors).toBe(0)
     })
   })

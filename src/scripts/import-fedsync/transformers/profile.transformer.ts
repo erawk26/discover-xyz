@@ -1,10 +1,10 @@
 /**
  * Profile Transformer
  *
- * Transforms FedSync profile/business listing data to Payload CMS format
+ * Transforms FedSync source/business listing data to Payload CMS format
  */
 
-import { TransformedProfileSchema } from '../schemas/profile.schema'
+import { TransformedProfileSchema, type Hours, type Rate } from '../schemas/profile.schema'
 import type { Listing, ExtendedProfile, TransformedProfile } from '../types/fedsync.types'
 
 export class ProfileTransformer {
@@ -14,12 +14,12 @@ export class ProfileTransformer {
   ) {}
 
   /**
-   * Transform FedSync profile to Payload format
+   * Transform FedSync source to Payload format
    */
   transform(source: Listing | ExtendedProfile): TransformedProfile {
-    // Validate this is a profile/listing (FedSync uses "listing" as generic type)
+    // Validate this is a source/listing (FedSync uses "listing" as generic type)
     const validTypes = [
-      'profile',
+      'source',
       'accommodation',
       'restaurant',
       'attraction',
@@ -29,14 +29,11 @@ export class ProfileTransformer {
       'listing',
     ]
     if (!validTypes.includes(source.type)) {
-      throw new Error(`Expected profile or listing type, got ${source.type}`)
+      throw new Error(`Expected source or listing type, got ${source.type}`)
     }
 
-    // Cast to ExtendedProfile to access profile-specific fields
-    const profile = source as ExtendedProfile
-
     // Extract description from products
-    const description = profile.products?.[0]?.description?.text
+    const description = source.products?.[0]?.description?.text
 
     // TODO: Handle photos properly - they need to be Media collection references
     // For now, skip photos to avoid validation errors
@@ -44,7 +41,7 @@ export class ProfileTransformer {
 
     // Transform hours - normalize day names
     const hours =
-      profile.hours?.map((h) => ({
+      source.hours?.map((h: Hours) => ({
         day: this.normalizeDayName(h.dayOfWeek),
         open: h.openAt,
         close: h.closeAt,
@@ -52,7 +49,7 @@ export class ProfileTransformer {
 
     // Transform rates
     const rates =
-      profile.rates?.map((r) => ({
+      source.rates?.map((r: Rate) => ({
         type: r.name,
         amount: r.value,
         description: r.name, // Use name as description
@@ -67,11 +64,11 @@ export class ProfileTransformer {
     const amenities: any[] = []
 
     const transformed: TransformedProfile = {
-      title: profile.name,
-      sortName: profile.name_sort || '',
-      externalId: profile.external_id || 0,
-      trackingId: profile.tracking_id || '',
-      type: profile.type || 'profile',
+      title: source.name,
+      sortName: source.name_sort || '',
+      externalId: source.external_id || 0,
+      trackingId: source.tracking_id || '',
+      type: source.type || 'source',
       ...(description && {
         description: {
           root: {
@@ -101,72 +98,72 @@ export class ProfileTransformer {
       }),
 
       // Location as [longitude, latitude]
-      ...(profile.latitude &&
-        profile.longitude && {
-          location: [profile.longitude, profile.latitude],
+      ...(source.latitude &&
+        source.longitude && {
+          location: [source.longitude, source.latitude],
         }),
 
       // Address
       address: {
-        line1: profile.address.line_1 || '',
-        line2: profile.address.line_2 || '',
-        city: profile.address.city,
-        state: profile.address.state,
-        postcode: profile.address.postcode || '',
+        line1: source.address.line_1 || '',
+        line2: source.address.line_2 || '',
+        city: source.address.city,
+        state: source.address.state,
+        postcode: source.address.postcode || '',
       },
 
       // Contact info - clean email addresses
       emailAddresses: {
-        business: this.cleanEmail(profile.email_addresses.business),
-        booking: this.cleanEmail(profile.email_addresses.booking),
+        business: this.cleanEmail(source.email_addresses.business),
+        booking: this.cleanEmail(source.email_addresses.booking),
       },
 
       phoneNumbers: {
-        local: profile.phone_numbers.local,
-        alt: profile.phone_numbers.alt,
-        fax: profile.phone_numbers.fax,
-        freeUS: profile.phone_numbers.free_us,
-        freeWorld: profile.phone_numbers.free_world,
+        local: source.phone_numbers.local,
+        alt: source.phone_numbers.alt,
+        fax: source.phone_numbers.fax,
+        freeUS: source.phone_numbers.free_us,
+        freeWorld: source.phone_numbers.free_world,
       },
 
       websites: {
-        business: profile.websites.business,
-        booking: profile.websites.booking || '',
-        meetings: profile.websites.meetings || '',
-        mobile: profile.websites.mobile || '',
+        business: source.websites.business,
+        booking: source.websites.booking || '',
+        meetings: source.websites.meetings || '',
+        mobile: source.websites.mobile || '',
       },
 
       socials: {
-        facebook: profile.socials.facebook,
-        twitter: profile.socials.twitter,
-        instagram: profile.socials.instagram,
-        youtube: profile.socials.youtube,
-        pinterest: profile.socials.pinterest || '',
-        tripadvisor: profile.socials.tripadvisor,
+        facebook: source.socials.facebook,
+        twitter: source.socials.twitter,
+        instagram: source.socials.instagram,
+        youtube: source.socials.youtube,
+        pinterest: source.socials.pinterest || '',
+        tripadvisor: source.socials.tripadvisor,
       },
 
       // Business info
       hours,
-      hoursText: profile.hours_text || '',
+      hoursText: source.hours_text || '',
       photos,
       rates,
-      citiesServed: profile.cities_served || [],
+      citiesServed: source.cities_served || [],
 
       // Meeting facilities
-      ...(profile.meeting_facilities?.total_sq_ft && {
+      ...((source as ExtendedProfile).meeting_facilities?.total_sq_ft && {
         meetingFacilities: {
-          totalSqFt: profile.meeting_facilities.total_sq_ft,
-          numMtgRooms: profile.meeting_facilities.num_mtg_rooms,
-          largestRoom: profile.meeting_facilities.largest_room,
-          ceilingHt: profile.meeting_facilities.ceiling_ht,
+          totalSqFt: (source as ExtendedProfile).meeting_facilities!.total_sq_ft,
+          numMtgRooms: (source as ExtendedProfile).meeting_facilities!.num_mtg_rooms,
+          largestRoom: (source as ExtendedProfile).meeting_facilities!.largest_room,
+          ceilingHt: (source as ExtendedProfile).meeting_facilities!.ceiling_ht,
         },
       }),
 
       // Rooms info
-      ...(profile.num_of_rooms && {
+      ...((source as ExtendedProfile).num_of_rooms && {
         roomsInfo: {
-          numOfRooms: profile.num_of_rooms,
-          numOfSuites: profile.num_of_suites || null,
+          numOfRooms: (source as ExtendedProfile).num_of_rooms,
+          numOfSuites: (source as ExtendedProfile).num_of_suites || null,
         },
       }),
 
@@ -175,11 +172,10 @@ export class ProfileTransformer {
       amenities,
 
       // Metadata
-      listingData: profile,
+      listingData: source,
       syncedAt: new Date().toISOString(),
       syncSource: 'federator-api',
-      status: 'published',
-      publishedAt: new Date().toISOString(),
+      _status: 'published' as const,
     }
 
     return transformed

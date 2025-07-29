@@ -11,7 +11,7 @@ Successfully consolidated duplicate logger functionality by removing our custom 
 - Eliminated code duplication and maintenance overhead
 
 ### ✅ Updated Imports
-- **ImportOrchestrator**: Now uses `import { Logger, LogLevel } from '@/lib/fedsync/src/logger'`
+- **ImportOrchestrator**: Now uses `import { Logger, LogLevel } from 'fedsync-standalone/logger'`
 - **CLI Interface**: Updated to use existing logger with proper LogLevel enum
 - **Validation Utils**: Updated logger instantiation  
 - **Tests**: Updated import paths
@@ -33,7 +33,7 @@ import { Logger } from '../utils/logger'
 new Logger({ level: 'info', file: 'import.log' })
 
 // After (FedSync logger with clean imports)
-import { Logger, LogLevel } from '@/lib/fedsync/src/logger'
+import { Logger, LogLevel } from 'fedsync-standalone/logger'
 new Logger({ 
   level: LogLevel.INFO,
   logToFile: true,

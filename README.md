@@ -106,6 +106,51 @@ The main collections in this application are:
 - `pnpm test`: Run all tests
 - `pnpm test:e2e`: Run end-to-end tests
 - `pnpm test:int`: Run integration tests
+- `pnpm sync`: Sync all data from FedSync API (profiles, events, categories, amenities)
+- `pnpm import`: Import synced data into Payload CMS
+- `pnpm cron:fedsync`: Run automated sync and import (for cron jobs)
+
+## FedSync Data Synchronization
+
+This project includes integration with FedSync API for importing external data. The workflow consists of two steps:
+
+### 1. Sync Data from API
+```bash
+pnpm sync
+```
+This downloads all data from the FedSync API and saves it to `data/fedsync/`:
+- Profiles (business listings)
+- Events
+- Categories
+- Amenities
+
+### 2. Import Data to Payload CMS
+```bash
+pnpm import
+```
+This imports the synced data into your Payload CMS database.
+
+**Note**: Make sure MongoDB is running before importing data.
+
+### Automated Sync with Cron
+
+To automatically sync and import data on a schedule:
+
+```bash
+# Run the cron job manually
+pnpm cron:fedsync
+
+# Set up automated scheduling (see cron-examples.md)
+```
+
+The cron job will:
+1. Sync data from FedSync API
+2. Wait 5 seconds (configurable)
+3. Import data to Payload CMS
+4. Log all operations to `logs/cron/`
+5. Send webhook notifications (if configured)
+
+See [Cron Setup Examples](./cron-examples.md) for detailed setup instructions.
 
 ## Collections Documentation
 
@@ -152,4 +197,4 @@ The Profiles collection handles business listings with extensive features:
 - **[Access Control Guide](./src/access/README.md)**: Detailed information about user roles and permissions
 - **[Branding Guide](./BRANDING_GUIDE.md)**: Instructions for customizing the application's appearance
 - **[Development Guidelines](./CLAUDE.md)**: Project standards and development workflow
-- **[FedSync Documentation](./src/lib/fedsync/README.md)**: API synchronization tool for importing data
+- **[FedSync Import Documentation](./src/scripts/import-fedsync/docs/FEDSYNC-IMPORT-STRATEGY.md)**: Strategy for importing FedSync data into Payload CMS

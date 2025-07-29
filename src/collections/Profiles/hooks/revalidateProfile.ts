@@ -9,6 +9,11 @@ export const revalidateProfile: CollectionAfterChangeHook<Profile> = ({
   previousDoc,
   req: { payload },
 }) => {
+  // Skip revalidation if not in Next.js runtime context
+  if (!process.env.NEXT_RUNTIME) {
+    return doc
+  }
+
   if (doc._status === 'published') {
     const path = `/profiles/${doc.slug}`
 

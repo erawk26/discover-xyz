@@ -13,7 +13,7 @@ export const Profiles: CollectionConfig = {
     update: authenticatedOrPublished,
   },
   admin: {
-    defaultColumns: ['title', 'type', 'city', 'status', 'updatedAt'],
+    defaultColumns: ['title', 'type', 'city', '_status', 'updatedAt'],
     livePreview: {
       url: ({ data }) => {
         const path = `/profiles/${data?.slug}${data?.slug !== data?.id ? `?draft=true` : ''}`
@@ -508,28 +508,6 @@ export const Profiles: CollectionConfig = {
     {
       name: 'publishedAt',
       type: 'date',
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'status',
-      type: 'select',
-      defaultValue: 'draft',
-      options: [
-        {
-          label: 'Draft',
-          value: 'draft',
-        },
-        {
-          label: 'Published',
-          value: 'published',
-        },
-        {
-          label: 'Archived',
-          value: 'archived',
-        },
-      ],
       admin: {
         position: 'sidebar',
       },

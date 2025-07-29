@@ -106,7 +106,7 @@ export const ProfileSchema = z.object({
   }).optional(),
   geography: z.any().optional(),
   account_id: z.number().optional(),
-  custom: z.record(z.any()).optional(),
+  custom: z.record(z.string(), z.any()).optional(),
   external_data: z.object({ tripadvisor: z.array(z.any()) }).optional(),
   last_publish_utc: z.union([z.string(), z.null()]).optional(),
 }).passthrough() // Allow additional fields from API
@@ -118,11 +118,16 @@ export const TransformedProfileSchema = z.object({
   externalId: z.number(),
   trackingId: z.string(),
   type: z.string(),
-  description: z.array(z.object({
-    children: z.array(z.object({
-      text: z.string()
-    }))
-  })).optional(),
+  description: z.object({
+    root: z.object({
+      type: z.literal('root'),
+      format: z.string(),
+      indent: z.number(),
+      version: z.number(),
+      children: z.array(z.any()),
+      direction: z.string(),
+    })
+  }).optional(),
   location: z.tuple([z.number(), z.number()]).optional(), // [longitude, latitude]
   address: z.object({
     line1: z.string(),
@@ -189,8 +194,7 @@ export const TransformedProfileSchema = z.object({
   listingData: z.any(),
   syncedAt: z.string(),
   syncSource: z.string(),
-  status: z.string(),
-  publishedAt: z.string(),
+  _status: z.enum(['published', 'draft']),
 })
 
 // Type exports

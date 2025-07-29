@@ -125,8 +125,7 @@ export class EventTransformer {
       listingData: source,
       syncedAt: new Date().toISOString(),
       syncSource: 'federator-api',
-      status: 'published',
-      publishedAt: new Date().toISOString(),
+      _status: 'published',
     }
 
     return transformed

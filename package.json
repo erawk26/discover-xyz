@@ -20,7 +20,10 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",
-    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
+    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
+    "sync": "fedsync --all",
+    "import": "payload run scripts/import-fedsync.mjs",
+    "cron:fedsync": "tsx src/scripts/fedsync-cron.ts"
   },
   "dependencies": {
     "@payloadcms/admin-bar": "3.45.0",
@@ -45,6 +48,7 @@
     "commander": "^14.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
+    "fedsync-standalone": "github:erawk26/fedsync",
     "geist": "^1.3.0",
     "graphql": "^16.8.2",
     "lucide-react": "^0.378.0",
@@ -94,9 +98,13 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "sharp",
       "esbuild",
+      "fedsync-standalone",
+      "sharp",
       "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "fedsync-standalone"
     ]
   }
 }

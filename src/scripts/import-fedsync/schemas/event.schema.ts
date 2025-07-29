@@ -92,7 +92,7 @@ export const EventSchema = z.object({
   amenities: z.array(z.any()).optional(),
   products: z.array(z.any()).optional(),
   photos: z.array(z.any()).optional(),
-  custom: z.record(z.any()).optional(),
+  custom: z.record(z.string(), z.any()).optional(),
   external_data: z.object({ tripadvisor: z.array(z.any()) }).optional(),
   published_city_id: z.number().optional(),
   published_under: z.object({
@@ -112,11 +112,16 @@ export const TransformedEventSchema = z.object({
   title: z.string(),
   externalId: z.number(),
   trackingId: z.string(),
-  description: z.array(z.object({
-    children: z.array(z.object({
-      text: z.string()
-    }))
-  })).optional(),
+  description: z.object({
+    root: z.object({
+      type: z.literal('root'),
+      format: z.string(),
+      indent: z.number(),
+      version: z.number(),
+      children: z.array(z.any()),
+      direction: z.string(),
+    })
+  }).optional(),
   location: z.tuple([z.number(), z.number()]).optional(), // [longitude, latitude]
   venueName: z.string().optional(),
   address: z.object({
@@ -161,8 +166,7 @@ export const TransformedEventSchema = z.object({
   listingData: z.any().optional(),
   syncedAt: z.string(),
   syncSource: z.string(),
-  status: z.enum(['published', 'draft']),
-  publishedAt: z.string(),
+  _status: z.enum(['published', 'draft']),
 })
 
 // Type exports

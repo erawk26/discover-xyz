@@ -6,7 +6,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { ImportOrchestrator, ImportOptions } from '../import-orchestrator'
-import { Logger, LogLevel } from '@/lib/fedsync/src/logger'
+import { Logger, LogLevel } from 'fedsync-standalone/logger'
 import fs from 'fs/promises'
 import path from 'path'
 

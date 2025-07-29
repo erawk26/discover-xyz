@@ -5,13 +5,14 @@
  * real Payload database to catch system-level issues
  */
 
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { ImportOrchestrator } from '../../importers/import-orchestrator'
-import { LogLevel } from '@/lib/fedsync/src/logger'
-import fs from 'fs/promises'
-import path from 'path'
-import os from 'os'
+import { LogLevel } from 'fedsync-standalone/logger'
+import * as fs from 'fs/promises'
+import * as path from 'path'
+import * as os from 'os'
 
 describe('End-to-End Import Integration', () => {
   let payload: any

@@ -868,7 +868,6 @@ export interface Event {
   slug?: string | null;
   slugLock?: boolean | null;
   publishedAt?: string | null;
-  status?: ('draft' | 'published' | 'archived') | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1030,7 +1029,6 @@ export interface Profile {
   slug?: string | null;
   slugLock?: boolean | null;
   publishedAt?: string | null;
-  status?: ('draft' | 'published' | 'archived') | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1691,7 +1689,6 @@ export interface EventsSelect<T extends boolean = true> {
   slug?: T;
   slugLock?: T;
   publishedAt?: T;
-  status?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1813,7 +1810,6 @@ export interface ProfilesSelect<T extends boolean = true> {
   slug?: T;
   slugLock?: T;
   publishedAt?: T;
-  status?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

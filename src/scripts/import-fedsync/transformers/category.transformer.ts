@@ -16,7 +16,7 @@ export class CategoryTransformer {
   transformCategory(category: Category, groupName?: string, parentId?: string): TransformedCategory {
     const transformed = {
       title: category.name.trim(),
-      type: 'category', // Individual categories have type 'category'
+      type: 'category' as const, // Individual categories have type 'category'
       externalId: `cat-${category.id}`,
       ...(parentId && { parent: parentId }), // Reference to parent group by ID
       ...(groupName && { groupName }) // Keep for backward compatibility
@@ -31,7 +31,7 @@ export class CategoryTransformer {
   transformCategoryGroup(group: CategoryGroup): TransformedCategory {
     return {
       title: group.name,
-      type: 'group',
+      type: 'group' as const,
       externalId: `group-${group.id}`,
       isGroup: true,
     }
