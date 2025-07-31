@@ -7,6 +7,7 @@ import { Endpoint } from 'payload'
 import { ImportOrchestrator, ImportOptions } from '../../scripts/import-fedsync/importers/import-orchestrator'
 import { LogLevel } from 'fedsync-standalone/logger'
 import path from 'path'
+import fs from 'fs'
 
 // Track running imports
 const importJobs = new Map<string, {
@@ -67,16 +68,48 @@ export const importFedSyncEndpoint: Endpoint = {
       }
     }
     
-    const {
-      dataPath = path.resolve(process.cwd(), 'data/fedsync'),
-      batchSize = 50,
-      concurrency = 5,
-      skipCategories = false,
-      skipEvents = false,
-      skipProfiles = false,
-      dryRun = false,
-      logLevel = 'info'
-    } = body
+    // Validate and sanitize input
+    const dataPath = body.dataPath 
+      ? path.resolve(process.cwd(), body.dataPath)
+      : path.resolve(process.cwd(), 'data/fedsync')
+    
+    // Prevent path traversal attacks
+    const normalizedPath = path.normalize(dataPath)
+    const cwd = process.cwd()
+    if (!normalizedPath.startsWith(cwd)) {
+      return new Response(JSON.stringify({ 
+        error: 'Invalid data path - path traversal detected' 
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+    
+    // Validate numeric inputs
+    const batchSize = Math.min(Math.max(parseInt(String(body.batchSize)) || 50, 1), 1000)
+    const concurrency = Math.min(Math.max(parseInt(String(body.concurrency)) || 5, 1), 20)
+    
+    // Validate boolean inputs
+    const skipCategories = Boolean(body.skipCategories)
+    const skipEvents = Boolean(body.skipEvents)
+    const skipProfiles = Boolean(body.skipProfiles)
+    const dryRun = Boolean(body.dryRun)
+    
+    // Validate log level
+    const validLogLevels = ['debug', 'info', 'warn', 'error']
+    const logLevel = validLogLevels.includes(body.logLevel || '') 
+      ? body.logLevel as 'debug' | 'info' | 'warn' | 'error'
+      : 'info'
+    
+    // Check if data directory exists
+    if (!fs.existsSync(normalizedPath)) {
+      return new Response(JSON.stringify({ 
+        error: `Data directory not found: ${normalizedPath}` 
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
 
     // Generate job ID
     const jobId = `import-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
