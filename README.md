@@ -64,7 +64,7 @@ cd <new folder name>
 
 ### Creating an Admin User
 
-1. Navigate to http://localhost:3026/admin (or http://localhost:3000/admin if using Docker)
+1. Navigate to http://localhost:3026/admin
 2. Follow the on-screen instructions to create your first admin user
 
 ### Seeding the Database
