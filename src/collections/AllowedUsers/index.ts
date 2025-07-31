@@ -1,6 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { PatternTester } from '@/components/admin/PatternTester'
-import { QuickPatterns } from '@/components/admin/QuickPatterns'
 
 export const AllowedUsers: CollectionConfig = {
   slug: 'allowed-users',
@@ -9,7 +7,7 @@ export const AllowedUsers: CollectionConfig = {
     defaultColumns: ['pattern', 'type', 'description', 'addedBy', 'matchCount'],
     group: 'Admin',
     components: {
-      beforeList: [PatternTester, QuickPatterns],
+      beforeList: ['@/components/admin/PatternTester', '@/components/admin/QuickPatterns'],
     },
   },
   access: {

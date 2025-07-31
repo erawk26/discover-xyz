@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Button } from '@payloadcms/ui'
 import { toast } from '@payloadcms/ui'
 
-export const QuickPatterns: React.FC = () => {
+const QuickPatterns: React.FC = () => {
   const [loading, setLoading] = useState<string | null>(null)
 
   const quickAdd = async (pattern: string, description: string, role: string = 'authenticated') => {
@@ -74,3 +74,5 @@ export const QuickPatterns: React.FC = () => {
     </div>
   )
 }
+
+export default QuickPatterns

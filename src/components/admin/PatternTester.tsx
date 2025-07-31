@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Button, TextInput } from '@payloadcms/ui'
 import { matchesPattern } from '@/utils/email-matcher'
 
-export const PatternTester: React.FC = () => {
+const PatternTester: React.FC = () => {
   const [testEmail, setTestEmail] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -82,3 +82,5 @@ export const PatternTester: React.FC = () => {
     </div>
   )
 }
+
+export default PatternTester
