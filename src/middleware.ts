@@ -3,6 +3,11 @@ import type { NextRequest } from 'next/server'
 import { addSecurityHeaders } from './middleware/security-headers'
 
 export function middleware(request: NextRequest) {
+  // Intercept Payload admin logout and redirect to unified logout
+  if (request.nextUrl.pathname === '/admin/logout') {
+    return NextResponse.redirect(new URL('/api/logout', request.url))
+  }
+  
   // Create response
   const response = NextResponse.next()
   

@@ -33,6 +33,33 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  // Support GET for convenience, but prefer POST
-  return POST(req)
+  // Handle GET requests (like from /admin/logout)
+  try {
+    // Clear Better Auth session
+    await auth.api.signOut({
+      headers: req.headers,
+    })
+
+    // Clear Payload session cookies
+    const cookieStore = await cookies()
+    cookieStore.delete('payload-token')
+    
+    // Clear any other auth-related cookies
+    const authCookies = ['better-auth.session', 'better-auth.session_data', 'payload-token']
+    authCookies.forEach(cookieName => {
+      cookieStore.delete(cookieName)
+    })
+
+    // Redirect to login page
+    return NextResponse.redirect(new URL('/admin/login', req.url))
+  } catch (error) {
+    console.error('Logout error:', error)
+    // Even if there's an error, we should clear cookies and redirect
+    const cookieStore = await cookies()
+    cookieStore.delete('payload-token')
+    cookieStore.delete('better-auth.session')
+    cookieStore.delete('better-auth.session_data')
+    
+    return NextResponse.redirect(new URL('/admin/login', req.url))
+  }
 }

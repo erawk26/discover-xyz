@@ -2,11 +2,9 @@
 
 import React from 'react'
 import { Button } from '@payloadcms/ui'
-import { useRouter } from 'next/navigation'
 import { toast } from '@payloadcms/ui'
 
 export const LogoutButton: React.FC = () => {
-  const router = useRouter()
   const [isLoading, setIsLoading] = React.useState(false)
 
   const handleLogout = async () => {
@@ -19,8 +17,11 @@ export const LogoutButton: React.FC = () => {
 
       if (response.ok) {
         toast.success('Logged out successfully')
-        router.push('/admin/login')
-        router.refresh()
+        // Clear any client-side auth state
+        window.localStorage.clear()
+        window.sessionStorage.clear()
+        // Redirect to login page
+        window.location.href = '/admin/login'
       } else {
         toast.error('Logout failed')
       }
