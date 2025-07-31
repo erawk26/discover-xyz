@@ -27,27 +27,27 @@ export function createBetterAuthPlugins(appUrl: string) {
       issuer: process.env.SITE_NAME ?? 'Discover XYZ',
       otpOptions: {
         async sendOTP({ user, otp }) {
-          console.log('Send OTP for user: ', user, otp)
           // TODO: Implement actual email sending
+          // For now, silently skip - do not log sensitive OTP codes
         },
       },
     }),
     phoneNumber({
       sendOTP: async ({ phoneNumber, code }, req) => {
-        console.log('Send OTP for phone: ', phoneNumber, code)
         // TODO: Implement actual SMS sending
+        // For now, silently skip - do not log sensitive codes
       },
     }),
     magicLink({
       sendMagicLink: async ({ email, token, url }, request) => {
-        console.log('Send magic link for user: ', email, url)
         // TODO: Implement actual email sending
+        // Magic link URL: url
       },
     }),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
-        console.log('Send verification OTP for user: ', email, otp, type)
         // TODO: Implement actual email sending
+        // For now, silently skip - do not log sensitive OTP codes
       },
     }),
     passkey({
@@ -63,8 +63,8 @@ export function createBetterAuthPlugins(appUrl: string) {
       },
       async sendInvitationEmail(data) {
         const inviteLink = `${appUrl}/accept-invitation/${data.id}`
-        console.log('Send invite for org: ', data, inviteLink)
         // TODO: Implement actual email sending
+        // Invite link: inviteLink
       },
     }),
     multiSession(),
@@ -83,7 +83,16 @@ export function createBetterAuthOptions(): BetterAuthOptions {
     appName: process.env.SITE_NAME ?? 'Discover XYZ',
     baseURL: appUrl,
     trustedOrigins: [appUrl],
-    secret: process.env.BETTER_AUTH_SECRET || process.env.PAYLOAD_SECRET || 'default-dev-secret',
+    secret: (() => {
+      const secret = process.env.BETTER_AUTH_SECRET || process.env.PAYLOAD_SECRET
+      if (!secret || secret.length < 32) {
+        throw new Error(
+          'BETTER_AUTH_SECRET must be set and at least 32 characters long. ' +
+          'Generate a secure secret with: openssl rand -base64 32'
+        )
+      }
+      return secret
+    })(),
     advanced: {
       database: {
         generateId: () => {
@@ -98,8 +107,8 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       enabled: true,
       requireEmailVerification: true, // Match example - require verification
       async sendResetPassword({ user, url }) {
-        console.log('Send reset password for user: ', user, url)
         // TODO: Implement actual email sending
+        // Reset link available but not logged for security
       },
     },
     socialProviders: {
@@ -115,8 +124,8 @@ export function createBetterAuthOptions(): BetterAuthOptions {
     },
     emailVerification: {
       async sendVerificationEmail({ user, url }) {
-        console.log('Send verification email for user: ', user, url)
         // TODO: Implement actual email sending
+        // Verification link available but not logged for security
       },
     },
     plugins: createBetterAuthPlugins(appUrl),
@@ -131,8 +140,8 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       changeEmail: {
         enabled: true,
         sendChangeEmailVerification: async ({ user, newEmail, url, token }) => {
-          console.log('Send change email verification for user: ', user, newEmail, url, token)
           // TODO: Implement actual email sending
+          // Change email verification link available but not logged for security
         },
       },
     },
@@ -143,6 +152,20 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       },
       expiresIn: 60 * 60 * 24 * 7, // 7 days
       updateAge: 60 * 60 * 24, // Update session if older than 1 day
+      cookieName: 'better-auth.session',
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      sameSite: 'lax', // CSRF protection
+      httpOnly: true, // Prevent XSS attacks
+    },
+    rateLimit: {
+      enabled: true,
+      window: 60, // 1 minute window
+      max: 10, // Max 10 requests per minute
+      customRules: {
+        '/api/auth/sign-in': { max: 5, window: 300 }, // 5 login attempts per 5 minutes
+        '/api/auth/sign-up': { max: 3, window: 300 }, // 3 signups per 5 minutes
+        '/api/auth/forgot-password': { max: 3, window: 300 }, // 3 resets per 5 minutes
+      },
     },
     account: {
       accountLinking: {
