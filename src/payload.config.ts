@@ -90,7 +90,20 @@ const config = buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   collections: [Pages, Articles, Media, Categories, AllowedUsers, Events, Profiles],
-  cors: [getServerSideURL()].filter(Boolean),
+  cors: (() => {
+    const allowedOrigins = [
+      getServerSideURL(),
+      process.env.NEXT_PUBLIC_APP_URL,
+      // Add production domains
+      process.env.PRODUCTION_URL,
+      // Development origins
+      process.env.NODE_ENV === 'development' ? 'http://localhost:3026' : null,
+      process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null,
+    ].filter(Boolean) as string[]
+    
+    // Remove duplicates
+    return [...new Set(allowedOrigins)]
+  })(),
   globals: [Header, Footer],
   plugins: [
     ...plugins,
