@@ -1,5 +1,7 @@
 # UI/UX Design Review - Discover XYZ
 
+[← Back to Reports Archive](./README.md) | [← Back to Main Documentation](../README.md)
+
 **Review Date:** July 31, 2025  
 **Reviewer:** Doug (UI/UX Designer)  
 **Focus:** Design consistency, component patterns, and overall design system

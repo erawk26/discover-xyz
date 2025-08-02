@@ -1,6 +1,6 @@
 # Architecture Overview
 
-[← Back to Main Documentation](../README.md)
+[← Back to Main Documentation](./README.md) | [Current Progress](./PROGRESS-REPORT.md) | [Tech Stack Details](./TECH-STACK.md)
 
 ## System Architecture
 
@@ -9,26 +9,27 @@ Discover XYZ is built using modern web technologies with a focus on performance,
 ## Technology Stack
 
 ### Frontend
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui
-- **Forms**: React Hook Form
+- **Framework**: Next.js 15.3.3 (App Router)
+- **UI Library**: React 19.1.0
+- **Language**: TypeScript 5.7.3 (strict mode enabled)
+- **Styling**: Tailwind CSS 3.4.3 (v4 upgrade planned)
+- **UI Components**: shadcn/ui (latest)
+- **Forms**: React Hook Form 7.45.4
 - **State Management**: React Context + Hooks
 
 ### Backend
-- **CMS**: Payload CMS v3.45
+- **CMS**: Payload CMS 3.45.0
 - **Runtime**: Node.js 20+
 - **Database**: MongoDB
-- **Authentication**: Payload Auth + OAuth (Google)
+- **Authentication**: Better Auth 1.3.4 + payload-auth 1.6.4
 - **File Storage**: Local filesystem (configurable)
 
 ### Infrastructure
-- **Package Manager**: pnpm
+- **Package Manager**: pnpm 9+
 - **Build Tool**: Next.js built-in
-- **Testing**: Vitest
-- **Linting**: ESLint + Prettier
-- **Type Checking**: TypeScript
+- **Testing**: Vitest 3.2.3
+- **Linting**: ESLint 9.32.0 + Prettier 3.4.2
+- **Type Checking**: TypeScript (strict mode)
 
 ## Application Structure
 

@@ -1,6 +1,6 @@
 # Testing Guide
 
-[← Back to Main Documentation](../README.md)
+[← Back to Main Documentation](./README.md)
 
 ## Overview
 

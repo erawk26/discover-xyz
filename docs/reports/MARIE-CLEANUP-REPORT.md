@@ -1,5 +1,7 @@
 # 🧹 Marie's Code Cleanup Report for discover-xyz
 
+[← Back to Reports Archive](./README.md) | [← Back to Main Documentation](../README.md)
+
 *"Does this code spark joy?"* - Let's tidy up this codebase together!
 
 ## Executive Summary

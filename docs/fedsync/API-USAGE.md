@@ -1,5 +1,7 @@
 # FedSync Import API Documentation
 
+[← Back to FedSync Guide](README.md) | [← Back to Main Documentation](../README.md)
+
 ## Overview
 
 The FedSync Import API provides endpoints to trigger and monitor data imports from FedSync into Payload CMS. The API runs imports asynchronously and provides job tracking.

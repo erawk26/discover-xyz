@@ -1,5 +1,7 @@
 # Security Audit Report - Discover XYZ
 
+[← Back to Reports Archive](./README.md) | [← Back to Main Documentation](../README.md)
+
 **Date**: 2025-07-31  
 **Auditor**: Security Analysis Team  
 **Project**: Discover XYZ - PayloadCMS Application  

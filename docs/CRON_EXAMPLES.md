@@ -1,6 +1,6 @@
 # FedSync Cron Setup Examples
 
-[← Back to Main Documentation](../README.md)
+[← Back to Main Documentation](./README.md)
 
 ## Option 1: System Cron (Linux/Mac)
 

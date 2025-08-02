@@ -1,5 +1,7 @@
 # Accessibility Audit Report - DiscoverXYZ
 
+[← Back to Reports Archive](./README.md) | [← Back to Main Documentation](../README.md)
+
 **Date**: 2025-07-31  
 **Auditor**: Adam - Accessibility Specialist  
 **WCAG Version**: 2.1 Level AA  

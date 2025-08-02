@@ -1,6 +1,17 @@
 # DiscoverXYZ
 
-This project is based on the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website). It provides a fully-working backend, enterprise-grade admin panel, and a production-ready website.
+This project is built with modern web technologies including Payload CMS v3, Next.js 15, React 19, and Better Auth. It provides a fully-working backend, enterprise-grade admin panel, and a production-ready website with advanced authentication capabilities.
+
+## Tech Stack
+
+- **[Payload CMS](https://payloadcms.com)** v3.45.0 - Headless CMS and application framework
+- **[Next.js](https://nextjs.org)** v15.3.3 - React framework with App Router
+- **[React](https://react.dev)** v19.1.0 - UI library
+- **[TypeScript](https://www.typescriptlang.org)** v5.7.3 - Type-safe JavaScript (strict mode enabled)
+- **[Tailwind CSS](https://tailwindcss.com)** v3.4.3 - Utility-first CSS framework (v4 upgrade planned)
+- **[shadcn/ui](https://ui.shadcn.com)** - Re-usable components built with Radix UI and Tailwind
+- **[Better Auth](https://www.better-auth.com)** v1.3.4 - Modern authentication library
+- **[MongoDB](https://www.mongodb.com)** - Database (via Payload)
 
 ## Quick Start for Developers
 
@@ -35,6 +46,11 @@ cd <new folder name>
 
    # Server URL (no trailing slash)
    NEXT_PUBLIC_SERVER_URL=http://localhost:3026
+   BETTER_AUTH_URL=http://localhost:3026
+
+   # OAuth Providers (optional)
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
    ```
 
 ### Development
@@ -194,13 +210,18 @@ The Profiles collection handles business listings with extensive features:
 
 ## Documentation Index
 
+### 📊 Project Overview
+- **[Tech Stack](./docs/TECH-STACK.md)** - Complete technology stack breakdown
+- **[Progress Report](./docs/PROGRESS-REPORT.md)** - Current project status and roadmap
+- **[Architecture Overview](./docs/ARCHITECTURE.md)** - System design and structure
+
 ### 🚀 Getting Started
 - **[Quick Start](#quick-start-for-developers)** - Set up the project locally
 - **[Environment Setup](#environment-setup)** - Configuration and environment variables
 - **[Branding Guide](./docs/BRANDING_GUIDE.md)** - Customize the application's appearance
 
 ### 🔐 Authentication & Security
-- **[Authentication Setup](./docs/AUTH_SETUP.md)** - OAuth and login configuration
+- **[Authentication Setup](./docs/AUTH_SETUP.md)** - Better Auth and OAuth configuration
 - **[Access Control Guide](./src/access/README.md)** - User roles and permissions
 
 ### 📊 Data Management

@@ -1,6 +1,6 @@
 # API Documentation
 
-[← Back to Main Documentation](../README.md)
+[← Back to Main Documentation](./README.md)
 
 ## Overview
 
@@ -13,26 +13,70 @@ The Discover XYZ API provides both REST and GraphQL endpoints for accessing and 
 
 ## Authentication
 
-Most API endpoints require authentication. There are several ways to authenticate:
+The API uses Better Auth for authentication. Most endpoints require authentication via session cookies or bearer tokens.
 
-### 1. Admin Panel Login
-- Login at `/admin` to get a session cookie
-- Cookie: `payload-token=<jwt-token>`
+### Authentication Methods
 
-### 2. API Login
+#### 1. Better Auth Login
 ```bash
-curl -X POST http://localhost:3026/api/users/login \
+# Email/Password login
+curl -X POST http://localhost:3026/api/auth/sign-in \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "user@example.com",
     "password": "password"
   }'
+
+# Returns session cookie and user data
 ```
 
-### 3. Bearer Token
+#### 2. OAuth Login
+- Google OAuth: Visit `/sign-in` and click "Continue with Google"
+- Callback handled at `/api/auth/callback/google`
+
+#### 3. Admin Panel Login
+- Visit `/admin/login` for Payload CMS admin access
+- Uses Better Auth integration for authentication
+
+#### 4. Bearer Token
 ```bash
-curl -H "Authorization: Bearer <jwt-token>" \
+# Use the session token from Better Auth
+curl -H "Authorization: Bearer <session-token>" \
   http://localhost:3026/api/events
+```
+
+### Better Auth Endpoints
+
+```bash
+# Sign up new user
+POST /api/auth/sign-up
+{
+  "email": "user@example.com",
+  "password": "password",
+  "name": "John Doe"
+}
+
+# Sign in
+POST /api/auth/sign-in
+{
+  "email": "user@example.com",
+  "password": "password"
+}
+
+# Sign out
+POST /api/auth/sign-out
+
+# Get current session
+GET /api/auth/session
+
+# Send magic link
+POST /api/auth/magic-link/send
+{
+  "email": "user@example.com"
+}
+
+# OAuth endpoints
+GET /api/auth/callback/:provider
 ```
 
 ## REST API Endpoints

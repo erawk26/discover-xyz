@@ -1,151 +1,140 @@
-# OAuth Integration Project Plan
+# Better Auth Integration Plan
 
-[← Back to Main Documentation](../README.md)
+[← Back to Main Documentation](./README.md) | [Current Progress](./PROGRESS-REPORT.md) | [Tech Stack Details](./TECH-STACK.md)
 
 ## Overview
-Direct OAuth integration with Payload CMS v3.45, enabling Google OAuth authentication while maintaining Payload's built-in session management.
+This document outlines the Better Auth integration strategy for DiscoverXYZ, providing modern, secure authentication that seamlessly integrates with Payload CMS v3.45.0 through the payload-auth plugin.
 
-## Project Goals
-- Fix Google OAuth redirect_uri_mismatch error
-- Enable OAuth login on Payload admin panel
-- Maintain existing Payload authentication system
-- Auto-assign roles based on email domain
+> **Note**: For current implementation status and completed features, see the [Progress Report](./PROGRESS-REPORT.md). For detailed technical specifications, see [Tech Stack](./TECH-STACK.md).
 
-## Implementation Phases
+## Authentication Features
 
-## Phase 1: OAuth Foundation ✅ COMPLETED
+### ✅ Implemented
+- Email/password authentication
+- Google OAuth integration
+- Magic link authentication
+- Session management with secure cookies
+- User synchronization with Payload CMS
+- Role-based access control
+- TypeScript strict mode compliance
 
-### 1.1 Environment Setup
-- [x] Configure OAuth environment variables
-- [x] Set up correct port configuration (3026)
-- [x] Create OAuth provider configuration
+### 🚧 Planned Enhancements
+- Additional OAuth providers (GitHub, etc.)
+- Two-factor authentication
+- Account linking
+- Session refresh tokens
+- Advanced role management
 
-### 1.2 OAuth Flow Implementation
-- [x] Create OAuth initiation endpoint
-- [x] Implement OAuth callback handler
-- [x] Handle token exchange with providers
-- [x] Extract user data from OAuth response
-
-## Phase 2: Payload Integration ✅ COMPLETED
-
-### 2.1 User Collection Modifications
-- [x] Make password field optional
-- [x] Add oauth_provider field
-- [x] Add oauth_id field
-- [x] Implement password auto-generation
-
-### 2.2 User Creation/Update Logic
-- [x] Create users from OAuth data
-- [x] Update existing users on OAuth login
-- [x] Implement domain-based role assignment
-- [x] Preserve existing user roles
-
-## Phase 3: Session Management ✅ COMPLETED
-
-### 3.1 JWT Token Generation
-- [x] Research Payload's token format
-- [x] Implement JWT generation
-- [x] Set proper cookie headers
-- [x] Handle token expiration
-
-### 3.2 Session Creation
-- [x] Create OAuth session endpoint
-- [x] Implement temporary password strategy
-- [x] Use Payload's login method
-- [x] Ensure proper cookie setting
-
-## Phase 4: UI Integration ✅ COMPLETED
-
-### 4.1 Admin Login Integration
-- [x] Create BeforeLogin component
-- [x] Add OAuth buttons to admin login
-- [x] Style OAuth buttons appropriately
-- [x] Handle OAuth flow initiation
-
-### 4.2 User Experience
-- [x] Seamless redirect to admin after OAuth
-- [x] Clear error messages
-- [x] Loading states during OAuth flow
-
-## Phase 5: Testing & Cleanup ✅ COMPLETED
-
-### 5.1 Testing
-- [x] Test Google OAuth flow
-- [x] Verify role assignment
-- [x] Test existing user updates
-- [x] Confirm session persistence
-
-### 5.2 Code Cleanup
-- [x] Remove unused Better Auth code
-- [x] Clean up test endpoints
-- [x] Remove unused imports
-- [x] Update documentation
-
-## Current Architecture
+## Project Architecture
 
 ### Authentication Flow
+1. **User Registration/Login**
+   - Better Auth handles authentication
+   - Sessions managed via secure cookies
+   - Users synced to Payload CMS
+
+2. **Protected Routes**
+   - Session validation via Better Auth
+   - API route protection
+   - Admin panel integration
+
+3. **OAuth Integration**
+   - Google OAuth configured
+   - Extensible for additional providers
+   - Automatic user creation/update
+
+## Development Guidelines
+
+### TypeScript Strict Mode
+All code must comply with TypeScript strict mode:
+- No `any` types
+- Explicit type declarations
+- Proper null/undefined handling
+
+### Security Best Practices
+- Secure session cookies (HTTP-only)
+- CSRF protection enabled
+- Environment variable validation
+- No hardcoded secrets
+
+### Testing Requirements
+- Authentication flow tests
+- Session management tests
+- OAuth integration tests
+- Protected route tests
+
+## Environment Configuration
+
+Required environment variables:
+```env
+# Database
+DATABASE_URI=mongodb://localhost:27017/discover-xyz
+
+# Payload
+PAYLOAD_SECRET=your-secure-secret
+
+# Better Auth
+BETTER_AUTH_URL=http://localhost:3026
+BETTER_AUTH_SECRET=your-auth-secret
+
+# OAuth
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Email (optional)
+EMAIL_FROM=noreply@yourdomain.com
+RESEND_API_KEY=your-resend-api-key
 ```
-User → Payload Admin Login → Google OAuth → Callback → User Creation/Update → JWT Generation → Admin Access
-```
 
-### Key Components
-1. **OAuth Initiation** (`/api/auth/oauth/initiate`)
-2. **OAuth Callback** (`/api/auth/callback/[provider]`)
-3. **Session Creation** (`/api/auth/oauth-session`)
-4. **BeforeLogin Component** (OAuth UI)
+## API Endpoints
 
-## Success Metrics Achieved
-1. ✅ Google OAuth working on Payload admin
-2. ✅ Automatic user creation
-3. ✅ Domain-based role assignment (@milespartnership.com → content-editor)
-4. ✅ Session persistence with JWT tokens
-5. ✅ No password management for OAuth users
+Better Auth provides these endpoints:
+- `POST /api/auth/sign-up` - User registration
+- `POST /api/auth/sign-in` - User login
+- `POST /api/auth/sign-out` - User logout
+- `GET /api/auth/session` - Current session
+- `POST /api/auth/magic-link/send` - Send magic link
+- `GET /api/auth/callback/:provider` - OAuth callbacks
 
-## Known Limitations
-1. Only Google OAuth implemented (GitHub code exists but not integrated)
-2. No account linking UI
-3. No OAuth disconnect functionality
-4. Magic links remain as mock implementation
+## Frontend Routes
 
-## Future Enhancements
+Authentication pages:
+- `/sign-in` - Sign in page with all auth methods
+- `/sign-up` - Registration page
+- `/dashboard` - Protected user dashboard
+- `/admin/login` - Payload admin login
 
-### Phase 6: Extended OAuth Support (PLANNED)
-- [ ] Enable GitHub OAuth
-- [ ] Add Microsoft/Azure AD OAuth
-- [ ] Implement OAuth provider selection UI
+## Migration Notes
 
-### Phase 7: Account Management (PLANNED)
-- [ ] User profile page with OAuth info
-- [ ] Account linking (multiple providers)
-- [ ] OAuth disconnect functionality
-- [ ] Password reset for non-OAuth users
+If migrating from standard OAuth:
+1. Install Better Auth dependencies
+2. Configure payload-auth plugin
+3. Update environment variables
+4. Migrate existing sessions
+5. Update login/signup pages
 
-### Phase 8: Security Enhancements (PLANNED)
+## Future Roadmap
+
+### Phase 1: Core Enhancements
+- [ ] Add GitHub OAuth provider
 - [ ] Implement refresh tokens
-- [ ] Add OAuth state validation
-- [ ] Enhanced CSRF protection
-- [ ] Audit logging for OAuth events
+- [ ] Add rate limiting
 
-### Phase 9: Production Readiness (PLANNED)
-- [ ] Performance optimization
-- [ ] Error tracking integration
-- [ ] Monitoring and alerts
-- [ ] Load testing OAuth flows
+### Phase 2: Advanced Features
+- [ ] Two-factor authentication
+- [ ] Account linking
+- [ ] Social login options
+- [ ] Advanced session management
 
-## Technical Decisions Made
+### Phase 3: Enterprise Features
+- [ ] SAML support
+- [ ] LDAP integration
+- [ ] Custom OAuth providers
+- [ ] Audit logging
 
-1. **Direct Payload Integration**: Chose to integrate OAuth directly with Payload rather than using Better Auth
-2. **Temporary Password Strategy**: OAuth users get auto-generated passwords for Payload compatibility
-3. **JWT Token Generation**: Created custom JWT tokens matching Payload's format
-4. **Cookie-based Sessions**: Using HTTP-only cookies for security
+## Resources
 
-## Lessons Learned
-
-1. **Payload's Authentication**: Deep understanding of Payload's auth system was crucial
-2. **JWT Token Format**: Payload expects specific token structure and claims
-3. **Session Management**: Cookie names and settings must match Payload's expectations
-4. **User Creation**: Password field complications required creative solutions
-
-## Project Status: COMPLETED ✅
-
-The OAuth integration is successfully implemented and working in production. Users can authenticate via Google OAuth on the Payload admin login page, with automatic user creation and role assignment based on email domain.
+- [Better Auth Documentation](https://www.better-auth.com)
+- [Payload CMS v3 Docs](https://payloadcms.com/docs)
+- [Next.js 15 Authentication](https://nextjs.org/docs/app/building-your-application/authentication)
+- [TypeScript Strict Mode](https://www.typescriptlang.org/tsconfig#strict)

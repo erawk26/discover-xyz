@@ -5,7 +5,9 @@ node_modules
 .env
 .next
 .vercel
-
+.hive*
+.claude*
+docs/ai
 # Payload default media upload directory
 public/media/
 
@@ -21,3 +23,4 @@ node_modules/
 /playwright/.cache/
 data/fedsync/
 logs/
+CLAUDE.md

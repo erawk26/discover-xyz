@@ -1,5 +1,7 @@
 # Test Suite Analysis Report - discover-xyz
 
+[← Back to Reports Archive](./README.md) | [← Back to Main Documentation](../README.md)
+
 ## Executive Summary
 
 **Overall Test Health Score: 4/10** ⚠️
