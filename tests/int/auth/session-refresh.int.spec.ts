@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { SessionRefreshManager } from '../session-refresh'
-import { authClient } from '../client'
+import { SessionRefreshManager } from '@/lib/better-auth/session-refresh'
+import { authClient } from '@/lib/better-auth/client'
 
 // Mock the auth client
 vi.mock('../client', () => ({
