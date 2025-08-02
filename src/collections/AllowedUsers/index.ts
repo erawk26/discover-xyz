@@ -4,7 +4,9 @@ export const AllowedUsers: CollectionConfig = {
   slug: 'allowed-users',
   admin: {
     useAsTitle: 'pattern',
-    defaultColumns: ['pattern', 'type', 'description', 'addedBy', 'matchCount'],
+    defaultColumns: ['pattern', 'type', 'description', 'addedByDisplay', 'matchCount'],
+    listSearchableFields: ['pattern', 'description', 'addedByEmail'],
+    description: 'Manage which email patterns are allowed to sign up',
     group: 'Admin',
     components: {
       beforeList: ['@/components/admin/PatternTester', '@/components/admin/QuickPatterns'],
@@ -91,6 +93,30 @@ export const AllowedUsers: CollectionConfig = {
       relationTo: 'users',
       admin: {
         readOnly: true,
+        description: 'User who added this pattern',
+      },
+    },
+    {
+      name: 'addedByEmail',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Email of user who added this pattern (fallback)',
+      },
+    },
+    {
+      name: 'addedVia',
+      type: 'select',
+      options: [
+        { label: 'Admin Panel', value: 'admin' },
+        { label: 'SSO Login', value: 'sso' },
+        { label: 'System', value: 'system' },
+        { label: 'Import', value: 'import' },
+      ],
+      defaultValue: 'admin',
+      admin: {
+        readOnly: true,
+        description: 'How this pattern was added',
       },
     },
     {
@@ -100,12 +126,64 @@ export const AllowedUsers: CollectionConfig = {
         readOnly: true,
       },
     },
+    {
+      name: 'addedByDisplay',
+      label: 'Added By',
+      type: 'text',
+      virtual: true,
+      admin: {
+        description: 'Display name for who added this pattern',
+        components: {
+          Field: () => null, // Hide in edit view
+        },
+      },
+      hooks: {
+        afterRead: [
+          ({ data, req }) => {
+            if (!data) return null
+            
+            // If we have a related user with data
+            if (data.addedBy?.email) {
+              return data.addedBy.name || data.addedBy.email
+            }
+            
+            // Fallback to email
+            if (data.addedByEmail) {
+              return data.addedByEmail
+            }
+            
+            // Show how it was added
+            const viaLabels = {
+              sso: 'SSO Auto-created',
+              system: 'System',
+              import: 'System Import',
+              admin: 'Admin Panel',
+            }
+            
+            if (data.addedVia && viaLabels[data.addedVia as keyof typeof viaLabels]) {
+              return viaLabels[data.addedVia as keyof typeof viaLabels]
+            }
+            
+            return 'Unknown'
+          },
+        ],
+      },
+    },
   ],
   hooks: {
     beforeChange: [
       ({ req, operation, data }) => {
         if (operation === 'create') {
-          data.addedBy = req.user?.id
+          // Set who added this pattern
+          if (req.user) {
+            data.addedBy = req.user.id
+            data.addedByEmail = req.user.email
+            data.addedVia = 'admin' // Default to admin panel
+          } else {
+            // Handle cases where there's no authenticated user (e.g., system imports)
+            data.addedVia = 'system'
+          }
+          
           data.addedAt = new Date()
           
           // Auto-detect type based on pattern

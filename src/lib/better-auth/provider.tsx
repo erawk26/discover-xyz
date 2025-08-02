@@ -2,9 +2,10 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthUIProvider } from '@daveyplate/better-auth-ui'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { authClient } from './client'
+import { sessionRefreshManager } from './session-refresh'
 
 export function BetterAuthProvider({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -17,6 +18,15 @@ export function BetterAuthProvider({ children }: { children: ReactNode }) {
   }))
   
   const router = useRouter()
+  
+  // Start session refresh manager when provider mounts
+  useEffect(() => {
+    sessionRefreshManager.start()
+    
+    return () => {
+      sessionRefreshManager.stop()
+    }
+  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>

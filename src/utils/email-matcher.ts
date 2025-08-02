@@ -7,11 +7,15 @@ export function matchesPattern(email: string, pattern: string): boolean {
   }
 
   // Convert wildcard pattern to regex
-  const regexPattern = pattern
+  // First escape all special regex characters except *
+  const escapedPattern = pattern
     .toLowerCase()
-    .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // Escape special regex chars except *
-    .replace(/\*/g, '.*') // Convert * to .*
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
   
+  // Then replace * with .* for wildcard matching
+  const regexPattern = escapedPattern.replace(/\*/g, '.*')
+  
+  // Create regex and test
   const regex = new RegExp(`^${regexPattern}$`)
   return regex.test(email.toLowerCase())
 }

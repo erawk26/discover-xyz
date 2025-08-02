@@ -1,9 +1,8 @@
-import type { BetterAuthOptions, User } from 'better-auth'
+import type { BetterAuthOptions } from 'better-auth'
 import { emailHarmony, phoneHarmony } from 'better-auth-harmony'
 import { nextCookies } from 'better-auth/next-js'
 import {
   admin,
-  anonymous,
   apiKey,
   emailOTP,
   magicLink,
@@ -26,26 +25,26 @@ export function createBetterAuthPlugins(appUrl: string) {
     twoFactor({
       issuer: process.env.SITE_NAME ?? 'Discover XYZ',
       otpOptions: {
-        async sendOTP({ user, otp }) {
+        async sendOTP() {
           // TODO: Implement actual email sending
           // For now, silently skip - do not log sensitive OTP codes
         },
       },
     }),
     phoneNumber({
-      sendOTP: async ({ phoneNumber, code }, req) => {
+      sendOTP: async () => {
         // TODO: Implement actual SMS sending
         // For now, silently skip - do not log sensitive codes
       },
     }),
     magicLink({
-      sendMagicLink: async ({ email, token, url }, request) => {
+      sendMagicLink: async () => {
         // TODO: Implement actual email sending
         // Magic link URL: url
       },
     }),
     emailOTP({
-      async sendVerificationOTP({ email, otp, type }) {
+      async sendVerificationOTP() {
         // TODO: Implement actual email sending
         // For now, silently skip - do not log sensitive OTP codes
       },
@@ -61,10 +60,9 @@ export function createBetterAuthPlugins(appUrl: string) {
       teams: {
         enabled: false,
       },
-      async sendInvitationEmail(data) {
-        const inviteLink = `${appUrl}/accept-invitation/${data.id}`
+      async sendInvitationEmail() {
         // TODO: Implement actual email sending
-        // Invite link: inviteLink
+        // Invite link: `${appUrl}/accept-invitation/${data.id}`
       },
     }),
     multiSession(),
@@ -106,7 +104,7 @@ export function createBetterAuthOptions(): BetterAuthOptions {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true, // Match example - require verification
-      async sendResetPassword({ user, url }) {
+      async sendResetPassword() {
         // TODO: Implement actual email sending
         // Reset link available but not logged for security
       },
@@ -123,7 +121,7 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       },
     },
     emailVerification: {
-      async sendVerificationEmail({ user, url }) {
+      async sendVerificationEmail() {
         // TODO: Implement actual email sending
         // Verification link available but not logged for security
       },
@@ -139,7 +137,7 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       },
       changeEmail: {
         enabled: true,
-        sendChangeEmailVerification: async ({ user, newEmail, url, token }) => {
+        sendChangeEmailVerification: async () => {
           // TODO: Implement actual email sending
           // Change email verification link available but not logged for security
         },
@@ -148,14 +146,12 @@ export function createBetterAuthOptions(): BetterAuthOptions {
     session: {
       cookieCache: {
         enabled: true,
-        maxAge: 5 * 60, // 5 minutes
+        maxAge: 5 * 60, // 5 minutes - short-lived cache for performance
       },
-      expiresIn: 60 * 60 * 24 * 7, // 7 days
-      updateAge: 60 * 60 * 24, // Update session if older than 1 day
-      cookieName: 'better-auth.session',
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'lax', // CSRF protection
-      httpOnly: true, // Prevent XSS attacks
+      expiresIn: 60 * 60 * 24 * 7, // 7 days - main session lifetime
+      updateAge: 60 * 60 * 24, // 1 day - refresh session if older than this
+      // freshAge helps determine when to proactively refresh
+      freshAge: 60 * 60 * 4, // 4 hours - consider session fresh if newer than this
     },
     rateLimit: {
       enabled: true,

@@ -249,6 +249,8 @@ export interface User {
   allowedPattern?: (string | null) | AllowedUser;
 }
 /**
+ * Manage which email patterns are allowed to sign up
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "allowed-users".
  */
@@ -282,8 +284,23 @@ export interface AllowedUser {
    * Last time this pattern was matched
    */
   lastMatched?: string | null;
+  /**
+   * User who added this pattern
+   */
   addedBy?: (string | null) | User;
+  /**
+   * Email of user who added this pattern (fallback)
+   */
+  addedByEmail?: string | null;
+  /**
+   * How this pattern was added
+   */
+  addedVia?: ('admin' | 'sso' | 'system' | 'import') | null;
   addedAt?: string | null;
+  /**
+   * Display name for who added this pattern
+   */
+  addedByDisplay?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2297,7 +2314,10 @@ export interface AllowedUsersSelect<T extends boolean = true> {
   matchCount?: T;
   lastMatched?: T;
   addedBy?: T;
+  addedByEmail?: T;
+  addedVia?: T;
   addedAt?: T;
+  addedByDisplay?: T;
   updatedAt?: T;
   createdAt?: T;
 }
