@@ -1,5 +1,7 @@
 # OAuth Integration Project Plan
 
+[← Back to Main Documentation](../README.md)
+
 ## Overview
 Direct OAuth integration with Payload CMS v3.45, enabling Google OAuth authentication while maintaining Payload's built-in session management.
 

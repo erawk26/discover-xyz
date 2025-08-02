@@ -1,6 +1,8 @@
-# FedSync Import System
+# FedSync Integration Guide
 
-This directory contains the import system for FedSync data into Payload CMS.
+[← Back to Main Documentation](../../README.md)
+
+This guide covers the complete FedSync data synchronization system for importing external data into Payload CMS.
 
 ## Quick Start
 
@@ -28,6 +30,26 @@ pnpm import
 ```
 Imports the synced data into your Payload CMS database
 
+### Automated Sync with Cron
+
+To automatically sync and import data on a schedule:
+
+```bash
+# Run the cron job manually
+pnpm cron:fedsync
+
+# Set up automated scheduling (see ../CRON_EXAMPLES.md)
+```
+
+The cron job will:
+1. Sync data from FedSync API
+2. Wait 5 seconds (configurable)
+3. Import data to Payload CMS
+4. Log all operations to `logs/cron/`
+5. Send webhook notifications (if configured)
+
+See [Cron Setup Examples](../CRON_EXAMPLES.md) for detailed setup instructions.
+
 ## Features
 
 - **Batch Processing**: Efficiently imports large datasets
@@ -40,7 +62,7 @@ Imports the synced data into your Payload CMS database
 
 After import, you'll see statistics like:
 ```
-📊 Import Statistics:
+📈 Import Statistics:
 ┌─────────────┬───────────┬───────────┬─────────┐
 │ Type        │ Processed │ Imported  │ Errors  │
 ├─────────────┼───────────┼───────────┼─────────┤
@@ -56,6 +78,31 @@ After import, you'll see statistics like:
 - **Orchestrator**: Manages the import process (`importers/import-orchestrator.ts`)
 - **Transformers**: Convert FedSync data to Payload format
 - **Schemas**: Zod validation schemas for data integrity
+
+## Data Collections
+
+### Events Collection
+
+The Events collection is designed to manage event listings with comprehensive date, location, and contact information:
+
+- **Event Information**: Title, description, multiple date ranges with times
+- **Location Details**: Venue name, full address, GPS coordinates, city/region relationships
+- **Contact Information**: Multiple email types, phone numbers, websites, and social media
+- **Media**: Photo galleries with captions
+- **Metadata**: Categories, sync tracking, external IDs for API integration
+
+### Profiles Collection
+
+The Profiles collection handles business listings with extensive features:
+
+- **Business Details**: Name, description, type classification
+- **Location & Service Area**: Address, coordinates, cities served, regions
+- **Contact Methods**: Multiple emails, phones, websites, social media profiles
+- **Operating Hours**: Detailed business hours by day
+- **Amenities & Features**: Relationship-based amenity tracking
+- **Accommodation Info**: Room counts, suites, meeting facilities
+- **Media**: Photo and video galleries
+- **Sync Integration**: API data preservation, sync status tracking
 
 ## Troubleshooting
 
@@ -95,7 +142,6 @@ This system replaces the previous local FedSync library with the `fedsync-standa
 
 ## Related Documentation
 
-- [Comprehensive FedSync Integration Guide](../../docs/fedsync/README.md) - Complete integration documentation
-- [FedSync Import Strategy](../../docs/fedsync/FEDSYNC-IMPORT-STRATEGY.md) - Technical strategy and architecture details
-- [API Usage Guide](../../docs/fedsync/API-USAGE.md) - REST API endpoints for triggering imports
-- [Cron Setup Examples](../../docs/CRON_EXAMPLES.md) - Automated synchronization setup
+- [API Usage Guide](API-USAGE.md) - Detailed API endpoint documentation
+- [Implementation Strategy](FEDSYNC-IMPORT-STRATEGY.md) - Technical strategy and architecture
+- [Cron Setup Examples](../CRON_EXAMPLES.md) - Automated synchronization setup

@@ -1,5 +1,7 @@
 # Authentication Setup Guide
 
+[← Back to Main Documentation](../README.md)
+
 ## Quick Start
 
 1. **Visit the Payload admin login**: Navigate to `/admin/login`

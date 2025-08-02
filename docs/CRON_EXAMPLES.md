@@ -1,5 +1,7 @@
 # FedSync Cron Setup Examples
 
+[← Back to Main Documentation](../README.md)
+
 ## Option 1: System Cron (Linux/Mac)
 
 ### Basic Daily Sync at 2 AM

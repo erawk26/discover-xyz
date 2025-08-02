@@ -192,9 +192,27 @@ The Profiles collection handles business listings with extensive features:
 - [Jobs and Scheduled Publishing](#jobs-and-scheduled-publish)
 - [Website](#website)
 
-## Additional Documentation
+## Documentation Index
 
-- **[Access Control Guide](./src/access/README.md)**: Detailed information about user roles and permissions
-- **[Branding Guide](./BRANDING_GUIDE.md)**: Instructions for customizing the application's appearance
-- **[Development Guidelines](./CLAUDE.md)**: Project standards and development workflow
-- **[FedSync Import Documentation](./src/scripts/import-fedsync/docs/FEDSYNC-IMPORT-STRATEGY.md)**: Strategy for importing FedSync data into Payload CMS
+### 🚀 Getting Started
+- **[Quick Start](#quick-start-for-developers)** - Set up the project locally
+- **[Environment Setup](#environment-setup)** - Configuration and environment variables
+- **[Branding Guide](./docs/BRANDING_GUIDE.md)** - Customize the application's appearance
+
+### 🔐 Authentication & Security
+- **[Authentication Setup](./docs/AUTH_SETUP.md)** - OAuth and login configuration
+- **[Access Control Guide](./src/access/README.md)** - User roles and permissions
+
+### 📊 Data Management
+- **[FedSync Integration](./docs/fedsync/README.md)** - Data synchronization with FedSync API
+- **[Cron Setup Examples](./docs/CRON_EXAMPLES.md)** - Automated data synchronization
+
+### 👩‍💻 Development
+- **[Development Guidelines](./CLAUDE.md)** - Project standards and team workflow
+- **[Testing Guide](./docs/TESTING.md)** - Running and writing tests
+- **[API Documentation](./docs/API.md)** - API endpoints and usage
+
+### 🏗️ Project Information
+- **[Project Roadmap](./docs/PROJECT_PLAN.md)** - Features and implementation status
+- **[Architecture Overview](./docs/ARCHITECTURE.md)** - System design and structure
+- **[Project Reports](./docs/reports/README.md)** - Historical audit reports and assessments
