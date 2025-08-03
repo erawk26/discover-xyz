@@ -7,7 +7,8 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
-    "dev": "pkill -f 'next dev' || true && cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next dev",
+    "dev": "pnpm run dev:kill && cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next dev",
+    "dev:kill": "lsof -ti:3026 | xargs kill -9 && sleep 2",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
@@ -68,6 +69,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "7.45.4",
+    "resend": "^4.7.0",
     "sharp": "0.32.6",
     "sonner": "^2.0.6",
     "tailwind-merge": "^2.3.0",

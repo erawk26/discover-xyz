@@ -20,8 +20,8 @@ export const LogoutButton: React.FC = () => {
         // Clear any client-side auth state
         window.localStorage.clear()
         window.sessionStorage.clear()
-        // Redirect to login page
-        window.location.href = '/admin/login'
+        // Redirect to unified login page
+        window.location.href = '/sign-in?redirectTo=/admin'
       } else {
         toast.error('Logout failed')
       }

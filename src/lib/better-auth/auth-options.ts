@@ -14,6 +14,7 @@ import {
   twoFactor,
 } from 'better-auth/plugins'
 import { passkey } from 'better-auth/plugins/passkey'
+import { sendEmail, emailTemplates } from '@/lib/email/resend'
 
 export function createBetterAuthPlugins(appUrl: string) {
   return [
@@ -25,9 +26,12 @@ export function createBetterAuthPlugins(appUrl: string) {
     twoFactor({
       issuer: process.env.SITE_NAME ?? 'Discover XYZ',
       otpOptions: {
-        async sendOTP() {
-          // TODO: Implement actual email sending
-          // For now, silently skip - do not log sensitive OTP codes
+        async sendOTP({ user, otp }) {
+          const template = emailTemplates.otpEmail(otp, 'Two-Factor Authentication')
+          await sendEmail({
+            to: user.email,
+            ...template
+          })
         },
       },
     }),
@@ -38,15 +42,21 @@ export function createBetterAuthPlugins(appUrl: string) {
       },
     }),
     magicLink({
-      sendMagicLink: async () => {
-        // TODO: Implement actual email sending
-        // Magic link URL: url
+      sendMagicLink: async ({ email, url }) => {
+        const template = emailTemplates.magicLinkEmail(url)
+        await sendEmail({
+          to: email,
+          ...template
+        })
       },
     }),
     emailOTP({
-      async sendVerificationOTP() {
-        // TODO: Implement actual email sending
-        // For now, silently skip - do not log sensitive OTP codes
+      async sendVerificationOTP({ email, otp }) {
+        const template = emailTemplates.otpEmail(otp, 'Email Verification')
+        await sendEmail({
+          to: email,
+          ...template
+        })
       },
     }),
     passkey({
@@ -60,9 +70,18 @@ export function createBetterAuthPlugins(appUrl: string) {
       teams: {
         enabled: false,
       },
-      async sendInvitationEmail() {
-        // TODO: Implement actual email sending
-        // Invite link: `${appUrl}/accept-invitation/${data.id}`
+      async sendInvitationEmail(data) {
+        const inviteUrl = `${appUrl}/accept-invitation/${data.id}`
+        const inviterName = data.inviter.user.name || data.inviter.user.email
+        const template = emailTemplates.invitationEmail(
+          inviteUrl,
+          inviterName,
+          data.organization.name
+        )
+        await sendEmail({
+          to: data.email,
+          ...template
+        })
       },
     }),
     multiSession(),
@@ -104,9 +123,12 @@ export function createBetterAuthOptions(): BetterAuthOptions {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true, // Match example - require verification
-      async sendResetPassword() {
-        // TODO: Implement actual email sending
-        // Reset link available but not logged for security
+      async sendResetPassword({ user, url }) {
+        const template = emailTemplates.passwordResetEmail(url)
+        await sendEmail({
+          to: user.email,
+          ...template
+        })
       },
     },
     socialProviders: {
@@ -121,9 +143,12 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       },
     },
     emailVerification: {
-      async sendVerificationEmail() {
-        // TODO: Implement actual email sending
-        // Verification link available but not logged for security
+      async sendVerificationEmail({ user, url }) {
+        const template = emailTemplates.verificationEmail(url)
+        await sendEmail({
+          to: user.email,
+          ...template
+        })
       },
     },
     plugins: createBetterAuthPlugins(appUrl),
@@ -137,9 +162,12 @@ export function createBetterAuthOptions(): BetterAuthOptions {
       },
       changeEmail: {
         enabled: true,
-        sendChangeEmailVerification: async () => {
-          // TODO: Implement actual email sending
-          // Change email verification link available but not logged for security
+        sendChangeEmailVerification: async ({ url, newEmail }) => {
+          const template = emailTemplates.changeEmailVerification(url, newEmail)
+          await sendEmail({
+            to: newEmail,
+            ...template
+          })
         },
       },
     },
