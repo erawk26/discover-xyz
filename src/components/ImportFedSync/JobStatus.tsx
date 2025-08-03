@@ -116,7 +116,7 @@ export const ImportJobStatus: React.FC = () => {
 
         {jobs.length === 0 && !loading && (
           <p className="text-sm text-muted-foreground">
-            No import jobs found. Click "Refresh Jobs" to check.
+            No import jobs found. Click &quot;Refresh Jobs&quot; to check.
           </p>
         )}
 
