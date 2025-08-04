@@ -8,11 +8,16 @@ import { ImportOrchestrator, ImportOptions } from '../../scripts/import-fedsync/
 import { LogLevel } from 'fedsync-standalone/logger'
 import path from 'path'
 import fs from 'fs'
+import { execSync } from 'child_process'
 
 // Track running imports
 const importJobs = new Map<string, {
-  status: 'pending' | 'running' | 'completed' | 'failed'
+  status: 'pending' | 'syncing' | 'running' | 'completed' | 'failed'
+  phase: 'initializing' | 'syncing' | 'importing' | 'done'
   startTime: Date
+  syncStartTime?: Date
+  syncEndTime?: Date
+  importStartTime?: Date
   endTime?: Date
   stats?: any
   error?: string
@@ -27,6 +32,7 @@ interface ImportRequestBody {
   skipProfiles?: boolean
   dryRun?: boolean
   logLevel?: 'debug' | 'info' | 'warn' | 'error'
+  syncFirst?: boolean  // New parameter to control syncing
 }
 
 export const importFedSyncEndpoint: Endpoint = {
@@ -94,6 +100,8 @@ export const importFedSyncEndpoint: Endpoint = {
     const skipEvents = Boolean(body.skipEvents)
     const skipProfiles = Boolean(body.skipProfiles)
     const dryRun = Boolean(body.dryRun)
+    // Default syncFirst to true for API calls (false maintains CLI compatibility)
+    const syncFirst = body.syncFirst !== false
     
     // Validate log level
     const validLogLevels = ['debug', 'info', 'warn', 'error']
@@ -117,15 +125,43 @@ export const importFedSyncEndpoint: Endpoint = {
     // Initialize job status
     importJobs.set(jobId, {
       status: 'pending',
+      phase: 'initializing',
       startTime: new Date()
     })
 
     // Run import asynchronously (non-blocking)
     process.nextTick(async () => {
       const job = importJobs.get(jobId)!
-      job.status = 'running'
       
       try {
+        // Step 1: Sync fresh data if requested
+        if (syncFirst) {
+          job.status = 'syncing'
+          job.phase = 'syncing'
+          job.syncStartTime = new Date()
+          
+          console.log(`[${jobId}] Starting FedSync data synchronization...`)
+          
+          try {
+            // Execute the sync command
+            execSync('pnpm run sync', {
+              cwd: process.cwd(),
+              stdio: 'inherit',  // This will show sync output in console
+              encoding: 'utf8'
+            })
+            
+            job.syncEndTime = new Date()
+            console.log(`[${jobId}] Sync completed successfully`)
+          } catch (syncError: any) {
+            throw new Error(`Sync failed: ${syncError.message}`)
+          }
+        }
+        
+        // Step 2: Import the data
+        job.status = 'running'
+        job.phase = 'importing'
+        job.importStartTime = new Date()
+        
         const importOptions: ImportOptions = {
           batchSize,
           concurrency,
@@ -146,11 +182,13 @@ export const importFedSyncEndpoint: Endpoint = {
 
         // Update job status
         job.status = 'completed'
+        job.phase = 'done'
         job.stats = stats
         job.endTime = new Date()
       } catch (error: any) {
         // Update job status with error
         job.status = 'failed'
+        job.phase = 'done'
         job.error = error.message
         job.endTime = new Date()
       }
@@ -204,10 +242,24 @@ export const importFedSyncStatusEndpoint: Endpoint = {
       })
     }
     
-    return Response.json({
+    // Calculate durations
+    const response: any = {
       jobId,
       ...job,
       logFile: `logs/import-${jobId}.log`
-    })
+    }
+    
+    // Add duration calculations
+    if (job.syncStartTime && job.syncEndTime) {
+      response.syncDuration = Math.round((job.syncEndTime.getTime() - job.syncStartTime.getTime()) / 1000) + 's'
+    }
+    if (job.importStartTime && job.endTime) {
+      response.importDuration = Math.round((job.endTime.getTime() - job.importStartTime.getTime()) / 1000) + 's'
+    }
+    if (job.startTime && job.endTime) {
+      response.totalDuration = Math.round((job.endTime.getTime() - job.startTime.getTime()) / 1000) + 's'
+    }
+    
+    return Response.json(response)
   }
 }

@@ -15,6 +15,7 @@ interface ImportOptions {
   dryRun?: boolean
   batchSize?: number
   concurrency?: number
+  syncFirst?: boolean
 }
 
 export const ImportFedSync: React.FC = () => {
@@ -26,7 +27,8 @@ export const ImportFedSync: React.FC = () => {
     skipProfiles: false,
     dryRun: false,
     batchSize: 50,
-    concurrency: 5
+    concurrency: 5,
+    syncFirst: true  // Default to syncing fresh data
   })
 
   const handleImport = async () => {
@@ -68,6 +70,18 @@ export const ImportFedSync: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="sync-first"
+              checked={options.syncFirst}
+              onCheckedChange={(checked) => 
+                setOptions({ ...options, syncFirst: checked as boolean })
+              }
+            />
+            <Label htmlFor="sync-first" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Sync Fresh Data (download latest from FedSync before importing)
+            </Label>
+          </div>
           <div className="flex items-center space-x-2">
             <Checkbox
               id="dry-run"

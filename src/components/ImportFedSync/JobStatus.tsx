@@ -7,8 +7,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 interface ImportJob {
   jobId: string
-  status: 'pending' | 'running' | 'completed' | 'failed'
+  status: 'pending' | 'syncing' | 'running' | 'completed' | 'failed'
+  phase?: 'initializing' | 'syncing' | 'importing' | 'done'
   startTime: string
+  syncStartTime?: string
+  syncEndTime?: string
+  syncDuration?: string
+  importStartTime?: string
+  importDuration?: string
+  totalDuration?: string
   endTime?: string
   stats?: {
     categories: { processed: number; imported: number; errors: number }
@@ -66,17 +73,22 @@ export const ImportJobStatus: React.FC = () => {
     }
   }
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, phase?: string) => {
     const statusStyles = {
       pending: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+      syncing: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
       running: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
       completed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
       failed: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
     }
     
+    const displayText = status === 'syncing' ? 'SYNCING' : 
+                       status === 'running' && phase === 'importing' ? 'IMPORTING' :
+                       status.toUpperCase()
+    
     return (
       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[status] || 'bg-gray-100 text-gray-800'}`}>
-        {status.toUpperCase()}
+        {displayText}
       </span>
     )
   }
@@ -142,7 +154,7 @@ export const ImportJobStatus: React.FC = () => {
                           {job.jobId}
                         </code>
                       </td>
-                      <td className="p-2">{getStatusBadge(job.status)}</td>
+                      <td className="p-2">{getStatusBadge(job.status, job.phase)}</td>
                       <td className="p-2 text-sm">{formatDate(job.startTime)}</td>
                       <td className="p-2 text-sm">{calculateDuration(job.startTime, job.endTime)}</td>
                       <td className="p-2">
@@ -183,10 +195,10 @@ export const ImportJobStatus: React.FC = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="font-medium">Status:</span> {getStatusBadge(jobDetails.status)}
+                  <span className="font-medium">Status:</span> {getStatusBadge(jobDetails.status, jobDetails.phase)}
                 </div>
                 <div>
-                  <span className="font-medium">Duration:</span> {calculateDuration(jobDetails.startTime, jobDetails.endTime)}
+                  <span className="font-medium">Total Duration:</span> {jobDetails.totalDuration || calculateDuration(jobDetails.startTime, jobDetails.endTime)}
                 </div>
                 <div>
                   <span className="font-medium">Started:</span> {formatDate(jobDetails.startTime)}
@@ -194,6 +206,16 @@ export const ImportJobStatus: React.FC = () => {
                 {jobDetails.endTime && (
                   <div>
                     <span className="font-medium">Ended:</span> {formatDate(jobDetails.endTime)}
+                  </div>
+                )}
+                {jobDetails.syncDuration && (
+                  <div>
+                    <span className="font-medium">Sync Duration:</span> {jobDetails.syncDuration}
+                  </div>
+                )}
+                {jobDetails.importDuration && (
+                  <div>
+                    <span className="font-medium">Import Duration:</span> {jobDetails.importDuration}
                   </div>
                 )}
               </div>
