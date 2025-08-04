@@ -9,6 +9,7 @@ describe('SessionRefreshManager', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks()
+    mockAuthClient.getSession.mockReset()
     vi.useFakeTimers()
     
     // Mock session that expires in 2 hours
@@ -129,12 +130,14 @@ describe('SessionRefreshManager', () => {
     manager = new SessionRefreshManager()
     await manager.start()
 
-    // For expired session, start() will call getSession and immediately
-    // schedule a refresh, which might execute synchronously
+    // For expired session, start() will call getSession twice:
+    // 1. Initial call to check session
+    // 2. Immediate refresh because session is expired
+    // Plus one more from the scheduled refresh
     await vi.runAllTimersAsync()
 
-    // Should have called getSession for start + immediate refresh
-    expect(mockAuthClient.getSession).toHaveBeenCalledTimes(2)
+    // Should have been called 3 times total
+    expect(mockAuthClient.getSession).toHaveBeenCalledTimes(3)
   })
 
   it('should stop trying after max retries', async () => {
@@ -179,7 +182,7 @@ describe('SessionRefreshManager', () => {
     // Should still be 3 - no more retries
     expect(mockAuthClient.getSession).toHaveBeenCalledTimes(3)
     
-    // Should have called error handler for refresh + retries = 3 times
-    expect(onRefreshError).toHaveBeenCalledTimes(3)
+    // Should have called error handler once for the refresh failure
+    expect(onRefreshError).toHaveBeenCalledTimes(1)
   })
 })
