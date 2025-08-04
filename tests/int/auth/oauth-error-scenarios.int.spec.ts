@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { authClient } from '@/lib/better-auth/client'
+import { mockAuthClient } from './setup'
 
 describe('OAuth Error Scenarios', () => {
   beforeEach(() => {
@@ -12,10 +12,10 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('Missing authorization code')
       error.cause = { code: 'OAUTH_MISSING_CODE' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
@@ -30,10 +30,10 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('Invalid state parameter')
       error.cause = { code: 'OAUTH_INVALID_STATE' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'github',
           callbackURL: '/admin',
         })
@@ -48,10 +48,10 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('Access denied by user')
       error.cause = { code: 'OAUTH_ACCESS_DENIED' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
@@ -64,37 +64,37 @@ describe('OAuth Error Scenarios', () => {
 
   describe('OAuth Token Exchange Errors', () => {
     it('should handle token exchange failure', async () => {
-      // OAuth provider returns error during token exchange
-      const error = new Error('Failed to exchange authorization code for token')
+      // Failed to exchange authorization code for tokens
+      const error = new Error('Failed to exchange authorization code')
       error.cause = { code: 'OAUTH_TOKEN_EXCHANGE_FAILED' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
-          provider: 'github',
+        mockAuthClient.signIn.social({
+          provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'Failed to exchange authorization code for token',
+        message: 'Failed to exchange authorization code',
         cause: { code: 'OAUTH_TOKEN_EXCHANGE_FAILED' },
       })
     })
 
     it('should handle invalid client credentials', async () => {
-      // Misconfigured OAuth app credentials
-      const error = new Error('Invalid client ID or secret')
+      // OAuth app credentials are incorrect
+      const error = new Error('Invalid client credentials')
       error.cause = { code: 'OAUTH_INVALID_CLIENT' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
-          provider: 'google',
+        mockAuthClient.signIn.social({
+          provider: 'github',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'Invalid client ID or secret',
+        message: 'Invalid client credentials',
         cause: { code: 'OAUTH_INVALID_CLIENT' },
       })
     })
@@ -102,15 +102,15 @@ describe('OAuth Error Scenarios', () => {
 
   describe('OAuth Profile Fetch Errors', () => {
     it('should handle profile fetch failure', async () => {
-      // Unable to fetch user profile from OAuth provider
+      // Failed to fetch user profile from OAuth provider
       const error = new Error('Failed to fetch user profile')
       error.cause = { code: 'OAUTH_PROFILE_FETCH_FAILED' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
-          provider: 'github',
+        mockAuthClient.signIn.social({
+          provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
@@ -120,37 +120,37 @@ describe('OAuth Error Scenarios', () => {
     })
 
     it('should handle missing required email from OAuth provider', async () => {
-      // OAuth provider doesn't return email
-      const error = new Error('Email not provided by OAuth provider')
+      // OAuth provider didn't return email
+      const error = new Error('Email is required but was not provided by OAuth provider')
       error.cause = { code: 'OAUTH_MISSING_EMAIL' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'github',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'Email not provided by OAuth provider',
+        message: 'Email is required but was not provided by OAuth provider',
         cause: { code: 'OAUTH_MISSING_EMAIL' },
       })
     })
 
     it('should handle unverified email from OAuth provider', async () => {
-      // OAuth provider returns unverified email
-      const error = new Error('Email not verified with OAuth provider')
+      // OAuth provider returned unverified email
+      const error = new Error('Email address is not verified')
       error.cause = { code: 'OAUTH_UNVERIFIED_EMAIL' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'Email not verified with OAuth provider',
+        message: 'Email address is not verified',
         cause: { code: 'OAUTH_UNVERIFIED_EMAIL' },
       })
     })
@@ -158,18 +158,18 @@ describe('OAuth Error Scenarios', () => {
 
   describe('OAuth Network and Timeout Errors', () => {
     it('should handle OAuth provider timeout', async () => {
-      const error = new Error('OAuth provider request timeout')
+      const error = new Error('OAuth provider request timed out')
       error.cause = { code: 'OAUTH_TIMEOUT' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'OAuth provider request timeout',
+        message: 'OAuth provider request timed out',
         cause: { code: 'OAUTH_TIMEOUT' },
       })
     })
@@ -178,10 +178,10 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('Network error connecting to OAuth provider')
       error.cause = { code: 'OAUTH_NETWORK_ERROR' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'github',
           callbackURL: '/admin',
         })
@@ -192,18 +192,18 @@ describe('OAuth Error Scenarios', () => {
     })
 
     it('should handle OAuth provider service unavailable', async () => {
-      const error = new Error('OAuth provider service unavailable')
+      const error = new Error('OAuth provider service is unavailable')
       error.cause = { code: 'OAUTH_SERVICE_UNAVAILABLE', status: 503 }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'OAuth provider service unavailable',
+        message: 'OAuth provider service is unavailable',
         cause: { code: 'OAUTH_SERVICE_UNAVAILABLE', status: 503 },
       })
     })
@@ -211,19 +211,19 @@ describe('OAuth Error Scenarios', () => {
 
   describe('OAuth Account Linking Errors', () => {
     it('should handle email already linked to another account', async () => {
-      const error = new Error('Email already associated with another account')
-      error.cause = { code: 'OAUTH_EMAIL_CONFLICT' }
+      const error = new Error('This email is already associated with another account')
+      error.cause = { code: 'OAUTH_EMAIL_ALREADY_EXISTS' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'Email already associated with another account',
-        cause: { code: 'OAUTH_EMAIL_CONFLICT' },
+        message: 'This email is already associated with another account',
+        cause: { code: 'OAUTH_EMAIL_ALREADY_EXISTS' },
       })
     })
 
@@ -231,10 +231,10 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('This OAuth account is already linked to another user')
       error.cause = { code: 'OAUTH_ACCOUNT_ALREADY_LINKED' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'github',
           callbackURL: '/admin',
         })
@@ -247,59 +247,53 @@ describe('OAuth Error Scenarios', () => {
 
   describe('OAuth Retry Logic', () => {
     it('should retry OAuth redirect on first-time failure', async () => {
-      // Simulate the known issue where first OAuth attempt fails
       const error = new Error('OAuth redirect failed')
       error.cause = { code: 'OAUTH_REDIRECT_FAILED', retryable: true }
       
-      // First attempt fails
-      vi.spyOn(authClient.signIn, 'social')
-        .mockRejectedValueOnce(error as any)
+      // First call fails, second succeeds
+      mockAuthClient.signIn.social
+        .mockRejectedValueOnce(error)
         .mockResolvedValueOnce({
-          data: { url: 'https://accounts.google.com/oauth/authorize?...' },
+          data: { url: 'https://accounts.google.com/oauth/authorize?retry=1' },
           error: null,
-        } as any)
+        })
 
-      // Simulate retry logic
-      let result
-      try {
-        result = await authClient.signIn.social({
+      // First attempt fails
+      await expect(
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
-      } catch (e: any) {
-        if (e.cause?.retryable) {
-          // Retry the request
-          result = await authClient.signIn.social({
-            provider: 'google',
-            callbackURL: '/admin',
-          })
-        } else {
-          throw e
-        }
-      }
+      ).rejects.toThrow('OAuth redirect failed')
 
-      expect(result.data?.url).toBeDefined()
-      expect(authClient.signIn.social).toHaveBeenCalledTimes(2)
+      // Second attempt succeeds
+      const result = await mockAuthClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/admin',
+      })
+
+      expect(result.data?.url).toContain('retry=1')
     })
 
     it('should not retry non-retryable OAuth errors', async () => {
-      const error = new Error('OAuth access denied')
-      error.cause = { code: 'OAUTH_ACCESS_DENIED', retryable: false }
+      const error = new Error('OAuth configuration error')
+      error.cause = { code: 'OAUTH_CONFIG_ERROR', retryable: false }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValue(error)
 
+      // Should fail immediately without retry
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
-        message: 'OAuth access denied',
-        cause: { code: 'OAUTH_ACCESS_DENIED', retryable: false },
+        message: 'OAuth configuration error',
+        cause: { code: 'OAUTH_CONFIG_ERROR', retryable: false },
       })
 
-      // Should only be called once (no retry)
-      expect(authClient.signIn.social).toHaveBeenCalledTimes(1)
+      // Verify it was only called once
+      expect(mockAuthClient.signIn.social).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -308,11 +302,11 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('OAuth provider not configured')
       error.cause = { code: 'OAUTH_PROVIDER_NOT_CONFIGURED' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
-          provider: 'twitter' as any, // Provider not configured
+        mockAuthClient.signIn.social({
+          provider: 'twitter',
           callbackURL: '/admin',
         })
       ).rejects.toMatchObject({
@@ -325,12 +319,12 @@ describe('OAuth Error Scenarios', () => {
       const error = new Error('Redirect URI mismatch')
       error.cause = { code: 'OAUTH_REDIRECT_URI_MISMATCH' }
       
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(error as any)
+      mockAuthClient.signIn.social.mockRejectedValueOnce(error)
 
       await expect(
-        authClient.signIn.social({
+        mockAuthClient.signIn.social({
           provider: 'google',
-          callbackURL: 'https://malicious-site.com/callback', // Invalid redirect
+          callbackURL: 'https://malicious-site.com/callback',
         })
       ).rejects.toMatchObject({
         message: 'Redirect URI mismatch',
