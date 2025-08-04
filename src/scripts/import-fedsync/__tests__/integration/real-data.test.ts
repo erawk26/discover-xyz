@@ -5,6 +5,7 @@
  * that mock data tests miss
  */
 
+import { describe, it, expect } from 'vitest'
 import { CategoryTransformer } from '../../transformers/category.transformer'
 import { EventTransformer } from '../../transformers/event.transformer' 
 import { ProfileTransformer } from '../../transformers/profile.transformer'
@@ -88,7 +89,7 @@ describe('Real FedSync Data Integration', () => {
       
       // Validate description from products
       expect(transformed.description).toBeDefined()
-      expect(transformed.description?.[0].children[0].text).toContain('ultimate summer music experience')
+      expect(transformed.description?.root.children[0].children[0].text).toContain('ultimate summer music experience')
     })
 
     it('should handle events with minimal data gracefully', () => {
@@ -133,7 +134,7 @@ describe('Real FedSync Data Integration', () => {
       expect(transformed.websites.business).toBe('https://artisanbakery.com')
       
       // Validate description
-      expect(transformed.description?.[0].children[0].text).toContain('Handcrafted artisan breads')
+      expect(transformed.description?.root.children[0].children[0].text).toContain('Handcrafted artisan breads')
     })
 
     it('should handle problematic category formats', () => {
@@ -160,7 +161,7 @@ describe('Real FedSync Data Integration', () => {
         const transformed = transformer.transform(profileWithBadPhotos)
         expect(transformed.title).toBe('Business with Invalid Photos')
         // Photos should be disabled to avoid Media collection validation errors
-        expect(transformed.photos).toBeUndefined()
+        expect(transformed.photos).toEqual([])
       }).not.toThrow()
     })
   })

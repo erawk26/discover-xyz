@@ -5,6 +5,7 @@
  * to catch schema mismatches that unit tests miss
  */
 
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { CategoryTransformer } from '../../transformers/category.transformer'

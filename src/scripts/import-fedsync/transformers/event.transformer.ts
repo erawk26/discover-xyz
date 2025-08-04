@@ -93,29 +93,29 @@ export class EventTransformer {
       
       // Contact info - clean email addresses to remove invisible characters
       emailAddresses: {
-        business: this.cleanEmail(source.email_addresses.business),
-        booking: this.cleanEmail(source.email_addresses.booking),
+        business: this.cleanEmail(source.email_addresses?.business || ''),
+        booking: this.cleanEmail(source.email_addresses?.booking || ''),
       },
       
       phoneNumbers: {
-        local: source.phone_numbers.local,
-        alt: source.phone_numbers.alt,
-        fax: source.phone_numbers.fax,
-        freeUS: source.phone_numbers.free_us,
-        freeWorld: source.phone_numbers.free_world,
+        local: source.phone_numbers?.local || '',
+        alt: source.phone_numbers?.alt || '',
+        fax: source.phone_numbers?.fax || '',
+        freeUS: source.phone_numbers?.free_us || '',
+        freeWorld: source.phone_numbers?.free_world || '',
       },
       
       websites: {
-        business: source.websites.business,
-        booking: source.websites.booking || '',
+        business: source.websites?.business || '',
+        booking: source.websites?.booking || '',
       },
       
       socials: {
-        facebook: source.socials.facebook,
-        twitter: source.socials.twitter,
-        instagram: source.socials.instagram,
-        youtube: source.socials.youtube,
-        pinterest: source.socials.pinterest || '',
+        facebook: source.socials?.facebook || '',
+        twitter: source.socials?.twitter || '',
+        instagram: source.socials?.instagram || '',
+        youtube: source.socials?.youtube || '',
+        pinterest: source.socials?.pinterest || '',
       },
       
       // Categories

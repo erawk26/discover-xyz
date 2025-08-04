@@ -5,6 +5,7 @@
  * actual Payload CMS collection configurations
  */
 
+import { describe, it, expect } from 'vitest'
 import { CollectionConfig } from 'payload'
 import { Categories } from '@/collections/Categories'
 import { CategoryTransformer } from '../../transformers/category.transformer'
