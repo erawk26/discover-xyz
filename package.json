@@ -27,7 +27,6 @@
     "cron:fedsync": "tsx src/scripts/fedsync-cron.ts"
   },
   "dependencies": {
-    "@better-auth/client": "0.0.2-alpha.3",
     "@daveyplate/better-auth-ui": "^1.4.7",
     "@payloadcms/admin-bar": "3.45.0",
     "@payloadcms/db-mongodb": "3.45.0",
