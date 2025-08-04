@@ -20,6 +20,39 @@ export function SignInForm() {
   const redirectTo = searchParams.get('redirectTo') || '/admin'
 
   useEffect(() => {
+    // Detect and apply theme preference
+    const detectTheme = async () => {
+      try {
+        // First check localStorage
+        const localTheme = localStorage.getItem('payload-theme')
+        
+        // Fetch theme from API (which checks cookies)
+        const response = await fetch('/api/theme', {
+          headers: {
+            'x-theme-preference': localTheme || 'light'
+          }
+        })
+        
+        if (response.ok) {
+          const { theme } = await response.json()
+          document.documentElement.setAttribute('data-theme', theme)
+          
+          // Also set class for Tailwind dark mode
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+          }
+        }
+      } catch (error) {
+        console.error('Failed to detect theme:', error)
+        // Default to light theme on error
+        document.documentElement.setAttribute('data-theme', 'light')
+      }
+    }
+
+    detectTheme()
+
     // Show error messages from OAuth callback
     const error = searchParams.get('error')
     const retry = searchParams.get('retry')
