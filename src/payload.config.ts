@@ -125,16 +125,10 @@ const config = buildConfig({
           },
           hooks: {
             beforeChange: [
-              async ({ data, operation, req, context }) => {
+              async ({ data, operation, req }) => {
                 // Only check on create (new users)
                 if (operation === 'create' && data.email && req.payload) {
                   try {
-                    // Check if validation should be skipped (e.g., during seeding)
-                    if (context?.skipValidation === true) {
-                      console.log('Skipping email validation for:', data.email)
-                      return data
-                    }
-
                     // Check if this is the first user (no users exist yet)
                     const userCount = await req.payload.count({
                       collection: 'users',
@@ -146,6 +140,7 @@ const config = buildConfig({
                       data.role = 'admin'
                       return data
                     }
+
 
                     const { findMatchingPattern } = await import('@/utils/email-matcher')
 
@@ -186,12 +181,6 @@ const config = buildConfig({
               async ({ user, req }) => {
                 if (req.payload && user.email) {
                   try {
-                    // Skip validation for demo author during seeding
-                    if (user.email === 'demo-author@example.com') {
-                      console.log('Skipping login validation for demo author')
-                      return user
-                    }
-
                     const { findMatchingPattern } = await import('@/utils/email-matcher')
 
                     // Double-check on every login that the user is still allowed

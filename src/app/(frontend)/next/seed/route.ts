@@ -34,14 +34,17 @@ export async function POST(): Promise<Response> {
     authenticatedUser = user
   }
   
-  if (!authenticatedUser) {
-    return new Response('Action forbidden.', { status: 403 })
+  // SECURE: Only allow admins to seed the database
+  if (!authenticatedUser || authenticatedUser.role !== 'admin') {
+    return new Response('Only administrators can seed the database.', { status: 403 })
   }
 
   try {
-    // Create a Payload request object to pass to the Local API for transactions
-    // At this point you should pass in a user, locale, and any other context you need for the Local API
-    const payloadReq = await createLocalReq({ user: authenticatedUser }, payload)
+    // Create a Payload request object with admin context for seeding
+    const payloadReq = await createLocalReq({ 
+      user: authenticatedUser,
+      context: { internal: true }  // Mark as internal operation
+    }, payload)
 
     await seed({ payload, req: payloadReq })
 

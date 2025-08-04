@@ -69,38 +69,17 @@ export const seed = async ({
       .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
   )
 
-  payload.logger.info(`— Seeding demo author...`)
+  payload.logger.info(`— Using authenticated admin as author...`)
 
-  // Delete only the demo author if it exists
-  await payload.delete({
-    collection: 'users',
-    depth: 0,
-    where: {
-      email: {
-        equals: 'demo-author@example.com',
-      },
-    },
-  })
+  // Use the current admin user as the author for seeded content
+  // This is more secure than creating a bypass user
+  const currentUser = req.user
+  
+  if (!currentUser) {
+    throw new Error('No authenticated user found for seeding')
+  }
 
-  // Check if any users exist
-  const userCount = await payload.count({
-    collection: 'users',
-  })
-
-  // Create the demo author - if no users exist, it will be created as admin
-  const demoAuthor = await payload.create({
-    collection: 'users',
-    data: {
-      name: 'Demo Author',
-      email: 'demo-author@example.com',
-      password: 'password',
-      role: userCount.totalDocs === 0 ? 'admin' : 'content-editor',
-    },
-    context: {
-      // Bypass email pattern validation for seed operation
-      skipValidation: true,
-    },
-  })
+  payload.logger.info(`— Using ${currentUser.email} as content author`)
 
   payload.logger.info(`— Seeding media...`)
 
@@ -229,7 +208,7 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: article1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
+    data: article1({ heroImage: image1Doc, blockImage: image2Doc, author: currentUser }),
   })
 
   const _post2Doc = await payload.create({
@@ -238,7 +217,7 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: article2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
+    data: article2({ heroImage: image2Doc, blockImage: image3Doc, author: currentUser }),
   })
 
   const _post3Doc = await payload.create({
@@ -247,7 +226,7 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: article3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
+    data: article3({ heroImage: image3Doc, blockImage: image1Doc, author: currentUser }),
   })
 
   // Note: Related articles functionality would need to be added to the Articles collection schema
