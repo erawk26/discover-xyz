@@ -21,6 +21,11 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
 data/fedsync/
 logs/
+*.log
 CLAUDE.md
+.claude*
+.hive*
+docs/ai
