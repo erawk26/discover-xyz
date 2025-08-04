@@ -17,7 +17,7 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
-    "reset-db": "cross-env NODE_OPTIONS=--no-deprecation node scripts/reset-db.js",
+    "db:reset": "cross-env NODE_OPTIONS=--no-deprecation node scripts/reset-db.js",
     "start": "cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",

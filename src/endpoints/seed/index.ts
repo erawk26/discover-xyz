@@ -18,6 +18,7 @@ const collections: CollectionSlug[] = [
   'forms',
   'form-submissions',
   'search',
+  'allowed-users',
 ]
 const globals: GlobalSlug[] = ['header', 'footer']
 
@@ -68,6 +69,48 @@ export const seed = async ({
       .filter((collection) => Boolean(payload.collections[collection].config.versions))
       .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
   )
+
+  payload.logger.info(`— Seeding allowed users patterns...`)
+
+  // Seed some default allowed-users patterns
+  await Promise.all([
+    payload.create({
+      collection: 'allowed-users',
+      data: {
+        pattern: 'cedric@grr.la',
+        type: 'exact',
+        defaultRole: 'admin',
+        description: 'Primary admin',
+        addedVia: 'system',
+        addedAt: new Date(),
+        notes: 'Seeded admin user',
+      },
+    }),
+    payload.create({
+      collection: 'allowed-users',
+      data: {
+        pattern: '*@grr.la',
+        type: 'wildcard',
+        defaultRole: 'content-editor',
+        description: 'All GRR.LA employees',
+        addedVia: 'system',
+        addedAt: new Date(),
+        notes: 'Company-wide access pattern',
+      },
+    }),
+    payload.create({
+      collection: 'allowed-users',
+      data: {
+        pattern: '*@example.com',
+        type: 'wildcard',
+        defaultRole: 'authenticated',
+        description: 'Example domain for testing',
+        addedVia: 'system',
+        addedAt: new Date(),
+        notes: 'Testing pattern - remove in production',
+      },
+    }),
+  ])
 
   payload.logger.info(`— Using authenticated admin as author...`)
 
