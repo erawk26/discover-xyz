@@ -56,8 +56,11 @@ export const seed = async ({
     ),
   )
 
+  // Clear all collections except users to preserve first-user logic
   await Promise.all(
-    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
+    collections
+      .filter((collection) => collection !== 'users')
+      .map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
   )
 
   await Promise.all(
@@ -66,8 +69,9 @@ export const seed = async ({
       .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
   )
 
-  payload.logger.info(`— Seeding demo author and user...`)
+  payload.logger.info(`— Seeding demo author...`)
 
+  // Delete only the demo author if it exists
   await payload.delete({
     collection: 'users',
     depth: 0,
@@ -75,6 +79,26 @@ export const seed = async ({
       email: {
         equals: 'demo-author@example.com',
       },
+    },
+  })
+
+  // Check if any users exist
+  const userCount = await payload.count({
+    collection: 'users',
+  })
+
+  // Create the demo author - if no users exist, it will be created as admin
+  const demoAuthor = await payload.create({
+    collection: 'users',
+    data: {
+      name: 'Demo Author',
+      email: 'demo-author@example.com',
+      password: 'password',
+      role: userCount.totalDocs === 0 ? 'admin' : 'content-editor',
+    },
+    context: {
+      // Bypass email pattern validation for seed operation
+      skipValidation: true,
     },
   })
 
@@ -95,16 +119,7 @@ export const seed = async ({
     ),
   ])
 
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
-    payload.create({
-      collection: 'users',
-      data: {
-        name: 'Demo Author',
-        email: 'demo-author@example.com',
-        password: 'password',
-        role: 'content-editor',
-      },
-    }),
+  const [image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
     payload.create({
       collection: 'media',
       data: image1,
@@ -208,7 +223,7 @@ export const seed = async ({
 
   // Do not create articles with `Promise.all` because we want the articles to be created in order
   // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  await payload.create({
+  const _post1Doc = await payload.create({
     collection: 'articles',
     depth: 0,
     context: {
@@ -217,7 +232,7 @@ export const seed = async ({
     data: article1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
   })
 
-  await payload.create({
+  const _post2Doc = await payload.create({
     collection: 'articles',
     depth: 0,
     context: {
@@ -226,7 +241,7 @@ export const seed = async ({
     data: article2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
   })
 
-  await payload.create({
+  const _post3Doc = await payload.create({
     collection: 'articles',
     depth: 0,
     context: {

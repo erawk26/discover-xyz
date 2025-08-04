@@ -42,13 +42,20 @@ export const SeedButton: React.FC = () => {
         toast.promise(
           new Promise((resolve, reject) => {
             try {
-              fetch('/next/seed', { method: 'POST', credentials: 'include' })
-                .then((res) => {
+              fetch('/next/seed', { 
+                method: 'POST', 
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                }
+              })
+                .then(async (res) => {
                   if (res.ok) {
                     resolve(true)
                     setSeeded(true)
                   } else {
-                    reject('An error occurred while seeding.')
+                    const text = await res.text()
+                    reject(`Error: ${text} (${res.status})`)
                   }
                 })
                 .catch((error) => {
