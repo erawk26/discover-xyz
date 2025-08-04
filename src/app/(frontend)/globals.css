@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../../../tailwind.config.ts";
 
 @theme {
   --color-brand-primary: #2563eb;
@@ -6,6 +7,17 @@
   --color-brand-primary-active: #1e40af;
   --color-brand-secondary: #7c3aed;
   --color-brand-accent: #06b6d4;
+  
+  /* Container configuration */
+  --container-padding-default: 1rem;
+  --container-padding-sm: 1rem;
+  --container-padding-md: 2rem;
+  --container-padding-lg: 2rem;
+  --container-padding-xl: 2rem;
+  --container-padding-2xl: 2rem;
+  
+  /* Animation timing */
+  --animate-accordion: 0.2s;
 }
 
 @import '../../styles/safelist.css';
