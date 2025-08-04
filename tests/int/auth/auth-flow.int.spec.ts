@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { authClient } from '@/lib/better-auth/client'
+import { signIn, signUp, signOut, useSession, twoFactor, magicLink, authClient } from '@/lib/better-auth/client'
 import { toast } from 'sonner'
 
 // Mock dependencies
@@ -28,12 +28,12 @@ describe('Authentication Flow Tests', () => {
         expiresAt: Date.now() / 1000 + 7200,
       }
 
-      vi.spyOn(authClient.signIn, 'email').mockResolvedValueOnce({
+      vi.spyOn(signIn, 'email').mockResolvedValueOnce({
         data: { session: mockSession, user: mockSession.user },
         error: null,
       } as any)
 
-      const result = await authClient.signIn.email({
+      const result = await signIn.email({
         email: 'test@example.com',
         password: 'password123',
         callbackURL: '/admin',
@@ -44,12 +44,12 @@ describe('Authentication Flow Tests', () => {
     })
 
     it('should handle invalid credentials error', async () => {
-      vi.spyOn(authClient.signIn, 'email').mockRejectedValueOnce(
+      vi.spyOn(signIn, 'email').mockRejectedValueOnce(
         new Error('Invalid credentials')
       )
 
       await expect(
-        authClient.signIn.email({
+        signIn.email({
           email: 'test@example.com',
           password: 'wrongpassword',
           callbackURL: '/admin',
@@ -61,10 +61,10 @@ describe('Authentication Flow Tests', () => {
       const error = new Error('Too many requests') as any
       error.error = { status: 429 }
       
-      vi.spyOn(authClient.signIn, 'email').mockRejectedValueOnce(error)
+      vi.spyOn(signIn, 'email').mockRejectedValueOnce(error)
 
       try {
-        await authClient.signIn.email({
+        await signIn.email({
           email: 'test@example.com',
           password: 'password123',
           callbackURL: '/admin',
@@ -82,18 +82,18 @@ describe('Authentication Flow Tests', () => {
     it('should initiate Google OAuth flow', async () => {
       const mockRedirectUrl = 'https://accounts.google.com/oauth/authorize?...'
       
-      vi.spyOn(authClient.signIn, 'social').mockResolvedValueOnce({
+      vi.spyOn(signIn, 'social').mockResolvedValueOnce({
         data: { url: mockRedirectUrl },
         error: null,
       } as any)
 
-      const result = await authClient.signIn.social({
+      const result = await signIn.social({
         provider: 'google',
         callbackURL: '/admin',
       })
 
       expect(result.data?.url).toBe(mockRedirectUrl)
-      expect(authClient.signIn.social).toHaveBeenCalledWith({
+      expect(signIn.social).toHaveBeenCalledWith({
         provider: 'google',
         callbackURL: '/admin',
       })
@@ -102,30 +102,30 @@ describe('Authentication Flow Tests', () => {
     it('should initiate GitHub OAuth flow', async () => {
       const mockRedirectUrl = 'https://github.com/login/oauth/authorize?...'
       
-      vi.spyOn(authClient.signIn, 'social').mockResolvedValueOnce({
+      vi.spyOn(signIn, 'social').mockResolvedValueOnce({
         data: { url: mockRedirectUrl },
         error: null,
       } as any)
 
-      const result = await authClient.signIn.social({
+      const result = await signIn.social({
         provider: 'github',
         callbackURL: '/admin',
       })
 
       expect(result.data?.url).toBe(mockRedirectUrl)
-      expect(authClient.signIn.social).toHaveBeenCalledWith({
+      expect(signIn.social).toHaveBeenCalledWith({
         provider: 'github',
         callbackURL: '/admin',
       })
     })
 
     it('should handle OAuth provider errors', async () => {
-      vi.spyOn(authClient.signIn, 'social').mockRejectedValueOnce(
+      vi.spyOn(signIn, 'social').mockRejectedValueOnce(
         new Error('OAuth provider error')
       )
 
       await expect(
-        authClient.signIn.social({
+        signIn.social({
           provider: 'google',
           callbackURL: '/admin',
         })
@@ -135,30 +135,30 @@ describe('Authentication Flow Tests', () => {
 
   describe('Magic Link Authentication', () => {
     it('should send magic link successfully', async () => {
-      vi.spyOn(authClient.signIn, 'magicLink').mockResolvedValueOnce({
+      vi.spyOn(magicLink, 'signIn').mockResolvedValueOnce({
         data: { success: true },
         error: null,
       } as any)
 
-      const result = await authClient.signIn.magicLink({
+      const result = await magicLink.signIn({
         email: 'test@example.com',
         callbackURL: '/admin',
       })
 
       expect(result.data?.success).toBe(true)
-      expect(authClient.signIn.magicLink).toHaveBeenCalledWith({
+      expect(magicLink.signIn).toHaveBeenCalledWith({
         email: 'test@example.com',
         callbackURL: '/admin',
       })
     })
 
     it('should handle invalid email for magic link', async () => {
-      vi.spyOn(authClient.signIn, 'magicLink').mockRejectedValueOnce(
+      vi.spyOn(magicLink, 'signIn').mockRejectedValueOnce(
         new Error('Invalid email address')
       )
 
       await expect(
-        authClient.signIn.magicLink({
+        magicLink.signIn({
           email: 'invalid-email',
           callbackURL: '/admin',
         })
@@ -166,12 +166,12 @@ describe('Authentication Flow Tests', () => {
     })
 
     it('should handle rate limiting for magic links', async () => {
-      vi.spyOn(authClient.signIn, 'magicLink').mockRejectedValueOnce(
+      vi.spyOn(magicLink, 'signIn').mockRejectedValueOnce(
         new Error('Too many magic link requests')
       )
 
       await expect(
-        authClient.signIn.magicLink({
+        magicLink.signIn({
           email: 'test@example.com',
           callbackURL: '/admin',
         })
@@ -187,12 +187,12 @@ describe('Authentication Flow Tests', () => {
         role: 'user',
       }
 
-      vi.spyOn(authClient, 'signUp').mockResolvedValueOnce({
+      vi.spyOn(signUp, 'email').mockResolvedValueOnce({
         data: { user: mockUser },
         error: null,
       } as any)
 
-      const result = await authClient.signUp({
+      const result = await signUp.email({
         email: 'newuser@example.com',
         password: 'securepassword123',
         name: 'New User',
@@ -203,12 +203,12 @@ describe('Authentication Flow Tests', () => {
     })
 
     it('should handle duplicate email error', async () => {
-      vi.spyOn(authClient, 'signUp').mockRejectedValueOnce(
+      vi.spyOn(signUp, 'email').mockRejectedValueOnce(
         new Error('Email already exists')
       )
 
       await expect(
-        authClient.signUp({
+        signUp.email({
           email: 'existing@example.com',
           password: 'password123',
           name: 'Existing User',
@@ -217,12 +217,12 @@ describe('Authentication Flow Tests', () => {
     })
 
     it('should validate password requirements', async () => {
-      vi.spyOn(authClient, 'signUp').mockRejectedValueOnce(
+      vi.spyOn(signUp, 'email').mockRejectedValueOnce(
         new Error('Password must be at least 8 characters')
       )
 
       await expect(
-        authClient.signUp({
+        signUp.email({
           email: 'test@example.com',
           password: 'short',
           name: 'Test User',
@@ -233,22 +233,22 @@ describe('Authentication Flow Tests', () => {
 
   describe('Sign Out Flow', () => {
     it('should successfully sign out', async () => {
-      vi.spyOn(authClient, 'signOut').mockResolvedValueOnce({
+      vi.spyOn(signOut, '$').mockResolvedValueOnce({
         data: { success: true },
         error: null,
       } as any)
 
-      const result = await authClient.signOut()
+      const result = await signOut()
 
       expect(result.data?.success).toBe(true)
     })
 
     it('should handle sign out errors gracefully', async () => {
-      vi.spyOn(authClient, 'signOut').mockRejectedValueOnce(
+      vi.spyOn(signOut, '$').mockRejectedValueOnce(
         new Error('Failed to sign out')
       )
 
-      await expect(authClient.signOut()).rejects.toThrow('Failed to sign out')
+      await expect(signOut()).rejects.toThrow('Failed to sign out')
     })
   })
 
@@ -297,9 +297,9 @@ describe('Authentication Flow Tests', () => {
         error: null,
       }
 
-      vi.spyOn(authClient.signIn, 'email').mockResolvedValueOnce(mock2FAResponse as any)
+      vi.spyOn(signIn, 'email').mockResolvedValueOnce(mock2FAResponse as any)
 
-      const result = await authClient.signIn.email({
+      const result = await signIn.email({
         email: 'test@example.com',
         password: 'password123',
         callbackURL: '/admin',
@@ -315,12 +315,12 @@ describe('Authentication Flow Tests', () => {
         expiresAt: Date.now() / 1000 + 7200,
       }
 
-      vi.spyOn(authClient.twoFactor, 'verify').mockResolvedValueOnce({
+      vi.spyOn(twoFactor, 'verifyTotp').mockResolvedValueOnce({
         data: { session: mockSession },
         error: null,
       } as any)
 
-      const result = await authClient.twoFactor.verify({
+      const result = await twoFactor.verifyTotp({
         code: '123456',
       })
 
@@ -328,12 +328,12 @@ describe('Authentication Flow Tests', () => {
     })
 
     it('should handle invalid 2FA code', async () => {
-      vi.spyOn(authClient.twoFactor, 'verify').mockRejectedValueOnce(
+      vi.spyOn(twoFactor, 'verifyTotp').mockRejectedValueOnce(
         new Error('Invalid verification code')
       )
 
       await expect(
-        authClient.twoFactor.verify({
+        twoFactor.verifyTotp({
           code: '000000',
         })
       ).rejects.toThrow('Invalid verification code')
