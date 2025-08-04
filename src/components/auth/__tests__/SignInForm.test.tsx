@@ -57,6 +57,11 @@ describe('SignInForm', () => {
       },
       writable: true,
     })
+    
+    // Clear DOM between tests
+    document.body.innerHTML = ''
+    document.documentElement.removeAttribute('data-theme')
+    document.documentElement.classList.remove('dark')
   })
 
   it('should render sign in form with all elements', () => {
@@ -70,13 +75,14 @@ describe('SignInForm', () => {
     expect(screen.getByLabelText('Email')).toBeInTheDocument()
     expect(screen.getByLabelText('Password')).toBeInTheDocument()
 
-    // Check for action buttons
-    expect(screen.getByText('Sign In')).toBeInTheDocument()
-    expect(screen.getByText('Send Magic Link')).toBeInTheDocument()
+    // Check for action buttons (should find the submit button)
+    const signInButtons = screen.getAllByRole('button', { name: /^sign in$/i })
+    expect(signInButtons.length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Send Magic Link' })).toBeInTheDocument()
 
     // Check for tabs
-    expect(screen.getByText('Password')).toBeInTheDocument()
-    expect(screen.getByText('Email Code')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Password' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Email Code' })).toBeInTheDocument()
   })
 
   it('should handle email/password sign in', async () => {
@@ -96,8 +102,10 @@ describe('SignInForm', () => {
     await user.type(screen.getByLabelText('Email'), 'test@example.com')
     await user.type(screen.getByLabelText('Password'), 'password123')
 
-    // Submit form
-    await user.click(screen.getByText('Sign In'))
+    // Submit form - use type="submit" to find the exact button
+    const submitButtons = screen.getAllByRole('button', { name: /^sign in$/i })
+    const submitButton = submitButtons.find(btn => btn.getAttribute('type') === 'submit')
+    await user.click(submitButton!)
 
     await waitFor(() => {
       expect(authClient.signIn.email).toHaveBeenCalledWith({
@@ -119,7 +127,9 @@ describe('SignInForm', () => {
 
     await user.type(screen.getByLabelText('Email'), 'test@example.com')
     await user.type(screen.getByLabelText('Password'), 'wrong')
-    await user.click(screen.getByText('Sign In'))
+    const submitButtons = screen.getAllByRole('button', { name: /^sign in$/i })
+    const submitButton = submitButtons.find(btn => btn.getAttribute('type') === 'submit')
+    await user.click(submitButton!)
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Invalid credentials')
@@ -204,13 +214,13 @@ describe('SignInForm', () => {
     render(<SignInForm />)
 
     // Click on Email Code tab
-    await user.click(screen.getByText('Email Code'))
+    await user.click(screen.getByRole('button', { name: 'Email Code' }))
 
     // Password field should be hidden
     expect(screen.queryByLabelText('Password')).not.toBeInTheDocument()
     
     // Send Code button should be visible
-    expect(screen.getByText('Send Code')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Send Code' })).toBeInTheDocument()
   })
 
   it('should send OTP code', async () => {
@@ -223,13 +233,13 @@ describe('SignInForm', () => {
     render(<SignInForm />)
 
     // Switch to OTP mode
-    await user.click(screen.getByText('Email Code'))
+    await user.click(screen.getByRole('button', { name: 'Email Code' }))
     
     // Enter email
     await user.type(screen.getByLabelText('Email'), 'test@example.com')
     
     // Send OTP
-    await user.click(screen.getByText('Send Code'))
+    await user.click(screen.getByRole('button', { name: 'Send Code' }))
 
     await waitFor(() => {
       expect(authClient.emailOTP.sendVerificationOtp).toHaveBeenCalledWith({
@@ -259,9 +269,9 @@ describe('SignInForm', () => {
     render(<SignInForm />)
 
     // Switch to OTP mode
-    await user.click(screen.getByText('Email Code'))
+    await user.click(screen.getByRole('button', { name: 'Email Code' }))
     await user.type(screen.getByLabelText('Email'), 'test@example.com')
-    await user.click(screen.getByText('Send Code'))
+    await user.click(screen.getByRole('button', { name: 'Send Code' }))
 
     // Wait for OTP input to appear
     await waitFor(() => {
@@ -270,7 +280,7 @@ describe('SignInForm', () => {
 
     // Enter OTP
     await user.type(screen.getByLabelText('Verification Code'), '123456')
-    await user.click(screen.getByText('Verify & Sign In'))
+    await user.click(screen.getByRole('button', { name: /verify.*sign in/i }))
 
     await waitFor(() => {
       expect(authClient.signIn.emailOTP).toHaveBeenCalledWith({

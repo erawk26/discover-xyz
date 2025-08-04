@@ -132,6 +132,8 @@ describe('OTP Authentication Flow', () => {
     })
 
     it('should handle OTP resend functionality', async () => {
+      vi.useFakeTimers()
+      
       const email = 'otp@example.com'
 
       // Initial OTP send
@@ -172,6 +174,8 @@ describe('OTP Authentication Flow', () => {
       })
 
       expect(resendResult.data.success).toBe(true)
+      
+      vi.useRealTimers()
     })
   })
 

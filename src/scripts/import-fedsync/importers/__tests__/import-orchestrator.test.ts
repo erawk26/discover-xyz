@@ -5,10 +5,30 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { ImportOrchestrator, ImportOptions } from '../import-orchestrator'
 import { Logger, LogLevel } from 'fedsync-standalone/logger'
 import fs from 'fs/promises'
 import path from 'path'
+
+// Mock the entire payload config to avoid ES module issues
+vi.mock('@payload-config', () => ({
+  default: {
+    collections: [],
+    plugins: [],
+    db: {},
+  },
+}))
+
+// Mock payload-auth separately  
+vi.mock('payload-auth/better-auth', () => ({
+  betterAuthPlugin: vi.fn(() => ({
+    name: 'better-auth-plugin',
+    init: vi.fn(),
+  })),
+}))
+
+// Import after mocks are set up
+import { ImportOrchestrator } from '../import-orchestrator'
+type ImportOptions = Parameters<ImportOrchestrator['prototype']['import']>[1]
 
 // Mock Payload CMS
 const mockPayload = {
@@ -78,7 +98,7 @@ describe('ImportOrchestrator', () => {
     it('should process categories file successfully', async () => {
       // Mock file system
       const mockCategories = {
-        groups: [
+        categories: [
           {
             id: 1,
             name: 'Arts, Culture & History',
@@ -125,7 +145,7 @@ describe('ImportOrchestrator', () => {
 
     it('should update existing categories', async () => {
       const mockCategories = {
-        groups: [
+        categories: [
           {
             id: 1,
             name: 'Test Group',
@@ -240,7 +260,7 @@ describe('ImportOrchestrator', () => {
   describe('Dry Run Mode', () => {
     it('should not make changes in dry run mode', async () => {
       const mockCategories = {
-        groups: [
+        categories: [
           {
             id: 1,
             name: 'Test Group',
@@ -251,6 +271,10 @@ describe('ImportOrchestrator', () => {
 
       vi.mocked(fs.access).mockResolvedValueOnce(undefined)
       vi.mocked(fs.readFile).mockResolvedValueOnce(JSON.stringify(mockCategories))
+      // Mock empty directories for events and profiles
+      vi.mocked(fs.readdir)
+        .mockResolvedValueOnce([]) // Empty events dir
+        .mockResolvedValueOnce([]) // Empty profiles dir
 
       await orchestrator.initialize()
       const stats = await orchestrator.runImport(mockDataPath, { 
@@ -317,7 +341,7 @@ describe('ImportOrchestrator', () => {
     it('should provide comprehensive import statistics', async () => {
       // Mock minimal successful import
       vi.mocked(fs.access).mockResolvedValueOnce(undefined)
-      vi.mocked(fs.readFile).mockResolvedValueOnce(JSON.stringify({ groups: [] }))
+      vi.mocked(fs.readFile).mockResolvedValueOnce(JSON.stringify({ categories: [] }))
       vi.mocked(fs.readdir)
         .mockResolvedValueOnce([]) // Empty events dir
         .mockResolvedValueOnce([]) // Empty profiles dir

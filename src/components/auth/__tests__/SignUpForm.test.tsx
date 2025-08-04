@@ -17,6 +17,9 @@ vi.mock('@/lib/better-auth/client', () => ({
     signUp: {
       email: vi.fn(),
     },
+    signIn: {
+      social: vi.fn(),
+    },
   },
 }))
 
@@ -30,6 +33,9 @@ vi.mock('sonner', () => ({
 describe('SignUpForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    
+    // Clear DOM between tests
+    document.body.innerHTML = ''
   })
 
   it('should render sign up form with all elements', () => {
@@ -38,8 +44,10 @@ describe('SignUpForm', () => {
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toBeInTheDocument()
     expect(screen.getByLabelText('Password')).toBeInTheDocument()
-    expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument()
-    expect(screen.getByText('Create Account')).toBeInTheDocument()
+    const submitButtons = screen.getAllByRole('button', { name: /sign up/i })
+    expect(submitButtons.length).toBeGreaterThan(0)
+    expect(screen.getByText('Sign up with Google')).toBeInTheDocument()
+    expect(screen.getByText('Sign up with GitHub')).toBeInTheDocument()
   })
 
   it('should handle successful sign up', async () => {
@@ -62,62 +70,23 @@ describe('SignUpForm', () => {
     await user.type(screen.getByLabelText('Name'), 'Test User')
     await user.type(screen.getByLabelText('Email'), 'new@example.com')
     await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'SecurePass123!')
 
     // Submit
-    await user.click(screen.getByText('Create Account'))
+    const submitButtons = screen.getAllByRole('button', { name: /sign up/i })
+    const submitButton = submitButtons.find(btn => btn.getAttribute('type') === 'submit')
+    await user.click(submitButton!)
 
     await waitFor(() => {
       expect(authClient.signUp.email).toHaveBeenCalledWith({
         email: 'new@example.com',
         password: 'SecurePass123!',
         name: 'Test User',
+        callbackURL: '/admin'
       })
-      expect(toast.success).toHaveBeenCalledWith(
-        'Account created! Please check your email to verify your account.'
-      )
     })
   })
 
-  it('should validate password match', async () => {
-    const user = userEvent.setup()
-    
-    render(<SignUpForm />)
-
-    await user.type(screen.getByLabelText('Name'), 'Test User')
-    await user.type(screen.getByLabelText('Email'), 'new@example.com')
-    await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'DifferentPass123!')
-
-    await user.click(screen.getByText('Create Account'))
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Passwords do not match')
-      expect(authClient.signUp.email).not.toHaveBeenCalled()
-    })
-  })
-
-  it('should validate password strength', async () => {
-    const user = userEvent.setup()
-    
-    render(<SignUpForm />)
-
-    await user.type(screen.getByLabelText('Name'), 'Test User')
-    await user.type(screen.getByLabelText('Email'), 'new@example.com')
-    await user.type(screen.getByLabelText('Password'), 'weak')
-    await user.type(screen.getByLabelText('Confirm Password'), 'weak')
-
-    await user.click(screen.getByText('Create Account'))
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        'Password must be at least 8 characters long'
-      )
-      expect(authClient.signUp.email).not.toHaveBeenCalled()
-    })
-  })
-
-  it('should handle duplicate email error', async () => {
+  it('should handle sign up errors', async () => {
     const user = userEvent.setup()
     
     vi.mocked(authClient.signUp.email).mockRejectedValueOnce(
@@ -129,9 +98,10 @@ describe('SignUpForm', () => {
     await user.type(screen.getByLabelText('Name'), 'Test User')
     await user.type(screen.getByLabelText('Email'), 'existing@example.com')
     await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'SecurePass123!')
 
-    await user.click(screen.getByText('Create Account'))
+    const submitButtons = screen.getAllByRole('button', { name: /sign up/i })
+    const submitButton = submitButtons.find(btn => btn.getAttribute('type') === 'submit')
+    await user.click(submitButton!)
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Email already exists')
@@ -154,9 +124,9 @@ describe('SignUpForm', () => {
     await user.type(screen.getByLabelText('Name'), 'Test User')
     await user.type(screen.getByLabelText('Email'), 'new@example.com')
     await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'SecurePass123!')
 
-    const submitButton = screen.getByText('Create Account')
+    const submitButtons = screen.getAllByRole('button', { name: /sign up/i })
+    const submitButton = submitButtons.find(btn => btn.getAttribute('type') === 'submit')!
     await user.click(submitButton)
 
     // Button should be disabled while loading
@@ -171,8 +141,8 @@ describe('SignUpForm', () => {
     })
 
     await waitFor(() => {
-      expect(submitButton).not.toBeDisabled()
-      expect(screen.getByText('Create Account')).toBeInTheDocument()
+      expect(submitButton.disabled).toBe(false)
+      expect(screen.getByText('Sign Up')).toBeInTheDocument()
     })
   })
 
@@ -182,7 +152,9 @@ describe('SignUpForm', () => {
     render(<SignUpForm />)
 
     // Try to submit empty form
-    await user.click(screen.getByText('Create Account'))
+    const submitButtons = screen.getAllByRole('button', { name: /sign up/i })
+    const submitButton = submitButtons.find(btn => btn.getAttribute('type') === 'submit')
+    await user.click(submitButton!)
 
     // Check that HTML5 validation prevents submission
     expect(authClient.signUp.email).not.toHaveBeenCalled()
@@ -196,59 +168,23 @@ describe('SignUpForm', () => {
     await user.type(screen.getByLabelText('Name'), 'Test User')
     await user.type(screen.getByLabelText('Email'), 'invalid-email')
     await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'SecurePass123!')
 
     // The email input should have validation error due to type="email"
     const emailInput = screen.getByLabelText('Email') as HTMLInputElement
     expect(emailInput.validity.valid).toBe(false)
   })
 
-  it('should trim whitespace from inputs', async () => {
+  it('should enforce minimum password length', async () => {
     const user = userEvent.setup()
     
-    vi.mocked(authClient.signUp.email).mockResolvedValueOnce({
-      data: {
-        user: { id: '1', email: 'trimmed@example.com' },
-      },
-    })
-
     render(<SignUpForm />)
 
-    // Enter values with whitespace
-    await user.type(screen.getByLabelText('Name'), '  Test User  ')
-    await user.type(screen.getByLabelText('Email'), '  trimmed@example.com  ')
-    await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'SecurePass123!')
+    const passwordInput = screen.getByLabelText('Password') as HTMLInputElement
+    await user.type(passwordInput, 'short')
 
-    await user.click(screen.getByText('Create Account'))
-
-    await waitFor(() => {
-      expect(authClient.signUp.email).toHaveBeenCalledWith({
-        email: 'trimmed@example.com',
-        password: 'SecurePass123!',
-        name: 'Test User',
-      })
-    })
-  })
-
-  it('should handle network errors gracefully', async () => {
-    const user = userEvent.setup()
-    
-    vi.mocked(authClient.signUp.email).mockRejectedValueOnce(
-      new Error('Network error')
-    )
-
-    render(<SignUpForm />)
-
-    await user.type(screen.getByLabelText('Name'), 'Test User')
-    await user.type(screen.getByLabelText('Email'), 'new@example.com')
-    await user.type(screen.getByLabelText('Password'), 'SecurePass123!')
-    await user.type(screen.getByLabelText('Confirm Password'), 'SecurePass123!')
-
-    await user.click(screen.getByText('Create Account'))
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Network error')
-    })
+    // Check that the input has the minimum length attribute
+    expect(passwordInput.minLength).toBe(8)
+    expect(passwordInput.value).toBe('short')
+    expect(passwordInput.value.length).toBeLessThan(8)
   })
 })

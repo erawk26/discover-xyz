@@ -129,6 +129,8 @@ describe('Multi-Factor Authentication (MFA)', () => {
     })
 
     it('should handle MFA timeout', async () => {
+      vi.useFakeTimers()
+      
       const challengeId = 'challenge-timeout'
 
       // Simulate waiting too long
@@ -144,6 +146,8 @@ describe('Multi-Factor Authentication (MFA)', () => {
           code: '123456',
         })
       ).rejects.toThrow('MFA challenge has expired')
+      
+      vi.useRealTimers()
     })
 
     it('should limit MFA verification attempts', async () => {
