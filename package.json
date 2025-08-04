@@ -24,7 +24,8 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "sync": "fedsync --all",
     "import": "pnpm run sync && payload run scripts/import-fedsync.mjs",
-    "cron:fedsync": "tsx src/scripts/fedsync-cron.ts"
+    "cron:fedsync": "tsx src/scripts/fedsync-cron.ts",
+    "db:seed": "cross-env NODE_OPTIONS=--no-deprecation tsx src/scripts/seed.ts"
   },
   "dependencies": {
     "@daveyplate/better-auth-ui": "^1.4.7",
