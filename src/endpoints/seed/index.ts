@@ -77,37 +77,37 @@ export const seed = async ({
     payload.create({
       collection: 'allowed-users',
       data: {
-        pattern: 'cedric@grr.la',
+        pattern: 'erawk26@gmail.com',
         type: 'exact',
         defaultRole: 'admin',
         description: 'Primary admin',
         addedVia: 'system',
-        addedAt: new Date(),
+        addedAt: new Date().toISOString(),
         notes: 'Seeded admin user',
       },
     }),
     payload.create({
       collection: 'allowed-users',
       data: {
-        pattern: '*@grr.la',
+        pattern: '*@milespartnership.com',
         type: 'wildcard',
         defaultRole: 'content-editor',
-        description: 'All GRR.LA employees',
+        description: 'All Miles Partnership employees',
         addedVia: 'system',
-        addedAt: new Date(),
+        addedAt: new Date().toISOString(),
         notes: 'Company-wide access pattern',
       },
     }),
     payload.create({
       collection: 'allowed-users',
       data: {
-        pattern: '*@example.com',
+        pattern: `${process.env.SITE_EMAIL || '*@discover-xyz.com'}`,
         type: 'wildcard',
-        defaultRole: 'authenticated',
+        defaultRole: 'content-editor',
         description: 'Example domain for testing',
         addedVia: 'system',
-        addedAt: new Date(),
-        notes: 'Testing pattern - remove in production',
+        addedAt: new Date().toISOString(),
+        notes: 'Wildcard pattern for site email domain',
       },
     }),
   ])
@@ -117,7 +117,7 @@ export const seed = async ({
   // Use the current admin user as the author for seeded content
   // This is more secure than creating a bypass user
   const currentUser = req.user
-  
+
   if (!currentUser) {
     throw new Error('No authenticated user found for seeding')
   }
@@ -167,6 +167,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Technology',
+        type: 'category',
         breadcrumbs: [
           {
             label: 'Technology',
@@ -180,6 +181,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'News',
+        type: 'category',
         breadcrumbs: [
           {
             label: 'News',
@@ -193,6 +195,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Finance',
+        type: 'category',
         breadcrumbs: [
           {
             label: 'Finance',
@@ -205,6 +208,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Design',
+        type: 'category',
         breadcrumbs: [
           {
             label: 'Design',
@@ -218,6 +222,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Software',
+        type: 'category',
         breadcrumbs: [
           {
             label: 'Software',
@@ -231,6 +236,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Engineering',
+        type: 'category',
         breadcrumbs: [
           {
             label: 'Engineering',
