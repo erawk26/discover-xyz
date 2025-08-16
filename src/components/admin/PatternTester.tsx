@@ -45,9 +45,10 @@ const PatternTester: React.FC = () => {
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginBottom: '1rem' }}>
         <div style={{ flex: 1 }}>
           <TextInput
+            path="testEmail"
             label="Test Email"
             value={testEmail}
-            onChange={(e) => setTestEmail(e.target.value)}
+            onChange={(e: any) => setTestEmail(e.target.value)}
             placeholder="test@example.com"
           />
         </div>

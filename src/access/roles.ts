@@ -12,7 +12,7 @@ export const roleHierarchy = {
   [UserRole.AUTHENTICATED]: [UserRole.AUTHENTICATED]
 }
 
-export function hasRole(userRole: string | undefined, requiredRole: UserRole): boolean {
+export function hasRole(userRole: string | null | undefined, requiredRole: UserRole): boolean {
   if (!userRole) return false
   
   return roleHierarchy[userRole as UserRole]?.includes(requiredRole) ?? false

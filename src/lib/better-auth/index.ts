@@ -6,7 +6,7 @@ import config from '@/payload.config'
 
 export async function getAuth() {
   const payload = await getPayload({ config })
-  return payload.betterAuth
+  return (payload as any).betterAuth
 }
 
 // For backwards compatibility, export auth as a promise

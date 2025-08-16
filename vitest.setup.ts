@@ -13,7 +13,7 @@ vi.mock('payload-auth/better-auth', () => ({
 }))
 
 // Set test environment
-process.env.NODE_ENV = 'test'
+// process.env.NODE_ENV = 'test' // Already set by vitest
 
 // Configure test database
 if (!process.env.TEST_DATABASE_URI) {

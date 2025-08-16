@@ -22,6 +22,7 @@ export function SignUpForm() {
         email,
         password,
         name,
+        role: 'user', // Default role for new signups
         callbackURL: '/admin'
       })
       router.push('/admin')

@@ -138,7 +138,7 @@ export function SignInForm() {
 
     setLoading(true)
     try {
-      await authClient.emailOTP.sendVerificationOtp({
+      await authClient.emailOtp.sendVerificationOtp({
         email,
         type: 'sign-in'
       })
@@ -160,7 +160,7 @@ export function SignInForm() {
 
     setLoading(true)
     try {
-      await authClient.signIn.emailOTP({
+      await authClient.signIn.emailOtp({
         email,
         otp: otpCode
       })

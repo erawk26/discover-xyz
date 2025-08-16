@@ -165,7 +165,7 @@ const config = buildConfig({
                       id: matchingPattern.id,
                       data: {
                         matchCount: (matchingPattern.matchCount || 0) + 1,
-                        lastMatched: new Date(),
+                        lastMatched: new Date().toISOString(),
                       },
                     })
                   } catch (error) {
@@ -197,7 +197,7 @@ const config = buildConfig({
                     await req.payload.update({
                       collection: 'allowed-users',
                       id: stillAllowed.id,
-                      data: { lastMatched: new Date() },
+                      data: { lastMatched: new Date().toISOString() },
                     })
                   } catch (error) {
                     console.error('Error in beforeLogin hook:', error)
@@ -247,8 +247,8 @@ const config = buildConfig({
                 return {
                   ...field,
                   access: {
-                    create: ({ req: { user } }) => user?.role === 'admin',
-                    update: ({ req: { user } }) => user?.role === 'admin',
+                    create: ({ req: { user } }: any) => user?.role === 'admin',
+                    update: ({ req: { user } }: any) => user?.role === 'admin',
                   },
                 }
               }
@@ -336,94 +336,7 @@ const config = buildConfig({
           },
         }),
       },
-      // Organizations plugin collections
-      organizations: {
-        slug: 'organizations',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      members: {
-        slug: 'members',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      invitations: {
-        slug: 'invitations',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      // Two-factor plugin collection
-      twoFactors: {
-        slug: 'twoFactors',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      // Passkey plugin collection
-      passkeys: {
-        slug: 'passkeys',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
+      // Plugin collections (organizations, two-factor, passkeys) are handled by the plugin itself
     }),
     // storage-adapter-placeholder
   ],

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { HiddenField } from './components/HiddenField'
 
 export const AllowedUsers: CollectionConfig = {
   slug: 'allowed-users',
@@ -134,7 +135,7 @@ export const AllowedUsers: CollectionConfig = {
       admin: {
         description: 'Display name for who added this pattern',
         components: {
-          Field: () => null, // Hide in edit view
+          Field: HiddenField as any, // Hide in edit view
         },
       },
       hooks: {
