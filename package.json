@@ -117,12 +117,12 @@
     },
     "onlyBuiltDependencies": [
       "esbuild",
-      "fedsync-standalone",
+      "fedsync",
       "sharp",
       "unrs-resolver"
     ],
     "ignoredBuiltDependencies": [
-      "fedsync-standalone"
+      "fedsync"
     ]
   }
 }
