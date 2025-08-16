@@ -90,9 +90,9 @@ importers:
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
-      fedsync-standalone:
-        specifier: github:erawk26/fedsync
-        version: git+https://git@github.com:erawk26/fedsync.git#4df8219f431fd248ef9d32f737be56f53361527b
+      fedsync:
+        specifier: ^1.0.0
+        version: 1.0.0
       geist:
         specifier: ^1.3.0
         version: 1.4.2(next@15.3.3(@babel/core@7.28.0)(@playwright/test@1.50.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.77.4))
@@ -3687,9 +3687,8 @@ packages:
       picomatch:
         optional: true
 
-  fedsync-standalone@git+https://git@github.com:erawk26/fedsync.git#4df8219f431fd248ef9d32f737be56f53361527b:
-    resolution: {commit: 4df8219f431fd248ef9d32f737be56f53361527b, repo: git@github.com:erawk26/fedsync.git, type: git}
-    version: 1.0.0
+  fedsync@1.0.0:
+    resolution: {integrity: sha512-fnAsDEWM1fmKMz4trHR9PbbrCmtvnFr536fbqi4jlOtBrYwxiswjYf1d3fpAPG6/FD3MqcHg9bT+cg8Xy5tx/Q==}
     hasBin: true
 
   fflate@0.8.2:
@@ -10399,7 +10398,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.3
 
-  fedsync-standalone@git+https://git@github.com:erawk26/fedsync.git#4df8219f431fd248ef9d32f737be56f53361527b:
+  fedsync@1.0.0:
     dependencies:
       axios: 1.10.0
       dotenv: 17.2.0
