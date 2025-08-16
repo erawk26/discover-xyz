@@ -1,0 +1,18 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "pnpm install && pnpm run build"
+
+[deploy]
+startCommand = "pnpm run start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[[services]]
+name = "web"
+port = 3026
+
+[environments.production]
+PORT = "3026"
+NODE_ENV = "production"

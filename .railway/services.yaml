@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: payloadcms-app
+    env:
+      PORT: 3026
+      NODE_ENV: production
+    healthcheck:
+      path: /api/health
+      interval: 30
+      timeout: 10
+      retries: 3
+      
+  - type: database
+    name: mongodb
+    image: mongo:7
+    volumes:
+      - name: mongo-data
+        mount: /data/db
+    env:
+      MONGO_INITDB_ROOT_USERNAME: ${{ MONGO_USERNAME }}
+      MONGO_INITDB_ROOT_PASSWORD: ${{ MONGO_PASSWORD }}
+      MONGO_INITDB_DATABASE: payloadcms
