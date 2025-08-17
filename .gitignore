@@ -12,3 +12,4 @@ public/media/
 /logs
 public/robots.txt
 public/sitemap.xml
+.spec-*
