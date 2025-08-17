@@ -8,10 +8,21 @@ interface PayloadWithAuth extends Awaited<ReturnType<typeof getPayload>> {
   betterAuth?: Auth
 }
 
-const payload = await getPayload({ config }) as PayloadWithAuth
-
-if (!payload.betterAuth) {
-  throw new Error('betterAuth is not initialized on Payload instance')
+// Lazy-load handlers to avoid module-level database connection
+export async function POST(req: any) {
+  const payload = await getPayload({ config }) as PayloadWithAuth
+  if (!payload.betterAuth) {
+    throw new Error('betterAuth is not initialized on Payload instance')
+  }
+  const { POST: handler } = toNextJsHandler(payload.betterAuth)
+  return handler(req)
 }
 
-export const { POST, GET } = toNextJsHandler(payload.betterAuth)
+export async function GET(req: any) {
+  const payload = await getPayload({ config }) as PayloadWithAuth
+  if (!payload.betterAuth) {
+    throw new Error('betterAuth is not initialized on Payload instance')
+  }
+  const { GET: handler } = toNextJsHandler(payload.betterAuth)
+  return handler(req)
+}

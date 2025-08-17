@@ -9,5 +9,16 @@ export async function getAuth() {
   return (payload as any).betterAuth
 }
 
-// For backwards compatibility, export auth as a promise
-export const auth = await getAuth()
+// Create lazy-loaded auth to avoid module-level database connection
+export const auth = {
+  api: {
+    getSession: async (...args: any[]) => {
+      const authInstance = await getAuth()
+      return authInstance.api.getSession(...args)
+    },
+    signOut: async (...args: any[]) => {
+      const authInstance = await getAuth()
+      return authInstance.api.signOut(...args)
+    },
+  }
+}

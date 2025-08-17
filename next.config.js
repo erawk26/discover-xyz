@@ -15,6 +15,7 @@ const hostnames = [
 ]
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone', // Required for Docker deployment
   images: {
     remotePatterns: [
       ...hostnames.map((item) => {
