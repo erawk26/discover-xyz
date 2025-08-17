@@ -25,6 +25,17 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+# Accept build arguments for environment variables
+ARG DATABASE_URI
+ARG PAYLOAD_SECRET
+ARG NEXT_PUBLIC_SERVER_URL
+
+# Set them as environment variables for the build
+ENV DATABASE_URI=$DATABASE_URI
+ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 

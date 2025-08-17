@@ -4,6 +4,7 @@ dockerfilePath = "Dockerfile"
 
 [build.args]
 # Pass environment variables to Docker build
+DATABASE_URI = "${{DATABASE_URI}}"
 PAYLOAD_SECRET = "${{PAYLOAD_SECRET}}"
 NEXT_PUBLIC_SERVER_URL = "https://${{RAILWAY_PUBLIC_DOMAIN}}"
 
@@ -21,5 +22,3 @@ port = 3026
 [environments.production]
 PORT = "3026"
 NODE_ENV = "production"
-# Map Railway's MongoDB URL to our DATABASE_URI
-DATABASE_URI = "${{MONGO_URL}}"
