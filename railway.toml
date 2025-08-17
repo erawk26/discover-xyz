@@ -9,7 +9,7 @@ PAYLOAD_SECRET = "${{PAYLOAD_SECRET}}"
 NEXT_PUBLIC_SERVER_URL = "https://${{RAILWAY_PUBLIC_DOMAIN}}"
 
 [deploy]
-startCommand = "pnpm run start"
+# Let Docker CMD handle the start command (HOSTNAME="0.0.0.0" node server.js)
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
