@@ -21,6 +21,7 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
 tsconfig.tsbuildinfo
 data/fedsync/
 logs/
@@ -30,3 +31,5 @@ CLAUDE.md
 .hive*
 docs/ai
 .pnpm-store/
+public/sitemap.xml
+.spec-*
