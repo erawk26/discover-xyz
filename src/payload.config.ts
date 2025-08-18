@@ -1,5 +1,5 @@
 // storage-adapter-import-placeholder
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { betterAuthPlugin } from 'payload-auth/better-auth'
 
 import sharp from 'sharp' // sharp-import
@@ -86,8 +86,10 @@ const config = buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI || '',
+    },
   }),
   collections: [Pages, Articles, Media, Categories, AllowedUsers, Events, Profiles],
   cors: (() => {
@@ -242,10 +244,16 @@ const config = buildConfig({
           },
           fields: [
             ...(collection.fields || []).map((field) => {
-              // Add admin-only access control to the role field
-              if (field.type === 'select' && field.name === 'role') {
+              // Override and add admin-only access control to the role field
+              if ('name' in field && field.name === 'role' && field.type === 'select') {
                 return {
                   ...field,
+                  options: [
+                    { label: 'Admin', value: 'admin' },
+                    { label: 'Content Editor', value: 'content-editor' },
+                    { label: 'Authenticated', value: 'authenticated' },
+                  ],
+                  defaultValue: 'authenticated',
                   access: {
                     create: ({ req: { user } }: any) => user?.role === 'admin',
                     update: ({ req: { user } }: any) => user?.role === 'admin',
