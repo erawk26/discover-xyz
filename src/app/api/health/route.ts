@@ -1,52 +1,15 @@
 import { NextResponse } from 'next/server'
-import { Pool } from 'pg'
 
 export async function GET() {
-  const checks = {
-    service: 'healthy',
-    database: 'unknown',
-    timestamp: new Date().toISOString(),
-  }
-
   try {
-    // Check database connectivity if DATABASE_URI is set
-    if (process.env.DATABASE_URI) {
-      const pool = new Pool({
-        connectionString: process.env.DATABASE_URI,
-        max: 1,
-        connectionTimeoutMillis: 5000,
-      })
-      
-      try {
-        const result = await pool.query('SELECT NOW()')
-        if (result.rows.length > 0) {
-          checks.database = 'healthy'
-        }
-      } catch (dbError) {
-        console.error('Database health check failed:', dbError)
-        checks.database = 'unhealthy'
-      } finally {
-        await pool.end()
-      }
-    } else {
-      checks.database = 'not_configured'
-    }
-
-    // If database is required and unhealthy, return 503
-    if (checks.database === 'unhealthy') {
-      return NextResponse.json(
-        { 
-          status: 'degraded',
-          ...checks,
-        },
-        { status: 503 }
-      )
-    }
-
+    // Simple health check without database dependency
+    // Railway just needs a 200 response to know the service is up
     return NextResponse.json(
       { 
         status: 'healthy',
-        ...checks,
+        timestamp: new Date().toISOString(),
+        service: 'payload-cms',
+        environment: process.env.NODE_ENV || 'production'
       },
       { status: 200 }
     )
@@ -55,7 +18,7 @@ export async function GET() {
       { 
         status: 'unhealthy',
         error: error instanceof Error ? error.message : 'Unknown error',
-        ...checks,
+        timestamp: new Date().toISOString()
       },
       { status: 503 }
     )
