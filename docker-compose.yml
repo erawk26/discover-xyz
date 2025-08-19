@@ -10,6 +10,3 @@ services:
     command: sh -c "yarn install && yarn dev"
     env_file:
       - .env
-volumes:
-  data:
-  node_modules:
