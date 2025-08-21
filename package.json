@@ -7,8 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
-    "dev": "pnpm run dev:kill && cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next dev",
-    "dev:kill": "lsof -ti:3026 | xargs kill -9 && sleep 2",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
@@ -19,7 +18,7 @@
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "db:reset": "cross-env NODE_OPTIONS=--no-deprecation node scripts/reset-db.js",
     "db:seed": "cross-env NODE_OPTIONS=--no-deprecation npx tsx --env-file=.env src/scripts/seed.ts",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next start",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
