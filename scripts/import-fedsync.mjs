@@ -8,7 +8,7 @@
 import http from 'http'
 import { URL } from 'url'
 import { spawn } from 'child_process'
-import { Logger, LogLevel } from 'fedsync-standalone/logger'
+import { Logger, LogLevel } from 'fedsync/logger'
 
 // Initialize logger
 const logger = new Logger({

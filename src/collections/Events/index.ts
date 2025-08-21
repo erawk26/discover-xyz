@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { slugField } from '@/fields/slug'
+import { locationField } from '@/fields/location'
 import { populatePublishedAt } from '@/hooks/populatePublishedAt'
 import { revalidateEvent } from './hooks/revalidateEvent'
 
@@ -164,11 +165,7 @@ export const Events: CollectionConfig = {
                 },
               ],
             },
-            {
-              name: 'location',
-              type: 'point',
-              label: 'GPS Coordinates',
-            },
+            locationField(),
             {
               name: 'cities',
               type: 'relationship',

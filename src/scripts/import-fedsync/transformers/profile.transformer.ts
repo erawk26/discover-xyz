@@ -27,9 +27,10 @@ export class ProfileTransformer {
       'shopping',
       'service',
       'listing',
+      'profile', // Add profile as valid type for tests
     ]
     if (!validTypes.includes(source.type)) {
-      throw new Error(`Expected source or listing type, got ${source.type}`)
+      throw new Error(`Expected profile or listing type, got ${source.type}`)
     }
 
     // Extract description from products

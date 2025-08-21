@@ -42,7 +42,7 @@ export async function POST(): Promise<Response> {
   try {
     // Create a Payload request object with admin context for seeding
     const payloadReq = await createLocalReq({ 
-      user: authenticatedUser,
+      user: { ...authenticatedUser, collection: 'users' },
       context: { internal: true }  // Mark as internal operation
     }, payload)
 

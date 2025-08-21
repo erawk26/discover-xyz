@@ -134,7 +134,7 @@ export const AllowedUsers: CollectionConfig = {
       admin: {
         description: 'Display name for who added this pattern',
         components: {
-          Field: () => null, // Hide in edit view
+          Field: '@/collections/AllowedUsers/components/HiddenField#HiddenField',
         },
       },
       hooks: {

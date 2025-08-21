@@ -23,6 +23,7 @@ import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 }
 import { SlugComponent as SlugComponent_92cc057d0a2abb4f6cf0307edf59f986 } from '@/fields/slug/SlugComponent'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { HiddenField as HiddenField_af07abe17b37cafa39ba6bfd4a123082 } from '@/collections/AllowedUsers/components/HiddenField'
 import { default as default_1d9314025f41f7b0addb57cfc38acd9d } from '@/components/admin/PatternTester'
 import { default as default_ee29003af75241ee0c3a01648d7c2dc0 } from '@/components/admin/QuickPatterns'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
@@ -68,6 +69,7 @@ export const importMap = {
   "@/fields/slug/SlugComponent#SlugComponent": SlugComponent_92cc057d0a2abb4f6cf0307edf59f986,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/collections/AllowedUsers/components/HiddenField#HiddenField": HiddenField_af07abe17b37cafa39ba6bfd4a123082,
   "@/components/admin/PatternTester#default": default_1d9314025f41f7b0addb57cfc38acd9d,
   "@/components/admin/QuickPatterns#default": default_ee29003af75241ee0c3a01648d7c2dc0,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,

@@ -10,7 +10,7 @@ import 'dotenv/config'
 import { Command } from 'commander'
 import chalk from 'chalk'
 import { ImportOrchestrator, ImportOptions } from './importers/import-orchestrator'
-import { Logger, LogLevel } from 'fedsync-standalone/logger'
+import { Logger, LogLevel } from 'fedsync/logger'
 import path from 'path'
 
 const program = new Command()

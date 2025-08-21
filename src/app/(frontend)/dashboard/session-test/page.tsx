@@ -29,7 +29,14 @@ export default function SessionTestPage() {
     )
   }
 
-  const expiresAt = new Date(session.data.expiresAt * 1000)
+  // Get expiration time - handle both Date and timestamp formats
+  const sessionExpiry = session.data.session?.expiresAt || session.data.session?.updatedAt
+  const expiresAt = sessionExpiry instanceof Date 
+    ? sessionExpiry 
+    : typeof sessionExpiry === 'number' 
+      ? new Date(sessionExpiry * 1000)
+      : new Date(sessionExpiry)
+  
   const now = new Date()
   const timeRemaining = Math.max(0, expiresAt.getTime() - now.getTime())
   const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60))
@@ -56,7 +63,7 @@ export default function SessionTestPage() {
               </div>
               <div>
                 <dt className="inline font-medium">Session ID:</dt>
-                <dd className="inline ml-2 font-mono text-xs">{session.data.id}</dd>
+                <dd className="inline ml-2 font-mono text-xs">{session.data.session.id}</dd>
               </div>
             </dl>
           </div>

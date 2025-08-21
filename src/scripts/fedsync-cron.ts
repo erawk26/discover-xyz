@@ -9,10 +9,10 @@
 
 import 'dotenv/config'
 import { spawn } from 'child_process'
-import { Logger, LogLevel } from 'fedsync-standalone/logger'
+import { Logger, LogLevel } from 'fedsync/logger'
 
 // Initialize logger
-const logger = new Logger('FedSyncCron', LogLevel.INFO)
+const logger = new Logger({ level: LogLevel.INFO })
 
 // Execute command with proper error handling
 function executeCommand(command: string, args: string[]): Promise<void> {

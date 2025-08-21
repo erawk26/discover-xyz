@@ -8,7 +8,7 @@ import config from '@/payload.config'
  */
 export async function getBetterAuthSession() {
   const payload = await getPayload({ config })
-  const session = await payload.betterAuth.api.getSession({
+  const session = await (payload as any).betterAuth.api.getSession({
     headers: await headers() 
   })
   
@@ -45,15 +45,12 @@ export async function syncBetterAuthToPayload(betterAuthUser: any) {
       }) as PayloadUser
     } else {
       // Create new user
-      const crypto = await import('crypto')
-      const tempPassword = crypto.randomBytes(32).toString('hex')
-      
       payloadUser = await payload.create({
         collection: 'users',
         data: {
           email: betterAuthUser.email,
           name: betterAuthUser.name || betterAuthUser.email.split('@')[0],
-          password: tempPassword, // Required by Payload
+          emailVerified: betterAuthUser.emailVerified || false,
           role: betterAuthUser.role || 'authenticated',
         }
       }) as PayloadUser

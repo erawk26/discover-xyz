@@ -26,7 +26,7 @@ export class EventTransformer {
     const description = source.products?.[0]?.description?.text
 
     // Transform event dates
-    const eventDates = source.event_dates.map(date => ({
+    const eventDates = source.event_dates.map((date: any) => ({
       name: date.name,
       startDate: date.start_date,
       endDate: date.end_date,

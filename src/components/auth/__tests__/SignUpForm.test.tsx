@@ -141,7 +141,7 @@ describe('SignUpForm', () => {
     })
 
     await waitFor(() => {
-      expect(submitButton.disabled).toBe(false)
+      expect((submitButton as HTMLButtonElement).disabled).toBe(false)
       expect(screen.getByText('Sign Up')).toBeInTheDocument()
     })
   })

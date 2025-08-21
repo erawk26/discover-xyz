@@ -138,7 +138,7 @@ pnpm vitest run src/scripts/import-fedsync/__tests__/integration/end-to-end.test
 
 ## Migration Notes
 
-This system replaces the previous local FedSync library with the `fedsync-standalone` npm package for better maintainability and separation of concerns.
+This system replaces the previous local FedSync library with the `fedsync` npm package for better maintainability and separation of concerns.
 
 ## Related Documentation
 

@@ -5,6 +5,9 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null
 
+// Export for testing
+export const resendClient = resend
+
 // Email configuration
 const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@discover-xyz.com'
 const SITE_NAME = process.env.SITE_NAME || 'Discover XYZ'

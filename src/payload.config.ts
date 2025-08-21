@@ -1,5 +1,5 @@
 // storage-adapter-import-placeholder
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { betterAuthPlugin } from 'payload-auth/better-auth'
 
 import sharp from 'sharp' // sharp-import
@@ -86,8 +86,10 @@ const config = buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI || '',
+    },
   }),
   collections: [Pages, Articles, Media, Categories, AllowedUsers, Events, Profiles],
   cors: (() => {
@@ -165,7 +167,7 @@ const config = buildConfig({
                       id: matchingPattern.id,
                       data: {
                         matchCount: (matchingPattern.matchCount || 0) + 1,
-                        lastMatched: new Date(),
+                        lastMatched: new Date().toISOString(),
                       },
                     })
                   } catch (error) {
@@ -197,7 +199,7 @@ const config = buildConfig({
                     await req.payload.update({
                       collection: 'allowed-users',
                       id: stillAllowed.id,
-                      data: { lastMatched: new Date() },
+                      data: { lastMatched: new Date().toISOString() },
                     })
                   } catch (error) {
                     console.error('Error in beforeLogin hook:', error)
@@ -242,13 +244,19 @@ const config = buildConfig({
           },
           fields: [
             ...(collection.fields || []).map((field) => {
-              // Add admin-only access control to the role field
-              if (field.type === 'select' && field.name === 'role') {
+              // Override and add admin-only access control to the role field
+              if ('name' in field && field.name === 'role' && field.type === 'select') {
                 return {
                   ...field,
+                  options: [
+                    { label: 'Admin', value: 'admin' },
+                    { label: 'Content Editor', value: 'content-editor' },
+                    { label: 'Authenticated', value: 'authenticated' },
+                  ],
+                  defaultValue: 'authenticated',
                   access: {
-                    create: ({ req: { user } }) => user?.role === 'admin',
-                    update: ({ req: { user } }) => user?.role === 'admin',
+                    create: ({ req: { user } }: any) => user?.role === 'admin',
+                    update: ({ req: { user } }: any) => user?.role === 'admin',
                   },
                 }
               }
@@ -336,94 +344,7 @@ const config = buildConfig({
           },
         }),
       },
-      // Organizations plugin collections
-      organizations: {
-        slug: 'organizations',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      members: {
-        slug: 'members',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      invitations: {
-        slug: 'invitations',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      // Two-factor plugin collection
-      twoFactors: {
-        slug: 'twoFactors',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
-      // Passkey plugin collection
-      passkeys: {
-        slug: 'passkeys',
-        hidden: false,
-        collectionOverrides: ({ collection }) => ({
-          ...collection,
-          access: {
-            create: ({ req: { user } }) => user?.role === 'admin',
-            read: ({ req: { user } }) => user?.role === 'admin',
-            update: ({ req: { user } }) => user?.role === 'admin',
-            delete: ({ req: { user } }) => user?.role === 'admin',
-          },
-          admin: {
-            ...collection.admin,
-            hidden: ({ user }) => user?.role !== 'admin',
-          },
-        }),
-      },
+      // Plugin collections (organizations, two-factor, passkeys) are handled by the plugin itself
     }),
     // storage-adapter-placeholder
   ],

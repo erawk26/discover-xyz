@@ -21,9 +21,9 @@ vi.mock('@/lib/better-auth/client', () => ({
       email: vi.fn(),
       social: vi.fn(),
       magicLink: vi.fn(),
-      emailOTP: vi.fn(),
+      emailOtp: vi.fn(),
     },
-    emailOTP: {
+    emailOtp: {
       sendVerificationOtp: vi.fn(),
     },
   },
@@ -226,7 +226,7 @@ describe('SignInForm', () => {
   it('should send OTP code', async () => {
     const user = userEvent.setup()
     
-    vi.mocked(authClient.emailOTP.sendVerificationOtp).mockResolvedValueOnce({
+    vi.mocked(authClient.emailOtp.sendVerificationOtp).mockResolvedValueOnce({
       data: { success: true },
     })
 
@@ -242,7 +242,7 @@ describe('SignInForm', () => {
     await user.click(screen.getByRole('button', { name: 'Send Code' }))
 
     await waitFor(() => {
-      expect(authClient.emailOTP.sendVerificationOtp).toHaveBeenCalledWith({
+      expect(authClient.emailOtp.sendVerificationOtp).toHaveBeenCalledWith({
         email: 'test@example.com',
         type: 'sign-in',
       })
@@ -254,12 +254,12 @@ describe('SignInForm', () => {
     const user = userEvent.setup()
     
     // First send OTP
-    vi.mocked(authClient.emailOTP.sendVerificationOtp).mockResolvedValueOnce({
+    vi.mocked(authClient.emailOtp.sendVerificationOtp).mockResolvedValueOnce({
       data: { success: true },
     })
 
     // Then verify OTP
-    vi.mocked(authClient.signIn.emailOTP).mockResolvedValueOnce({
+    vi.mocked(authClient.signIn.emailOtp).mockResolvedValueOnce({
       data: {
         user: { id: '1', email: 'test@example.com' },
         session: { id: 'session-1' },
@@ -283,7 +283,7 @@ describe('SignInForm', () => {
     await user.click(screen.getByRole('button', { name: /verify.*sign in/i }))
 
     await waitFor(() => {
-      expect(authClient.signIn.emailOTP).toHaveBeenCalledWith({
+      expect(authClient.signIn.emailOtp).toHaveBeenCalledWith({
         email: 'test@example.com',
         otp: '123456',
       })

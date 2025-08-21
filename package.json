@@ -7,8 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
-    "dev": "pnpm run dev:kill && cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next dev",
-    "dev:kill": "lsof -ti:3026 | xargs kill -9 && sleep 2",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
@@ -19,10 +18,11 @@
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "db:reset": "cross-env NODE_OPTIONS=--no-deprecation node scripts/reset-db.js",
     "db:seed": "cross-env NODE_OPTIONS=--no-deprecation npx tsx --env-file=.env src/scripts/seed.ts",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation PORT=3026 next start",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
+    "setup": "node src/scripts/setup.mjs",
     "sync": "fedsync --all",
     "import": "pnpm run sync && payload run scripts/import-fedsync.mjs",
     "cron:fedsync": "tsx src/scripts/fedsync-cron.ts"
@@ -30,7 +30,7 @@
   "dependencies": {
     "@daveyplate/better-auth-ui": "^1.4.7",
     "@payloadcms/admin-bar": "3.45.0",
-    "@payloadcms/db-mongodb": "3.45.0",
+    "@payloadcms/db-postgres": "3.45.0",
     "@payloadcms/live-preview-react": "3.45.0",
     "@payloadcms/next": "3.45.0",
     "@payloadcms/payload-cloud": "3.45.0",
@@ -54,7 +54,7 @@
     "commander": "^14.0.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
-    "fedsync-standalone": "github:erawk26/fedsync",
+    "fedsync": "^1.0.0",
     "geist": "^1.3.0",
     "graphql": "^16.8.2",
     "jsonwebtoken": "^9.0.2",
@@ -65,6 +65,7 @@
     "p-limit": "^6.2.0",
     "payload": "3.45.0",
     "payload-auth": "^1.6.4",
+    "pg": "8.16.3",
     "prism-react-renderer": "^2.3.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -116,12 +117,12 @@
     },
     "onlyBuiltDependencies": [
       "esbuild",
-      "fedsync-standalone",
+      "fedsync",
       "sharp",
       "unrs-resolver"
     ],
     "ignoredBuiltDependencies": [
-      "fedsync-standalone"
+      "fedsync"
     ]
   }
 }

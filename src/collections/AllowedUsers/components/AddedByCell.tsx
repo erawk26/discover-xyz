@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useField } from '@payloadcms/ui'
 
 export const AddedByCell: React.FC<any> = (props) => {
   // In Payload v3, the cell component receives the entire row data
@@ -35,9 +36,9 @@ export const AddedByCell: React.FC<any> = (props) => {
 }
 
 export const AddedByField: React.FC = () => {
-  const { value: addedBy } = useField({ path: 'addedBy' })
-  const { value: addedByEmail } = useField({ path: 'addedByEmail' })
-  const { value: addedVia } = useField({ path: 'addedVia' })
+  const { value: addedBy } = useField({ path: 'addedBy' }) as { value: any }
+  const { value: addedByEmail } = useField({ path: 'addedByEmail' }) as { value: string }
+  const { value: addedVia } = useField({ path: 'addedVia' }) as { value: string }
   
   if (addedBy?.email) {
     return <div>{addedBy.name || addedBy.email}</div>

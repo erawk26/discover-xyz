@@ -33,12 +33,7 @@ export function BetterAuthProvider({ children }: { children: ReactNode }) {
       <AuthUIProvider
         authClient={authClient}
         basePath="/"
-        navigation={{
-          router: {
-            push: router.push,
-            replace: router.replace,
-          },
-        }}
+        navigate={(path: string) => router.push(path)}
         viewPaths={{
           settings: '/dashboard',
         }}

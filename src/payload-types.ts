@@ -124,7 +124,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   globals: {
     header: Header;
@@ -184,7 +184,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   /**
    * Users chosen display name
    */
@@ -230,7 +230,7 @@ export interface User {
   /**
    * The role of the user
    */
-  role?: ('admin' | 'content-editor' | 'user') | null;
+  role?: ('admin' | 'content-editor' | 'authenticated') | null;
   /**
    * Whether the user is banned from the platform
    */
@@ -246,7 +246,7 @@ export interface User {
   /**
    * The pattern that authorized this user
    */
-  allowedPattern?: (string | null) | AllowedUser;
+  allowedPattern?: (number | null) | AllowedUser;
 }
 /**
  * Manage which email patterns are allowed to sign up
@@ -255,7 +255,7 @@ export interface User {
  * via the `definition` "allowed-users".
  */
 export interface AllowedUser {
-  id: string;
+  id: number;
   /**
    * Email or pattern (e.g., user@example.com, *@company.com, team-*@company.com)
    */
@@ -287,7 +287,7 @@ export interface AllowedUser {
   /**
    * User who added this pattern
    */
-  addedBy?: (string | null) | User;
+  addedBy?: (number | null) | User;
   /**
    * Email of user who added this pattern (fallback)
    */
@@ -311,7 +311,7 @@ export interface AllowedUser {
  * via the `definition` "sessions".
  */
 export interface Session {
-  id: string;
+  id: number;
   /**
    * The date and time when the session will expire
    */
@@ -333,15 +333,15 @@ export interface Session {
   /**
    * The user that the session belongs to
    */
-  user: string | User;
+  user: number | User;
   /**
    * The admin who is impersonating this session
    */
-  impersonatedBy?: (string | null) | User;
+  impersonatedBy?: (number | null) | User;
   /**
    * The currently active organization for the session
    */
-  activeOrganization?: (string | null) | Organization;
+  activeOrganization?: (number | null) | Organization;
 }
 /**
  * Organizations are groups of users that share access to certain resources.
@@ -350,7 +350,7 @@ export interface Session {
  * via the `definition` "organizations".
  */
 export interface Organization {
-  id: string;
+  id: number;
   /**
    * The name of the organization.
    */
@@ -377,7 +377,7 @@ export interface Organization {
  * via the `definition` "accounts".
  */
 export interface Account {
-  id: string;
+  id: number;
   /**
    * The id of the account as provided by the SSO or equal to userId for credential accounts
    */
@@ -389,7 +389,7 @@ export interface Account {
   /**
    * The user that the account belongs to
    */
-  user: string | User;
+  user: number | User;
   /**
    * The access token of the account. Returned by the provider
    */
@@ -428,7 +428,7 @@ export interface Account {
  * via the `definition` "verifications".
  */
 export interface Verification {
-  id: string;
+  id: number;
   /**
    * The identifier of the verification request
    */
@@ -451,7 +451,7 @@ export interface Verification {
  * via the `definition` "twoFactors".
  */
 export interface TwoFactor {
-  id: string;
+  id: number;
   /**
    * The secret used to generate the TOTP code.
    */
@@ -463,7 +463,7 @@ export interface TwoFactor {
   /**
    * The user that the two factor authentication secret belongs to
    */
-  user: string | User;
+  user: number | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -474,7 +474,7 @@ export interface TwoFactor {
  * via the `definition` "passkeys".
  */
 export interface Passkey {
-  id: string;
+  id: number;
   /**
    * The name of the passkey
    */
@@ -486,7 +486,7 @@ export interface Passkey {
   /**
    * The user that the passkey belongs to
    */
-  user: string | User;
+  user: number | User;
   /**
    * The unique identifier of the registered credential
    */
@@ -518,7 +518,7 @@ export interface Passkey {
  * via the `definition` "apiKeys".
  */
 export interface ApiKey {
-  id: string;
+  id: number;
   /**
    * The name of the API key.
    */
@@ -538,7 +538,7 @@ export interface ApiKey {
   /**
    * The user associated with the API key.
    */
-  user: string | User;
+  user: number | User;
   /**
    * The interval to refill the key in milliseconds.
    */
@@ -609,15 +609,15 @@ export interface ApiKey {
  * via the `definition` "members".
  */
 export interface Member {
-  id: string;
+  id: number;
   /**
    * The organization that the member belongs to.
    */
-  organization: string | Organization;
+  organization: number | Organization;
   /**
    * The user that is a member of the organization.
    */
-  user: string | User;
+  user: number | User;
   /**
    * The role of the member in the organization.
    */
@@ -632,11 +632,11 @@ export interface Member {
  * via the `definition` "invitations".
  */
 export interface Invitation {
-  id: string;
+  id: number;
   /**
    * The organization that the user is being invited to.
    */
-  organization: string | Organization;
+  organization: number | Organization;
   /**
    * The email of the user being invited.
    */
@@ -656,7 +656,7 @@ export interface Invitation {
   /**
    * The user who invited the user.
    */
-  inviter: string | User;
+  inviter: number | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -665,7 +665,7 @@ export interface Invitation {
  * via the `definition` "admin-invitations".
  */
 export interface AdminInvitation {
-  id: string;
+  id: number;
   role: 'admin' | 'content-editor' | 'user';
   token: string;
   url?: string | null;
@@ -677,7 +677,7 @@ export interface AdminInvitation {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: string;
+  id: number;
   title: string;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
@@ -704,11 +704,11 @@ export interface Page {
             reference?:
               | ({
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null)
               | ({
                   relationTo: 'articles';
-                  value: string | Article;
+                  value: number | Article;
                 } | null);
             url?: string | null;
             label: string;
@@ -720,7 +720,7 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    media?: (string | null) | Media;
+    media?: (number | null) | Media;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
@@ -728,7 +728,7 @@ export interface Page {
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
@@ -743,9 +743,9 @@ export interface Page {
  * via the `definition` "articles".
  */
 export interface Article {
-  id: string;
+  id: number;
   title: string;
-  heroImage?: (string | null) | Media;
+  heroImage?: (number | null) | Media;
   content: {
     root: {
       type: string;
@@ -761,18 +761,18 @@ export interface Article {
     };
     [k: string]: unknown;
   };
-  relatedArticles?: (string | Article)[] | null;
-  categories?: (string | Category)[] | null;
+  relatedArticles?: (number | Article)[] | null;
+  categories?: (number | Category)[] | null;
   meta?: {
     title?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
-  authors?: (string | User)[] | null;
+  authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -790,7 +790,7 @@ export interface Article {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   caption?: {
     root: {
@@ -890,13 +890,13 @@ export interface Media {
  * via the `definition` "categories".
  */
 export interface Category {
-  id: string;
+  id: number;
   title: string;
   type: 'group' | 'category';
   /**
    * Select the parent group for this category
    */
-  parent?: (string | null) | Category;
+  parent?: (number | null) | Category;
   /**
    * FedSync category ID for sync purposes
    */
@@ -905,7 +905,7 @@ export interface Category {
   slugLock?: boolean | null;
   breadcrumbs?:
     | {
-        doc?: (string | null) | Category;
+        doc?: (number | null) | Category;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -942,11 +942,11 @@ export interface CallToActionBlock {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'articles';
-                value: string | Article;
+                value: number | Article;
               } | null);
           url?: string | null;
           label: string;
@@ -992,11 +992,11 @@ export interface ContentBlock {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'articles';
-                value: string | Article;
+                value: number | Article;
               } | null);
           url?: string | null;
           label: string;
@@ -1017,7 +1017,7 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
-  media: string | Media;
+  media: number | Media;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -1044,12 +1044,12 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'articles' | null;
-  categories?: (string | Category)[] | null;
+  categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
     | {
         relationTo: 'articles';
-        value: string | Article;
+        value: number | Article;
       }[]
     | null;
   id?: string | null;
@@ -1061,7 +1061,7 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
-  form: string | Form;
+  form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
     root: {
@@ -1087,7 +1087,7 @@ export interface FormBlock {
  * via the `definition` "forms".
  */
 export interface Form {
-  id: string;
+  id: number;
   title: string;
   fields?:
     | (
@@ -1261,7 +1261,7 @@ export interface Form {
  * via the `definition` "events".
  */
 export interface Event {
-  id: string;
+  id: number;
   title: string;
   /**
    * ID from the federator API
@@ -1297,7 +1297,7 @@ export interface Event {
     | null;
   photos?:
     | {
-        photo: string | Media;
+        photo: number | Media;
         caption?: string | null;
         id?: string | null;
       }[]
@@ -1310,19 +1310,18 @@ export interface Event {
     state?: string | null;
     postcode?: string | null;
   };
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  location?: [number, number] | null;
+  location?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
   /**
    * Cities associated with this event
    */
-  cities?: (string | Category)[] | null;
+  cities?: (number | Category)[] | null;
   /**
    * Regions associated with this event
    */
-  regions?: (string | Category)[] | null;
+  regions?: (number | Category)[] | null;
   emailAddresses?: {
     business?: string | null;
     booking?: string | null;
@@ -1348,7 +1347,7 @@ export interface Event {
   /**
    * Event categories
    */
-  categories?: (string | Category)[] | null;
+  categories?: (number | Category)[] | null;
   /**
    * Raw data from the federator API
    */
@@ -1378,7 +1377,7 @@ export interface Event {
  * via the `definition` "profiles".
  */
 export interface Profile {
-  id: string;
+  id: number;
   title: string;
   /**
    * Name used for alphabetical sorting
@@ -1406,7 +1405,7 @@ export interface Profile {
   } | null;
   photos?:
     | {
-        photo: string | Media;
+        photo: number | Media;
         caption?: string | null;
         altText?: string | null;
         id?: string | null;
@@ -1427,19 +1426,18 @@ export interface Profile {
     state?: string | null;
     postcode?: string | null;
   };
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  location?: [number, number] | null;
+  location?: {
+    lat?: number | null;
+    lng?: number | null;
+  };
   /**
    * Cities associated with this profile
    */
-  cities?: (string | Category)[] | null;
+  cities?: (number | Category)[] | null;
   /**
    * Regions associated with this profile
    */
-  regions?: (string | Category)[] | null;
+  regions?: (number | Category)[] | null;
   citiesServed?:
     | {
         city?: string | null;
@@ -1486,7 +1484,7 @@ export interface Profile {
   /**
    * Available amenities and features
    */
-  amenities?: (string | Category)[] | null;
+  amenities?: (number | Category)[] | null;
   rates?:
     | {
         type?: string | null;
@@ -1509,7 +1507,7 @@ export interface Profile {
   /**
    * Business categories
    */
-  categories?: (string | Category)[] | null;
+  categories?: (number | Category)[] | null;
   /**
    * Raw data from the federator API
    */
@@ -1539,7 +1537,7 @@ export interface Profile {
  * via the `definition` "redirects".
  */
 export interface Redirect {
-  id: string;
+  id: number;
   /**
    * You will need to rebuild the website when changing this field.
    */
@@ -1549,11 +1547,11 @@ export interface Redirect {
     reference?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'articles';
-          value: string | Article;
+          value: number | Article;
         } | null);
     url?: string | null;
   };
@@ -1565,8 +1563,8 @@ export interface Redirect {
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
-  id: string;
-  form: string | Form;
+  id: number;
+  form: number | Form;
   submissionData?:
     | {
         field: string;
@@ -1584,18 +1582,18 @@ export interface FormSubmission {
  * via the `definition` "search".
  */
 export interface Search {
-  id: string;
+  id: number;
   title?: string | null;
   priority?: number | null;
   doc: {
     relationTo: 'articles';
-    value: string | Article;
+    value: number | Article;
   };
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
   };
   categories?:
     | {
@@ -1613,7 +1611,7 @@ export interface Search {
  * via the `definition` "payload-jobs".
  */
 export interface PayloadJob {
-  id: string;
+  id: number;
   /**
    * Input data provided to the job
    */
@@ -1705,104 +1703,104 @@ export interface PayloadJob {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'sessions';
-        value: string | Session;
+        value: number | Session;
       } | null)
     | ({
         relationTo: 'accounts';
-        value: string | Account;
+        value: number | Account;
       } | null)
     | ({
         relationTo: 'verifications';
-        value: string | Verification;
+        value: number | Verification;
       } | null)
     | ({
         relationTo: 'twoFactors';
-        value: string | TwoFactor;
+        value: number | TwoFactor;
       } | null)
     | ({
         relationTo: 'passkeys';
-        value: string | Passkey;
+        value: number | Passkey;
       } | null)
     | ({
         relationTo: 'apiKeys';
-        value: string | ApiKey;
+        value: number | ApiKey;
       } | null)
     | ({
         relationTo: 'organizations';
-        value: string | Organization;
+        value: number | Organization;
       } | null)
     | ({
         relationTo: 'members';
-        value: string | Member;
+        value: number | Member;
       } | null)
     | ({
         relationTo: 'invitations';
-        value: string | Invitation;
+        value: number | Invitation;
       } | null)
     | ({
         relationTo: 'admin-invitations';
-        value: string | AdminInvitation;
+        value: number | AdminInvitation;
       } | null)
     | ({
         relationTo: 'pages';
-        value: string | Page;
+        value: number | Page;
       } | null)
     | ({
         relationTo: 'articles';
-        value: string | Article;
+        value: number | Article;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'categories';
-        value: string | Category;
+        value: number | Category;
       } | null)
     | ({
         relationTo: 'allowed-users';
-        value: string | AllowedUser;
+        value: number | AllowedUser;
       } | null)
     | ({
         relationTo: 'events';
-        value: string | Event;
+        value: number | Event;
       } | null)
     | ({
         relationTo: 'profiles';
-        value: string | Profile;
+        value: number | Profile;
       } | null)
     | ({
         relationTo: 'redirects';
-        value: string | Redirect;
+        value: number | Redirect;
       } | null)
     | ({
         relationTo: 'forms';
-        value: string | Form;
+        value: number | Form;
       } | null)
     | ({
         relationTo: 'form-submissions';
-        value: string | FormSubmission;
+        value: number | FormSubmission;
       } | null)
     | ({
         relationTo: 'search';
-        value: string | Search;
+        value: number | Search;
       } | null)
     | ({
         relationTo: 'payload-jobs';
-        value: string | PayloadJob;
+        value: number | PayloadJob;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -1812,10 +1810,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -1835,7 +1833,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -2359,7 +2357,12 @@ export interface EventsSelect<T extends boolean = true> {
         state?: T;
         postcode?: T;
       };
-  location?: T;
+  location?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
+      };
   cities?: T;
   regions?: T;
   emailAddresses?:
@@ -2438,7 +2441,12 @@ export interface ProfilesSelect<T extends boolean = true> {
         state?: T;
         postcode?: T;
       };
-  location?: T;
+  location?:
+    | T
+    | {
+        lat?: T;
+        lng?: T;
+      };
   cities?: T;
   regions?: T;
   citiesServed?:
@@ -2784,7 +2792,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "header".
  */
 export interface Header {
-  id: string;
+  id: number;
   navItems?:
     | {
         link: {
@@ -2793,11 +2801,11 @@ export interface Header {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'articles';
-                value: string | Article;
+                value: number | Article;
               } | null);
           url?: string | null;
           label: string;
@@ -2813,7 +2821,7 @@ export interface Header {
  * via the `definition` "footer".
  */
 export interface Footer {
-  id: string;
+  id: number;
   navItems?:
     | {
         link: {
@@ -2822,11 +2830,11 @@ export interface Footer {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'articles';
-                value: string | Article;
+                value: number | Article;
               } | null);
           url?: string | null;
           label: string;
@@ -2894,14 +2902,14 @@ export interface TaskSchedulePublish {
     doc?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'articles';
-          value: string | Article;
+          value: number | Article;
         } | null);
     global?: string | null;
-    user?: (string | null) | User;
+    user?: (number | null) | User;
   };
   output?: unknown;
 }

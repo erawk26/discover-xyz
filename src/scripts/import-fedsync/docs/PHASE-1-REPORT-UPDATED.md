@@ -13,7 +13,7 @@ Phase 1 of the FedSync Import System has been successfully completed with signif
 
 ### 1. Removed Redundant Type Definitions
 - **Issue**: Created duplicate TypeScript definitions when FedSync already provides complete types
-- **Solution**: Replaced with imports from `fedsync-standalone` library
+- **Solution**: Replaced with imports from `fedsync` library
 - **Impact**: Reduced code duplication and maintenance burden
 
 ### 2. Proper Type Usage
@@ -113,8 +113,8 @@ export interface ExtendedProfile extends Listing {
 ## 🔍 Technical Details
 
 ### Type Import Strategy
-1. Import base types from `fedsync-standalone`
-2. Import type guards from `fedsync-standalone/api-types`
+1. Import base types from `fedsync`
+2. Import type guards from `fedsync/api-types`
 3. Create minimal extensions only for missing fields
 4. Use type extraction for discriminated unions
 

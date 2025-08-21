@@ -1,5 +1,22 @@
 import { authClient } from './client'
-import type { Session } from 'better-auth/client'
+
+// Define types based on what authClient.getSession returns
+interface SessionData {
+  user: {
+    id: string
+    email: string
+    name?: string
+  }
+  session: {
+    id: string
+    userId: string
+    expiresAt: number
+    createdAt: Date
+    updatedAt: Date
+  }
+}
+
+type Session = SessionData['session']
 
 interface RefreshConfig {
   refreshThreshold?: number // Time in seconds before expiry to trigger refresh
@@ -37,9 +54,9 @@ export class SessionRefreshManager {
     this.stop() // Clear any existing timers
     
     try {
-      const session = await authClient.getSession()
-      if (session) {
-        this.scheduleRefresh(session)
+      const sessionData = await authClient.getSession()
+      if (sessionData && 'session' in sessionData) {
+        this.scheduleRefresh((sessionData as any).session)
       }
     } catch (error) {
       console.error('Failed to get initial session:', error)
@@ -100,10 +117,11 @@ export class SessionRefreshManager {
     try {
       // Better Auth automatically refreshes sessions when accessing them
       // if they're older than updateAge
-      const session = await authClient.getSession()
+      const sessionData = await authClient.getSession()
       
-      if (session) {
+      if (sessionData && 'session' in sessionData) {
         this.retryCount = 0
+        const session = (sessionData as any).session
         this.config.onRefreshSuccess(session)
         this.scheduleRefresh(session) // Schedule next refresh
         return session
@@ -138,7 +156,7 @@ export class SessionRefreshManager {
 // Create a singleton instance
 export const sessionRefreshManager = new SessionRefreshManager({
   refreshThreshold: 60 * 60, // Refresh 1 hour before expiry
-  onRefreshSuccess: (session) => {
+  onRefreshSuccess: (_session) => {
     console.log('Session refreshed successfully')
   },
   onRefreshError: (error) => {
@@ -151,7 +169,7 @@ export const sessionRefreshManager = new SessionRefreshManager({
  */
 export function useSessionRefresh(config?: RefreshConfig) {
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const managerRef = useRef<SessionRefreshManager>()
+  const managerRef = useRef<SessionRefreshManager>(new SessionRefreshManager())
 
   useEffect(() => {
     managerRef.current = new SessionRefreshManager({

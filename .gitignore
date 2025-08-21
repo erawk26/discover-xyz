@@ -2,7 +2,7 @@ build
 dist / media
 node_modules
 .DS_Store
-.env
+.env*
 .next
 .vercel
 .hive*
@@ -22,6 +22,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 
+tsconfig.tsbuildinfo
 data/fedsync/
 logs/
 *.log
@@ -30,3 +31,5 @@ CLAUDE.md
 .hive*
 docs/ai
 .pnpm-store/
+public/sitemap.xml
+.spec-*

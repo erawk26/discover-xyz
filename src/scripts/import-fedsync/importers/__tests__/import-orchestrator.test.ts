@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { Logger, LogLevel } from 'fedsync-standalone/logger'
+import { Logger, LogLevel } from 'fedsync/logger'
 import fs from 'fs/promises'
 import path from 'path'
 

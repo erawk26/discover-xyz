@@ -39,6 +39,13 @@ const nextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  // Memory optimization for Railway deployment
+  experimental: {
+    workerThreads: false,
+    cpus: 1
+  },
+  compress: true,
+  productionBrowserSourceMaps: false
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })

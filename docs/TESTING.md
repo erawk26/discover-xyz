@@ -185,7 +185,7 @@ export async function cleanupTestDatabase() {
 // __tests__/mocks/fedsync-api.ts
 import { vi } from 'vitest'
 
-vi.mock('fedsync-standalone', () => ({
+vi.mock('fedsync', () => ({
   FedSyncAPI: vi.fn().mockImplementation(() => ({
     getEvents: vi.fn().mockResolvedValue(mockEvents),
     getProfiles: vi.fn().mockResolvedValue(mockProfiles),

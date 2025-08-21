@@ -20,7 +20,7 @@ import type {
   EventDate,
   EnrichedListing,
   FederatorResponse,
-} from 'fedsync-standalone/api-types'
+} from 'fedsync/api-types'
 
 // Re-export commonly used FedSync types for convenience
 export type {
@@ -40,7 +40,7 @@ export type {
 }
 
 // Type guards from FedSync
-import { isEvent } from 'fedsync-standalone/api-types'
+import { isEvent } from 'fedsync/api-types'
 export { isEvent }
 
 // Custom type guard for profiles that accepts both 'profile' and 'listing' types

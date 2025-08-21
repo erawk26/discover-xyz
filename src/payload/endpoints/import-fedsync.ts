@@ -5,7 +5,7 @@
 
 import { Endpoint } from 'payload'
 import { ImportOrchestrator, ImportOptions } from '../../scripts/import-fedsync/importers/import-orchestrator'
-import { LogLevel } from 'fedsync-standalone/logger'
+import { LogLevel } from 'fedsync/logger'
 import path from 'path'
 import fs from 'fs'
 import { execSync } from 'child_process'

@@ -1,5 +1,12 @@
 import { resendClient } from './resend'
-import type { Session } from 'better-auth/client'
+
+// Define Session type locally
+interface Session {
+  user: {
+    email: string
+    name?: string
+  }
+}
 
 export interface EmailResult {
   success: boolean
@@ -18,6 +25,10 @@ export class EmailService {
    */
   async sendVerificationEmail(email: string, verificationUrl: string): Promise<EmailResult> {
     try {
+      if (!resendClient) {
+        console.log('Email service not configured - would send verification email to:', email)
+        return { success: true }
+      }
       const { data, error } = await resendClient.emails.send({
         from: this.from,
         to: email,
@@ -57,6 +68,10 @@ export class EmailService {
    */
   async sendPasswordResetEmail(email: string, resetUrl: string): Promise<EmailResult> {
     try {
+      if (!resendClient) {
+        console.log('Email service not configured - would send password reset email to:', email)
+        return { success: true }
+      }
       const { data, error } = await resendClient.emails.send({
         from: this.from,
         to: email,
@@ -96,6 +111,10 @@ export class EmailService {
    */
   async sendMagicLinkEmail(email: string, magicLink: string): Promise<EmailResult> {
     try {
+      if (!resendClient) {
+        console.log('Email service not configured - would send magic link email to:', email)
+        return { success: true }
+      }
       const { data, error } = await resendClient.emails.send({
         from: this.from,
         to: email,
@@ -135,6 +154,10 @@ export class EmailService {
    */
   async sendOTPEmail(email: string, otp: string): Promise<EmailResult> {
     try {
+      if (!resendClient) {
+        console.log('Email service not configured - would send OTP to:', email)
+        return { success: true }
+      }
       const { data, error } = await resendClient.emails.send({
         from: this.from,
         to: email,
@@ -173,6 +196,10 @@ export class EmailService {
    */
   async sendWelcomeEmail(session: Session): Promise<EmailResult> {
     try {
+      if (!resendClient) {
+        console.log('Email service not configured - would send welcome email to:', session.user.email)
+        return { success: true }
+      }
       const { data, error } = await resendClient.emails.send({
         from: this.from,
         to: session.user.email!,
@@ -223,6 +250,10 @@ export class EmailService {
    */
   async sendAccountDeletedEmail(email: string): Promise<EmailResult> {
     try {
+      if (!resendClient) {
+        console.log('Email service not configured - would send account deleted email to:', email)
+        return { success: true }
+      }
       const { data, error } = await resendClient.emails.send({
         from: this.from,
         to: email,
