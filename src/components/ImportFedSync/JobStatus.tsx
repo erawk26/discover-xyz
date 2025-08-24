@@ -75,11 +75,11 @@ export const ImportJobStatus: React.FC = () => {
 
   const getStatusBadge = (status: string, phase?: string) => {
     const statusStyles = {
-      pending: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-      syncing: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      running: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-      completed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      failed: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+      pending: 'bg-warning/10 text-warning-foreground',
+      syncing: 'bg-secondary text-secondary-foreground',
+      running: 'bg-primary/10 text-primary',
+      completed: 'bg-success/10 text-success-foreground',
+      failed: 'bg-destructive/10 text-destructive'
     }
     
     const displayText = status === 'syncing' ? 'SYNCING' : 
@@ -87,7 +87,7 @@ export const ImportJobStatus: React.FC = () => {
                        status.toUpperCase()
     
     return (
-      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || 'bg-gray-100 text-gray-800'}`}>
+      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[status as keyof typeof statusStyles] || 'bg-muted text-muted-foreground'}`}>
         {displayText}
       </span>
     )
@@ -221,9 +221,9 @@ export const ImportJobStatus: React.FC = () => {
               </div>
               
               {jobDetails.error && (
-                <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4">
-                  <p className="text-sm font-medium text-red-800 dark:text-red-300">Error:</p>
-                  <p className="text-sm text-red-700 dark:text-red-400">{jobDetails.error}</p>
+                <div className="rounded-lg bg-destructive/10 p-4">
+                  <p className="text-sm font-medium text-destructive">Error:</p>
+                  <p className="text-sm text-destructive/80">{jobDetails.error}</p>
                 </div>
               )}
               

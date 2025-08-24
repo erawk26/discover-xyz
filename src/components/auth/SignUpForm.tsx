@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/better-auth/client'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { LoadingButton } from '@/components/ui/loading-button'
+import { Input } from '@/components/ui/input'
 
 export function SignUpForm() {
   const router = useRouter()
@@ -122,13 +124,14 @@ export function SignUpForm() {
           <label htmlFor="name" className="block text-sm font-medium">
             Name
           </label>
-          <input
+          <Input
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1"
+            placeholder="Enter your name"
           />
         </div>
 
@@ -136,13 +139,14 @@ export function SignUpForm() {
           <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1"
+            placeholder="Enter your email"
           />
         </div>
 
@@ -150,24 +154,26 @@ export function SignUpForm() {
           <label htmlFor="password" className="block text-sm font-medium">
             Password
           </label>
-          <input
+          <Input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
-            className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1"
+            placeholder="Create a password (min 8 characters)"
           />
         </div>
 
-        <Button
+        <LoadingButton
           type="submit"
-          disabled={loading}
+          loading={loading}
+          loadingText="Creating account..."
           className="w-full"
         >
-          {loading ? 'Creating account...' : 'Sign Up'}
-        </Button>
+          Sign Up
+        </LoadingButton>
       </form>
     </div>
   )

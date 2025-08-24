@@ -11,7 +11,6 @@ declare namespace NodeJS {
     PAYLOAD_PUBLIC_DRAFT_SECRET: string
     REVALIDATION_KEY: string
     // Better Auth
-    NEXT_PUBLIC_APP_URL: string
     BETTER_AUTH_SECRET: string
     GOOGLE_CLIENT_ID: string
     GOOGLE_CLIENT_SECRET: string

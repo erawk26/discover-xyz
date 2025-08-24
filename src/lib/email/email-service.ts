@@ -212,17 +212,17 @@ export class EmailService {
             <p>Here are some things you can do to get started:</p>
             <ul style="margin: 20px 0; padding-left: 20px;">
               <li style="margin: 10px 0;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/events" style="color: ${this.brandColor}; text-decoration: none;">
+                <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/events" style="color: ${this.brandColor}; text-decoration: none;">
                   Browse Events
                 </a> - Discover local events happening in your area
               </li>
               <li style="margin: 10px 0;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/businesses" style="color: ${this.brandColor}; text-decoration: none;">
+                <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/businesses" style="color: ${this.brandColor}; text-decoration: none;">
                   Explore Businesses
                 </a> - Find local businesses and services
               </li>
               <li style="margin: 10px 0;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/account" style="color: ${this.brandColor}; text-decoration: none;">
+                <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/account" style="color: ${this.brandColor}; text-decoration: none;">
                   Manage Profile
                 </a> - Complete your profile and preferences
               </li>
@@ -267,7 +267,7 @@ export class EmailService {
               If you change your mind, you can always create a new account at any time:
             </p>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL}/sign-up" 
+              <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/sign-up" 
                  style="display: inline-block; background-color: ${this.brandColor}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                 Sign Up
               </a>

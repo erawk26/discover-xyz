@@ -95,9 +95,7 @@ const config = buildConfig({
   cors: (() => {
     const allowedOrigins = [
       getServerSideURL(),
-      process.env.NEXT_PUBLIC_APP_URL,
-      // Add production domains
-      process.env.PRODUCTION_URL,
+      process.env.NEXT_PUBLIC_SERVER_URL,
       // Development origins
       process.env.NODE_ENV === 'development' ? 'http://localhost:3026' : null,
       process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null,
