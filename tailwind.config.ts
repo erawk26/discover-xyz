@@ -93,8 +93,6 @@ const config: Config = {
           DEFAULT: 'hsl(var(--error))',
           foreground: 'hsl(var(--error-foreground))',
         },
-        error: 'hsl(var(--error))',
-        warning: 'hsl(var(--warning))',
       },
       fontFamily: {
         mono: ['var(--font-geist-mono)'],
