@@ -11,7 +11,7 @@ This project is built with modern web technologies including Payload CMS v3, Nex
 - **[Tailwind CSS](https://tailwindcss.com)** v3.4.3 - Utility-first CSS framework (v4 upgrade planned)
 - **[shadcn/ui](https://ui.shadcn.com)** - Re-usable components built with Radix UI and Tailwind
 - **[Better Auth](https://www.better-auth.com)** v1.3.4 - Modern authentication library
-- **[MongoDB](https://www.mongodb.com)** - Database (via Payload)
+- **[PostgreSQL](https://www.postgresql.org)** - Database (via Payload)
 
 ## Quick Start for Developers
 
@@ -31,22 +31,32 @@ cd <new folder name>
    cp .env.example .env
    ```
 
-2. Update the `.env` file with your configuration:
+2. Create a `.env.local` file for local development:
    ```bash
-   # Database connection (MongoDB is configured by default)
-   DATABASE_URI=mongodb://127.0.0.1/<your-project-name>
+   cp .env.example .env.local
+   ```
 
+3. Update the `.env.local` file with your local configuration:
+   ```bash
+   # Local PostgreSQL database (started with docker-compose)
+   DATABASE_URI=postgresql://postgres:postgres@localhost:5433/payload
+
+   # Development environment
+   NODE_ENV=development
+   BETTER_AUTH_URL=http://localhost:3026
+   NEXT_PUBLIC_APP_URL=http://localhost:3026
+   NEXT_PUBLIC_SERVER_URL=http://localhost:3026
+   ```
+
+4. Update the `.env` file with your production/shared configuration:
+   ```bash
    # Required secrets (generate strong random strings)
    PAYLOAD_SECRET=your_secure_secret_here
-   CRON_SECRET=your_secure_cron_secret_here
    PREVIEW_SECRET=your_secure_preview_secret_here
+   BETTER_AUTH_SECRET=your_secure_auth_secret_here
 
-   # Important: Set your site name (used throughout the application)
+   # Site configuration
    SITE_NAME=<Your Project Name>
-
-   # Server URL (no trailing slash)
-   NEXT_PUBLIC_SERVER_URL=http://localhost:3026
-   BETTER_AUTH_URL=http://localhost:3026
 
    # OAuth Providers (optional)
    GOOGLE_CLIENT_ID=your-google-client-id
@@ -55,28 +65,41 @@ cd <new folder name>
 
 ### Development
 
-#### Option 1: Local Development
+#### Option 1: Local Development with PostgreSQL
 
 1. Install dependencies:
    ```bash
    pnpm install
    ```
 
-2. Start the development server:
+2. Start the PostgreSQL database:
+   ```bash
+   pnpm dev:db
+   ```
+   This will start a PostgreSQL container on port 5433 (mapped from internal port 5432).
+
+3. Start the development server:
    ```bash
    pnpm dev
    ```
-
-3. Access the application at http://localhost:3026
-
-#### Option 2: Using Docker
-
-1. Make sure Docker and Docker Compose are installed on your machine
-2. Run the following command:
+   
+   Or start both database and server together:
    ```bash
-   docker-compose up
+   pnpm dev:full
    ```
-3. Access the application at http://localhost:3026 (This Docker config uses port 3026)
+
+4. Access the application at http://localhost:3026
+
+To stop the database:
+```bash
+pnpm dev:db:down
+```
+
+#### Option 2: Using Remote Database
+
+If you prefer to use a remote database (e.g., Neon, Railway, Supabase):
+1. Update `DATABASE_URI` in `.env.local` with your remote database connection string
+2. Run `pnpm dev` to start the development server
 
 ### Creating an Admin User
 
@@ -146,7 +169,7 @@ pnpm import
 ```
 This imports the synced data into your Payload CMS database.
 
-**Note**: Make sure MongoDB is running before importing data.
+**Note**: Make sure PostgreSQL is running before importing data.
 
 ### Automated Sync with Cron
 
