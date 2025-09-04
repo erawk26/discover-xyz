@@ -17,8 +17,12 @@ import {
 } from 'better-auth/client/plugins'
 import { toast } from 'sonner'
 
+// Use NEXT_PUBLIC_SERVER_URL for Better Auth client configuration
+// This is the single source of truth for the application URL
+const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026'
+
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026',
+  baseURL,
   plugins: [
     twoFactorClient({
       onTwoFactorRedirect() {

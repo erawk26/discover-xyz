@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/better-auth/client'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { LoadingButton } from '@/components/ui/loading-button'
+import { Input } from '@/components/ui/input'
 
 export function SignInForm() {
   const router = useRouter()
@@ -261,14 +263,15 @@ export function SignInForm() {
           <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={isOtpMode && otpSent}
-            className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1"
+            placeholder="Enter your email"
           />
         </div>
 
@@ -277,13 +280,14 @@ export function SignInForm() {
             <label htmlFor="password" className="block text-sm font-medium">
               Password
             </label>
-            <input
+            <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-1"
+              placeholder="Enter your password"
             />
           </div>
         ) : (
@@ -292,14 +296,14 @@ export function SignInForm() {
               <label htmlFor="otp" className="block text-sm font-medium">
                 Verification Code
               </label>
-              <input
+              <Input
                 id="otp"
                 type="text"
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value)}
                 placeholder="Enter 6-digit code"
                 required
-                className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-1"
               />
               <p className="mt-1 text-sm text-muted-foreground">Check your email for the verification code</p>
             </div>
@@ -309,43 +313,45 @@ export function SignInForm() {
         <div className="flex items-center justify-between gap-2">
           {!isOtpMode ? (
             <>
-              <Button
+              <LoadingButton
                 type="submit"
-                disabled={loading}
+                loading={loading}
                 className="flex-1"
               >
                 Sign In
-              </Button>
-              <Button
+              </LoadingButton>
+              <LoadingButton
                 type="button"
                 onClick={handleMagicLink}
-                disabled={loading}
+                loading={loading}
                 variant="outline"
                 className="flex-1"
               >
                 Send Magic Link
-              </Button>
+              </LoadingButton>
             </>
           ) : (
             <>  
               {!otpSent ? (
-                <Button
+                <LoadingButton
                   type="button"
                   onClick={handleSendOtp}
-                  disabled={loading || !email}
+                  loading={loading}
+                  disabled={!email}
                   className="w-full"
                 >
                   Send Code
-                </Button>
+                </LoadingButton>
               ) : (
                 <>
-                  <Button
+                  <LoadingButton
                     type="submit"
-                    disabled={loading || !otpCode}
+                    loading={loading}
+                    disabled={!otpCode}
                     className="flex-1"
                   >
                     Verify & Sign In
-                  </Button>
+                  </LoadingButton>
                   <Button
                     type="button"
                     onClick={() => { handleSendOtp(); setOtpCode(''); }}
