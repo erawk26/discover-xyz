@@ -1,17 +1,15 @@
 import { Resend } from 'resend'
 
 // Initialize Resend client
-const resend = process.env.RESEND_API_KEY 
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 // Export for testing
 export const resendClient = resend
 
 // Email configuration
-const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@discover-xyz.com'
-const SITE_NAME = process.env.SITE_NAME || 'Discover XYZ'
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3026'
+const FROM_EMAIL =
+  process.env.EMAIL_FROM || `noreply@${process.env.SITE_DOMAIN || 'mpblueprint.xyz'}`
+const SITE_NAME = process.env.SITE_NAME || 'MP Blueprint'
 
 // Development mode check
 const isDevelopment = process.env.NODE_ENV === 'development'
@@ -37,7 +35,7 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions) {
       console.log('---\n')
       return { success: true, development: true }
     }
-    
+
     throw new Error('Email service not configured. Please set RESEND_API_KEY environment variable.')
   }
 
@@ -79,7 +77,7 @@ export const emailTemplates = {
         </p>
       </div>
     `,
-    text: `Verify your email for ${SITE_NAME}\n\nThank you for signing up. Please verify your email address by visiting:\n\n${verificationUrl}\n\nIf you didn't create an account, you can safely ignore this email.`
+    text: `Verify your email for ${SITE_NAME}\n\nThank you for signing up. Please verify your email address by visiting:\n\n${verificationUrl}\n\nIf you didn't create an account, you can safely ignore this email.`,
   }),
 
   passwordResetEmail: (resetUrl: string) => ({
@@ -100,7 +98,7 @@ export const emailTemplates = {
         </p>
       </div>
     `,
-    text: `Reset your password for ${SITE_NAME}\n\nYou requested to reset your password. Visit the following link to create a new password:\n\n${resetUrl}\n\nThis link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.`
+    text: `Reset your password for ${SITE_NAME}\n\nYou requested to reset your password. Visit the following link to create a new password:\n\n${resetUrl}\n\nThis link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.`,
   }),
 
   magicLinkEmail: (magicLinkUrl: string) => ({
@@ -121,7 +119,7 @@ export const emailTemplates = {
         </p>
       </div>
     `,
-    text: `Login to ${SITE_NAME}\n\nClick the following link to log in to your account:\n\n${magicLinkUrl}\n\nThis link will expire in 15 minutes. If you didn't request this login link, you can safely ignore this email.`
+    text: `Login to ${SITE_NAME}\n\nClick the following link to log in to your account:\n\n${magicLinkUrl}\n\nThis link will expire in 15 minutes. If you didn't request this login link, you can safely ignore this email.`,
   }),
 
   otpEmail: (otp: string, purpose: string) => ({
@@ -140,7 +138,7 @@ export const emailTemplates = {
         </p>
       </div>
     `,
-    text: `Your ${purpose} code for ${SITE_NAME}\n\nEnter this code to complete your ${purpose.toLowerCase()}:\n\n${otp}\n\nThis code will expire in 10 minutes. If you didn't request this code, you can safely ignore this email.`
+    text: `Your ${purpose} code for ${SITE_NAME}\n\nEnter this code to complete your ${purpose.toLowerCase()}:\n\n${otp}\n\nThis code will expire in 10 minutes. If you didn't request this code, you can safely ignore this email.`,
   }),
 
   invitationEmail: (inviteUrl: string, inviterName: string, organizationName: string) => ({
@@ -161,7 +159,7 @@ export const emailTemplates = {
         </p>
       </div>
     `,
-    text: `You've been invited to join ${organizationName} on ${SITE_NAME}\n\n${inviterName} has invited you to join their organization. Accept the invitation by visiting:\n\n${inviteUrl}\n\nThis invitation will expire in 7 days. If you don't want to join, you can safely ignore this email.`
+    text: `You've been invited to join ${organizationName} on ${SITE_NAME}\n\n${inviterName} has invited you to join their organization. Accept the invitation by visiting:\n\n${inviteUrl}\n\nThis invitation will expire in 7 days. If you don't want to join, you can safely ignore this email.`,
   }),
 
   changeEmailVerification: (verificationUrl: string, newEmail: string) => ({
@@ -183,6 +181,6 @@ export const emailTemplates = {
         </p>
       </div>
     `,
-    text: `Verify your new email address for ${SITE_NAME}\n\nYou requested to change your email address to: ${newEmail}\n\nPlease confirm this change by visiting:\n\n${verificationUrl}\n\nIf you didn't request this change, please contact support immediately.`
-  })
+    text: `Verify your new email address for ${SITE_NAME}\n\nYou requested to change your email address to: ${newEmail}\n\nPlease confirm this change by visiting:\n\n${verificationUrl}\n\nIf you didn't request this change, please contact support immediately.`,
+  }),
 }
