@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 const { Pool } = pg;
 dotenv.config();
 
+// Using pg directly is acceptable for database reset
+// This is a destructive admin operation, not application logic
 async function resetDatabase() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URI,

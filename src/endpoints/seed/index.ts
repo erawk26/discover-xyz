@@ -101,7 +101,7 @@ export const seed = async ({
     payload.create({
       collection: 'allowed-users',
       data: {
-        pattern: `${process.env.SITE_EMAIL || '*@discover-xyz.com'}`,
+        pattern: `*@${process.env.SITE_DOMAIN || 'example.com'}`,
         type: 'wildcard',
         defaultRole: 'content-editor',
         description: 'Example domain for testing',
